@@ -1,6 +1,6 @@
 # Pot System
 
-"Pot" is short for **potential**: what an item's primary stat will be once every upgrade on it has been spent. Two copies of the same item at the same difficulty roll different bases and different upgrade counts, so their pot differs. High pot = stronger item = more desirable.
+"Pot" is short for **potential**: what an item's primary stat will be once every upgrade on it has been spent. Two copies of the same item at the same rarity roll different bases and different upgrade counts, so their pot differs. High pot = stronger item = more desirable.
 
 ## Formula
 
@@ -34,7 +34,7 @@ Armor therefore has **two tracks**. For `DPS Armor` the app reports both: the da
 
 ## Percentile
 
-How good a roll is, relative to what that exact item at that exact difficulty can produce:
+How good a roll is, relative to what that exact item at that exact rarity can produce:
 
 ```
 percentile = (potential - minPotential) / (maxPotential - minPotential) * 100
@@ -42,7 +42,7 @@ percentile = (potential - minPotential) / (maxPotential - minPotential) * 100
 
 Clamped to `0..100`. Reported to the user as "your item is N% optimal". Armor gets two percentiles, one per track.
 
-`minPotential` / `maxPotential` come from the item's difficulty row (`docs/Info/Item-Data.md`).
+`minPotential` / `maxPotential` come from the item's rarity row (`docs/Info/Item-Data.md`).
 
 ## Tiers
 

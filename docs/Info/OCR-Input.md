@@ -29,7 +29,7 @@ Label wording varies: `Physical Damage:` vs `Physical power:`, `Spell Power:` vs
 | Spell power | yes for Mage | Current value |
 | Health | armor only | Green line, present only on armor |
 | Upgrades done / total | yes | `done` drives `upgradesRemaining = total - done` |
-| `REQ Lvl.` | optional | Candidate tie-breaker for difficulty selection |
+| `REQ Lvl.` | optional | Level requirement — dungeon-based, cannot disambiguate rarity rows |
 | Sell | no | Ignore |
 
 ## Sample screenshots

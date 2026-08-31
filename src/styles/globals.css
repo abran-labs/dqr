@@ -3,39 +3,40 @@
 @tailwind utilities;
 
 /*
-  TweakCN dark theme tokens (single dark theme — DQR-Calc is dark-only).
-  Values are HSL triplets consumed via tailwind.config.ts hsl(var(--*)).
+  Dark theme tokens (single dark theme — DQR-Calc is dark-only).
+  Neutral ramp matches AbyssFishLog's near-black neutrals; primary stays the
+  DQR orange. Values are HSL triplets consumed via tailwind.config.ts hsl(var(--*)).
 */
 @layer base {
   :root {
-    --background: 225 11.7% 6.7%;
-    --foreground: 220 12.5% 90.6%;
-    --surface-lowest: 225.9 17.3% 3.9%;
-    --surface-low: 225 9.1% 8.6%;
-    --surface: 228 9.8% 10%;
-    --surface-high: 216 7.1% 13.9%;
-    --surface-highest: 228 6.5% 15.1%;
-    --surface-bright: 220 6.2% 18.8%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --surface-lowest: 240 10% 3.9%;
+    --surface-low: 240 3.7% 8%;
+    --surface: 240 3.7% 10%;
+    --surface-high: 240 3.7% 15.9%;
+    --surface-highest: 240 3.7% 18%;
+    --surface-bright: 240 3.7% 20.8%;
     --surface-tint: 14.2 85% 76.2%;
-    --card: 228 9.8% 10%;
-    --card-foreground: 220 12.5% 90.6%;
-    --popover: 225 8.7% 9%;
-    --popover-foreground: 220 12.5% 90.6%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
     --primary: 14.2 85% 76.2%;
     --primary-container: 14.2 59.6% 61%;
     --primary-foreground: 14.2 39.9% 7.1%;
-    --secondary: 228 6.5% 15.1%;
-    --secondary-foreground: 220 8.6% 86.3%;
-    --muted: 216 7.1% 13.9%;
-    --muted-foreground: 222.9 3.5% 60.2%;
-    --accent: 14.2 35.3% 15.5%;
-    --accent-foreground: 14.2 93.5% 88.6%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
     --tertiary: 193.9 40.8% 54.3%;
     --tertiary-foreground: 225 11.7% 6.7%;
     --destructive: 3 59.4% 60.4%;
     --destructive-foreground: 220 33.8% 98.2%;
-    --border: 220 6.2% 18.8%;
-    --input: 230 6.5% 18%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
     --ring: 14.2 85% 76.2%;
     --success: 193.9 40.8% 54.3%;
     --success-foreground: 220 33.8% 98.2%;
