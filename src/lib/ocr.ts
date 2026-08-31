@@ -18,6 +18,10 @@ export interface TooltipScan {
   readonly rawText: string;
   /** Text from the inverted/thresholded pass. */
   readonly processedText: string;
+  /** PNG data URL of the upscaled color image the OCR actually read — logged
+   *  with the stats API so past reads can be re-verified later. Null if a
+   *  canvas could not be produced. */
+  readonly imageDataUrl: string | null;
 }
 
 // Shared worker instance. eng.traineddata is served from /public for offline use.
@@ -121,6 +125,11 @@ async function preprocessImage(
   }
 }
 
+const asDataUrl = (source: string | HTMLCanvasElement): string | null => {
+  if (source instanceof HTMLCanvasElement) return source.toDataURL("image/png");
+  return source.startsWith("data:") ? source : null;
+};
+
 export async function scanTooltip(
   imageSource: File | Blob | string,
 ): Promise<TooltipScan> {
@@ -137,7 +146,8 @@ export async function scanTooltip(
   ]);
 
   return {
-    rawText: normalRun.data.text.trim(),
+    imageDataUrl: asDataUrl(upscaledInput),
     processedText: processedRun.data.text.trim(),
+    rawText: normalRun.data.text.trim(),
   };
 }

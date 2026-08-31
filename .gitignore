@@ -13,6 +13,9 @@ dist
 .env.*
 !.env.example
 
+# Stats sidecar state (SQLite db)
+server/data/
+
 # Debug logs
 *.log
 

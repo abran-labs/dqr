@@ -2,10 +2,19 @@
 import "@fontsource/manrope/400.css";
 import "@fontsource/manrope/500.css";
 import "@fontsource/manrope/600.css";
+import { ClientRouter } from "astro:transitions";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import type { MarketingFooterNavLink, MarketingFooterSocialLink } from "@/components/marketing/marketing-footer";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
+import type { SiteNavLink } from "@/components/marketing/site-nav-links";
 import { StarsBackground } from "@/components/marketing/stars-background";
+import { StatsStrip } from "@/components/marketing/stats-strip";
 import "@/styles/globals.css";
+
+const navLinks = [
+  { label: "Pot Calculator", href: "/" },
+  { label: "Level Calculator", href: "/level" },
+] as const satisfies ReadonlyArray<SiteNavLink>;
 
 const footerNavLinks: readonly MarketingFooterNavLink[] = [];
 
@@ -32,10 +41,11 @@ const {
   description = "Item potential calculator for Dungeon Quest Reborn. Paste a tooltip, get its pot rating.",
 } = Astro.props;
 const pageTitle = title ? `DQR-Calc | ${title}` : "DQR-Calc";
+const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" class="dark" transition:name="root" transition:animate="none">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -44,17 +54,34 @@ const pageTitle = title ? `DQR-Calc | ${title}` : "DQR-Calc";
     <meta name="color-scheme" content="dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{pageTitle}</title>
+    <ClientRouter />
   </head>
-  <body class="relative flex min-h-dvh flex-col font-sans">
-    <StarsBackground client:load />
-    <div class="relative z-[1] flex flex-1 flex-col px-4 pt-2 md:pt-0">
-      <slot />
+  <body class="relative font-sans">
+    <StarsBackground client:load transition:persist="stars-background" />
+    <div class="relative flex min-h-dvh flex-col">
+      <header class="pointer-events-none fixed inset-x-0 top-0 z-[2] px-2 md:relative md:px-4">
+        <div class="pointer-events-auto relative mx-auto flex h-14 w-full max-w-3xl items-center justify-center">
+          <MarketingNav
+            client:load
+            transition:persist="marketing-nav"
+            transition:persist-props
+            navLinks={navLinks}
+            pathname={pathname}
+          />
+        </div>
+        <div class="pb-1 md:pb-2">
+          <StatsStrip client:load transition:persist="stats-strip" />
+        </div>
+      </header>
+      <div class="relative z-[1] flex flex-1 flex-col px-4 pt-2 md:pt-0">
+        <slot />
+      </div>
+      <MarketingFooter
+        brandLine="© 2026 Abran Labs"
+        rightsLine="All rights reserved"
+        navLinks={footerNavLinks}
+        socialLinks={footerSocialLinks}
+      />
     </div>
-    <MarketingFooter
-      brandLine="© 2026 Abran Labs"
-      rightsLine="All rights reserved"
-      navLinks={footerNavLinks}
-      socialLinks={footerSocialLinks}
-    />
   </body>
 </html>
