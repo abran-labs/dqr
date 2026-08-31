@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+
+# Astro build output
+.astro
+dist
+
+# TypeScript
+*.tsbuildinfo
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Debug logs
+*.log
+
+# Misc
+.DS_Store
+Thumbs.db
+.vercel
+
+# Local runtime caches
+.cache

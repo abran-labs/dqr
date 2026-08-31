@@ -1,0 +1,30 @@
+---
+import { CalculatorApp } from "@/components/calculator/calculator-app";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+  <main class="mx-auto w-full max-w-3xl px-4 py-8">
+    <header class="mb-6">
+      <h1 class="text-2xl font-semibold tracking-tight">DQR-Calc</h1>
+      <p class="mt-1 text-sm text-muted-foreground">
+        Item potential calculator for Dungeon Quest Reborn
+      </p>
+    </header>
+
+    <!--
+      Tab shell. Only the Calculator tab is registered; future tabs mount here
+      without restructuring the page.
+    -->
+    <nav class="mb-4 flex w-fit gap-1 rounded-lg bg-surface-low p-1" aria-label="Sections">
+      <span
+        class="rounded-md bg-surface-highest px-4 py-1.5 text-sm font-semibold text-foreground"
+        aria-current="page"
+      >
+        Calculator
+      </span>
+    </nav>
+
+    <CalculatorApp client:load />
+  </main>
+</BaseLayout>

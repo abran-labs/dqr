@@ -1,0 +1,33 @@
+---
+import "@fontsource/manrope/400.css";
+import "@fontsource/manrope/500.css";
+import "@fontsource/manrope/600.css";
+import "@/styles/globals.css";
+
+interface Props {
+  readonly title?: string | undefined;
+  readonly description?: string | undefined;
+}
+
+const {
+  title,
+  description = "Item potential calculator for Dungeon Quest Reborn. Paste a tooltip, get its pot rating.",
+} = Astro.props;
+const pageTitle = title ? `DQR-Calc | ${title}` : "DQR-Calc";
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{pageTitle}</title>
+  </head>
+  <body class="relative font-sans">
+    <slot />
+  </body>
+</html>

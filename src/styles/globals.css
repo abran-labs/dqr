@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  TweakCN dark theme tokens (single dark theme — DQR-Calc is dark-only).
+  Values are HSL triplets consumed via tailwind.config.ts hsl(var(--*)).
+*/
+@layer base {
+  :root {
+    --background: 225 11.7% 6.7%;
+    --foreground: 220 12.5% 90.6%;
+    --surface-lowest: 225.9 17.3% 3.9%;
+    --surface-low: 225 9.1% 8.6%;
+    --surface: 228 9.8% 10%;
+    --surface-high: 216 7.1% 13.9%;
+    --surface-highest: 228 6.5% 15.1%;
+    --surface-bright: 220 6.2% 18.8%;
+    --surface-tint: 14.2 85% 76.2%;
+    --card: 228 9.8% 10%;
+    --card-foreground: 220 12.5% 90.6%;
+    --popover: 225 8.7% 9%;
+    --popover-foreground: 220 12.5% 90.6%;
+    --primary: 14.2 85% 76.2%;
+    --primary-container: 14.2 59.6% 61%;
+    --primary-foreground: 14.2 39.9% 7.1%;
+    --secondary: 228 6.5% 15.1%;
+    --secondary-foreground: 220 8.6% 86.3%;
+    --muted: 216 7.1% 13.9%;
+    --muted-foreground: 222.9 3.5% 60.2%;
+    --accent: 14.2 35.3% 15.5%;
+    --accent-foreground: 14.2 93.5% 88.6%;
+    --tertiary: 193.9 40.8% 54.3%;
+    --tertiary-foreground: 225 11.7% 6.7%;
+    --destructive: 3 59.4% 60.4%;
+    --destructive-foreground: 220 33.8% 98.2%;
+    --border: 220 6.2% 18.8%;
+    --input: 230 6.5% 18%;
+    --ring: 14.2 85% 76.2%;
+    --success: 193.9 40.8% 54.3%;
+    --success-foreground: 220 33.8% 98.2%;
+    --warning: 47.9 95.8% 53.1%;
+    --warning-foreground: 225 11.7% 6.7%;
+    --info: 243.1 43.1% 73.1%;
+    --info-foreground: 225 11.7% 6.7%;
+    --radius: 0.5rem;
+    color-scheme: dark;
+  }
+
+  html {
+    @apply bg-background;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply min-h-screen bg-background font-sans text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top, hsl(var(--surface-tint) / 0.06), transparent 38%),
+      linear-gradient(
+        180deg,
+        hsl(var(--background)) 0%,
+        hsl(var(--surface-lowest)) 55%,
+        hsl(var(--surface-lowest)) 100%
+      );
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary) / 0.28);
+    color: hsl(var(--foreground));
+  }
+}
