@@ -2,12 +2,30 @@
 import "@fontsource/manrope/400.css";
 import "@fontsource/manrope/500.css";
 import "@fontsource/manrope/600.css";
+import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import type { MarketingFooterNavLink, MarketingFooterSocialLink } from "@/components/marketing/marketing-footer";
+import { StarsBackground } from "@/components/marketing/stars-background";
 import "@/styles/globals.css";
+
+const footerNavLinks: readonly MarketingFooterNavLink[] = [];
+
+const footerSocialLinks = [
+  { id: "github", label: "GitHub", href: "https://github.com/abran-labs" },
+  { id: "x", label: "X (Twitter)", href: "https://x.com/AbranLabs" },
+  {
+    id: "youtube",
+    label: "YouTube",
+    href: "https://www.youtube.com/channel/UC0hfIt7GFnGCer6tYnYsCag",
+  },
+  { id: "roblox", label: "Roblox", href: "https://www.roblox.com/users/2373175020" },
+  { id: "discord", label: "Discord", href: "https://discord.com/users/563879454493900821" },
+] as const satisfies ReadonlyArray<MarketingFooterSocialLink>;
 
 interface Props {
   readonly title?: string | undefined;
   readonly description?: string | undefined;
 }
+
 
 const {
   title,
@@ -27,7 +45,16 @@ const pageTitle = title ? `DQR-Calc | ${title}` : "DQR-Calc";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{pageTitle}</title>
   </head>
-  <body class="relative font-sans">
-    <slot />
+  <body class="relative flex min-h-dvh flex-col font-sans">
+    <StarsBackground client:load />
+    <div class="relative z-[1] flex flex-1 flex-col px-4 pt-2 md:pt-0">
+      <slot />
+    </div>
+    <MarketingFooter
+      brandLine="© 2026 Abran Labs"
+      rightsLine="All rights reserved"
+      navLinks={footerNavLinks}
+      socialLinks={footerSocialLinks}
+    />
   </body>
 </html>
