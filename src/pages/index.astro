@@ -1,48 +1,10 @@
 ---
 import { CalculatorApp } from "@/components/calculator/calculator-app";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-
-// Tab registry: add entries here to register new sections. The tab bar is
-// only rendered for two or more tabs — a single section renders bare.
-const tabs = [
-  { id: "calculator", label: "Calculator" },
-] as const;
 ---
 
 <BaseLayout>
   <main class="mx-auto w-full max-w-3xl py-8">
-    <header class="mb-6">
-      <h1 class="text-2xl font-semibold tracking-tight">DQR-Calc</h1>
-      <p class="mt-1 text-sm text-muted-foreground">
-        Item potential calculator for Dungeon Quest Reborn
-      </p>
-    </header>
-
-    <!--
-      Tab shell. Only the Calculator tab is registered; future tabs mount here
-      without restructuring the page. The bar itself stays hidden until a
-      second tab exists.
-    -->
-    {
-      tabs.length >= 2 && (
-        <nav class="mb-4 flex w-fit gap-1 rounded-lg bg-surface-low p-1" aria-label="Sections">
-          {tabs.map((tab, index) => (
-            <span
-              class:list={[
-                "rounded-md px-4 py-1.5 text-sm font-semibold",
-                index === 0
-                  ? "bg-surface-highest text-foreground"
-                  : "text-muted-foreground",
-              ]}
-              aria-current={index === 0 ? "page" : undefined}
-            >
-              {tab.label}
-            </span>
-          ))}
-        </nav>
-      )
-    }
-
     <CalculatorApp client:load />
   </main>
 </BaseLayout>
