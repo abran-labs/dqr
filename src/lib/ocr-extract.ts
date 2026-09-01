@@ -16,6 +16,7 @@
 
 import { ITEMS, type DqrItem } from "./dqr-items";
 import type { TooltipScan } from "./ocr";
+import { parseUpgradePair, preferUpgradePair } from "./ocr-upgrades";
 
 export interface ExtractedTooltip {
   readonly physical: number | null;
@@ -47,12 +48,22 @@ function recoverNumber(raw: string): number | null {
 const VALUE = "[0-9bBgGiIlLoOqQsStTzZ,.]+";
 
 // Label wording varies (docs/Info/OCR-Input.md): `Physical Damage:` vs
-// `Physical power:`, optional colon, values sometimes wrap to the next line
-// (the pass text is joined before matching).
-const UPS_RE = new RegExp(`upgrades?\\s*[:.]?\\s*(${VALUE})\\s*/\\s*(${VALUE})`, "i");
-const PHYS_RE = new RegExp(`physical\\s*(?:damage|power|dmg)\\s*[:.]?\\s*(${VALUE})`, "i");
-const SPELL_RE = new RegExp(`spell\\s*power\\s*[:.]?\\s*(${VALUE})`, "i");
+// `Physical power:`. Values wrap onto the first label line
+// (`Physical 739072` / `power:`) or follow the full label.
+const PHYS_RE = new RegExp(
+  `physical\\s*(?:(?:damage|power|dmg)\\s*[:.]?\\s*(${VALUE})|(${VALUE})\\s*(?:damage|power|dmg))`,
+  "i",
+);
+const SPELL_RE = new RegExp(
+  `spell\\s*(?:power\\s*[:.]?\\s*(${VALUE})|(${VALUE})\\s*power)`,
+  "i",
+);
 const HEALTH_RE = new RegExp(`health\\s*[:.]?\\s*(${VALUE})`, "i");
+
+function fromMatch(match: RegExpExecArray | null): number | null {
+  const raw = match?.[1] ?? match?.[2];
+  return raw ? nz(recoverNumber(raw)) : null;
+}
 
 interface RawFields {
   physical: number | null;
@@ -64,17 +75,13 @@ interface RawFields {
 
 function parsePass(text: string): RawFields {
   const joined = text.replace(/\s*\n\s*/g, " ");
-  const phys = PHYS_RE.exec(joined);
-  const spell = SPELL_RE.exec(joined);
-  const health = HEALTH_RE.exec(joined);
-  const ups = UPS_RE.exec(joined);
+  const ups = parseUpgradePair(joined);
   return {
-    health: nz(health?.[1] ? recoverNumber(health[1]) : null),
-    physical: nz(phys?.[1] ? recoverNumber(phys[1]) : null),
-    spell: nz(spell?.[1] ? recoverNumber(spell[1]) : null),
-    // 0 upgrades-done is real (un-upgraded items) — keep it.
-    upsDone: ups?.[1] ? recoverNumber(ups[1]) : null,
-    upsTotal: nz(ups?.[2] ? recoverNumber(ups[2]) : null),
+    health: fromMatch(HEALTH_RE.exec(joined)),
+    physical: fromMatch(PHYS_RE.exec(joined)),
+    spell: fromMatch(SPELL_RE.exec(joined)),
+    upsDone: ups.done,
+    upsTotal: ups.total,
   };
 }
 
@@ -275,13 +282,17 @@ export function extractTooltip(scan: TooltipScan): ExtractedTooltip {
   // The white item name only survives the thresholded pass (the color pass
   // washes it out), so names come from processed first.
   const item = passName(scan.nameText) ?? passName(scan.processedText) ?? passName(scan.rawText);
+  const ups = preferUpgradePair(
+    { done: raw.upsDone, total: raw.upsTotal },
+    { done: processed.upsDone, total: processed.upsTotal },
+  );
   return {
     health: raw.health ?? processed.health,
     item,
     physical: raw.physical ?? processed.physical,
     spell: raw.spell ?? processed.spell,
     title: titleLine(scan.nameText) ?? titleLine(scan.processedText) ?? titleLine(scan.rawText),
-    upsDone: raw.upsDone ?? processed.upsDone,
-    upsTotal: raw.upsTotal ?? processed.upsTotal,
+    upsDone: ups.done,
+    upsTotal: ups.total,
   };
 }

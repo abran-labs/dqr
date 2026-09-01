@@ -29,7 +29,7 @@ Item name is white. White-only name plate (top band) is OCRed separately — gra
 | Legendary | orange (~38°) |
 | Ultimate | red (~0°) |
 
-Label wording varies: `Physical Damage:` vs `Physical power:`, `Spell Power:` vs `Spell power:`. Match case-insensitively; tolerate wrap onto two lines (`Physical` / `power:` with the number to the right).
+Label wording varies: `Physical Damage:` vs `Physical power:`, `Spell Power:` vs `Spell power:`. Match case-insensitively; tolerate wrap onto two lines (`Physical` / `power:`). The value often sits on the first line (`Physical 739072` / `power:`). DPS armor shows both tracks — pick Warrior→physical / Mage→spell from the title, else the in-range number.
 
 ## Fields
 
@@ -64,6 +64,7 @@ Armor samples name a **piece** (`Midgardian Mage Helmet`) while the dataset has 
 - `loadAndScale` canvas upscale before recognition.
 - Two parallel passes (color + preprocessed grayscale), merged text.
 - `similarity` / `bestMatch` fuzzy name lookup.
+- Upgrade pair repair in `src/lib/ocr-upgrades.ts`: dropped `/` concatenates equal halves (`2854028540`); `/` read as `1` (`28540128540`); doubled digit on done when it exceeds total.
 - Paste-anywhere, drag-drop, file picker, preview.
 
 DQR numbers are 8–10 digits; one OCR digit error is catastrophic. Cross-check every extracted number against the matched item's plausible range before accepting.
