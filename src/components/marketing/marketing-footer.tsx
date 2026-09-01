@@ -1,5 +1,7 @@
 import { IconBrandDiscord, IconBrandGithub, IconBrandYoutube } from "@tabler/icons-react";
+import { Heart } from "lucide-react";
 import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
 export type MarketingFooterNavLink = {
   label: string;
@@ -79,13 +81,29 @@ export function MarketingFooter({ brandLine, rightsLine, navLinks, socialLinks }
   return (
     <footer className="relative z-[1] px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto h-px w-full max-w-[1120px] bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,hsl(var(--muted))_78%,transparent),transparent)]" />
-      <div className="mx-auto grid w-full max-w-[1120px] grid-cols-[minmax(0,1fr)_auto] items-end gap-2 pt-7 sm:gap-6">
+      <div className="mx-auto grid w-full max-w-[1120px] grid-cols-[minmax(0,1fr)_auto] items-end gap-x-2 gap-y-4 pt-7 sm:gap-x-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
         <div className="grid gap-1.5 text-sm text-muted-foreground">
           <p>{brandLine}</p>
           <p>{rightsLine}</p>
         </div>
 
-        <div className="grid justify-items-end gap-3 sm:gap-4">
+        <div className="col-span-2 flex flex-col items-center text-center md:col-span-1 md:col-start-2 md:row-start-1">
+          <p className="mb-2 text-sm text-muted-foreground">
+            If you find this useful, consider supporting the project.
+          </p>
+          <Button
+            asChild
+            variant="secondary"
+            className="border-pink-500/30 bg-pink-500/10 text-pink-500 hover:border-pink-500/30 hover:bg-pink-500/20"
+          >
+            <a href="https://github.com/sponsors/abran-labs" target="_blank" rel="noopener noreferrer">
+              <Heart className="mr-2 h-4 w-4 fill-none stroke-pink-500" />
+              Support
+            </a>
+          </Button>
+        </div>
+
+        <div className="col-start-2 row-start-1 grid justify-items-end gap-3 sm:gap-4 md:col-start-3">
           {navLinks.length > 0 ? (
             <nav className="flex flex-wrap items-center justify-end gap-3 sm:gap-4" aria-label="Footer">
               {navLinks.map((link) => (

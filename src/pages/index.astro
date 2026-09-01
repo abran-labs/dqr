@@ -1,10 +1,20 @@
 ---
 import { CalculatorApp } from "@/components/calculator/calculator-app";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { DUNGEONS } from "@/lib/dqr-items";
+
+const northernLands = DUNGEONS.find((dungeon) => dungeon.code === "NL");
 ---
 
 <BaseLayout>
   <main class="mx-auto w-full max-w-3xl py-8">
     <CalculatorApp client:load />
+    {
+      northernLands ? (
+        <p class="mt-6 text-center text-sm italic">
+          <span style={`color: ${northernLands.color}`}>❄ {northernLands.name}!</span>
+        </p>
+      ) : null
+    }
   </main>
 </BaseLayout>

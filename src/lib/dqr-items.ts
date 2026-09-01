@@ -22,25 +22,26 @@ export const RARITY_INFO: Record<Rarity, { label: string; color: string }> = {
 export interface DungeonInfo {
   code: DungeonCode;
   name: string;
+  color: string;
 }
 
 export type DungeonCode = "DT" | "WO" | "PI" | "KC" | "UW" | "SP" | "TC" | "GH" | "SS" | "OO" | "VC" | "AT" | "EF" | "NL";
 
 export const DUNGEONS: DungeonInfo[] = [
-  { code: "DT", name: "Desert Temple" },
-  { code: "WO", name: "Winter Outpost" },
-  { code: "PI", name: "Pirate Island" },
-  { code: "KC", name: "King's Castle" },
-  { code: "UW", name: "The Underworld" },
-  { code: "SP", name: "Samurai Palace" },
-  { code: "TC", name: "The Canals" },
-  { code: "GH", name: "Ghastly Harbor" },
-  { code: "SS", name: "Steampunk Sewers" },
-  { code: "OO", name: "Orbital Outpost" },
-  { code: "VC", name: "Volcanic Chambers" },
-  { code: "AT", name: "Aquatic Temple" },
-  { code: "EF", name: "Enchanted Forest" },
-  { code: "NL", name: "Northern Lands" },
+  { code: "DT", name: "Desert Temple", color: "#D4B483" },
+  { code: "WO", name: "Winter Outpost", color: "#8EB8FF" },
+  { code: "PI", name: "Pirate Island", color: "#4DB6AC" },
+  { code: "KC", name: "King's Castle", color: "#E25C5C" },
+  { code: "UW", name: "The Underworld", color: "#E53935" },
+  { code: "SP", name: "Samurai Palace", color: "#F5C542" },
+  { code: "TC", name: "The Canals", color: "#B388FF" },
+  { code: "GH", name: "Ghastly Harbor", color: "#2BB673" },
+  { code: "SS", name: "Steampunk Sewers", color: "#F0A202" },
+  { code: "OO", name: "Orbital Outpost", color: "#00E5FF" },
+  { code: "VC", name: "Volcanic Chambers", color: "#FF6B1A" },
+  { code: "AT", name: "Aquatic Temple", color: "#1EA0FF" },
+  { code: "EF", name: "Enchanted Forest", color: "#C4B5FD" },
+  { code: "NL", name: "Northern Lands", color: "#5EEAD4" },
 ];
 
 export interface ItemRarityRow {

@@ -25,6 +25,8 @@ export interface ComboboxProps {
   disabled?: boolean;
   error?: boolean;
   errorMessage?: string | undefined;
+  /** Closed-button label color. Overrides the selected option's color. */
+  valueColor?: string;
 }
 
 /*
@@ -42,6 +44,7 @@ export function Combobox({
   disabled = false,
   error = false,
   errorMessage,
+  valueColor,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
@@ -160,7 +163,7 @@ export function Combobox({
       >
         <span
           className="truncate"
-          style={selected?.color ? { color: selected.color } : undefined}
+          style={(valueColor ?? selected?.color) ? { color: valueColor ?? selected?.color } : undefined}
         >
           {selected ? selected.label : placeholder}
         </span>

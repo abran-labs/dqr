@@ -44,7 +44,7 @@ const CLASS_LABEL: Record<ItemClass, string> = {
   war: "Warrior",
 };
 
-const DUNGEON_NAME = new Map(DUNGEONS.map((d) => [d.code, d.name] as const));
+const DUNGEON_BY_CODE = new Map(DUNGEONS.map((dungeon) => [dungeon.code, dungeon] as const));
 
 const fmt = (value: number): string => value.toLocaleString("en-US");
 
@@ -54,14 +54,20 @@ const parseNumber = (value: string): number | null => {
   return Number(cleaned);
 };
 
-const itemOptions: ComboboxOption[] = ITEMS.map((item) => ({
-  color: RARITY_INFO[item.maxRarity].color,
-  description: `${RARITY_INFO[item.maxRarity].label} · ${CLASS_LABEL[item.class]}${item.glitched ? " · glitched" : ""}${item.rows.length === 0 ? " · no data yet" : ""}`,
-  group: DUNGEON_NAME.get(item.dungeon) ?? item.dungeon,
-  keywords: item.dungeon,
-  label: item.name,
-  value: item.id,
-}));
+const itemOptions: ComboboxOption[] = ITEMS.map((item) => {
+  const dungeon = DUNGEON_BY_CODE.get(item.dungeon);
+  const single = item.rows.length === 1;
+  return {
+    ...(single ? { color: RARITY_INFO[item.maxRarity].color } : {}),
+    description: `${single ? `${RARITY_INFO[item.maxRarity].label} · ` : ""}${CLASS_LABEL[item.class]}${item.glitched ? " · glitched" : ""}${item.rows.length === 0 ? " · no data yet" : ""}`,
+    group: dungeon?.name ?? item.dungeon,
+    ...(dungeon === undefined ? {} : { groupColor: dungeon.color }),
+    groupIcon: `/dungeons/${item.dungeon}.webp`,
+    keywords: item.dungeon,
+    label: item.name,
+    value: item.id,
+  };
+});
 
 interface CalcResult {
   readonly item: DqrItem;
@@ -73,10 +79,10 @@ interface CalcResult {
 
 const DISCORD_SEP = "> ---------------------------------------->";
 
-function buildDiscordText(result: CalcResult, tierLabel: string): string {
+function buildDiscordText(result: CalcResult, tierLabel: string, title: string): string {
   const pct = result.percentile.toFixed(1);
   const lines = [
-    `**${result.item.name}**`,
+    `**${title}**`,
     `**\`${fmt(result.pot)} POT\`** | **\`${RARITY_INFO[result.row.rarity].label}\`** | **\`${pct}% ${tierLabel}\`**`,
     DISCORD_SEP,
     `> :trophy: Potential: \`${fmt(result.pot)}\``,
@@ -145,7 +151,7 @@ export function CalculatorApp() {
           (statRangeBounds === null || (cand >= statRangeBounds.min && cand <= statRangeBounds.max)),
       ) ?? null;
     setItemId(ex.item?.id ?? "");
-    setManualRarity(null);
+    setManualRarity(next.rarity);
     setStatStr(stat !== null ? String(stat) : "");
     setUpsDoneStr(ex.upsDone !== null ? String(ex.upsDone) : "");
     setUpsTotalStr(ex.upsTotal !== null ? String(ex.upsTotal) : "");
@@ -155,7 +161,7 @@ export function CalculatorApp() {
 
   const handleItemChange = (nextId: string) => {
     setItemId(nextId);
-    setManualRarity(null);
+    if (!scan?.rarity) setManualRarity(null);
   };
 
   // Live ranges + per-field validation (an out-of-range read is a misread —
@@ -220,6 +226,17 @@ export function CalculatorApp() {
       : null;
   const tier = result ? classifyTier(result.percentile) : null;
   const tierInfo = tier ? TIER_INFO[tier] : null;
+  const displayName =
+    extract?.item?.id === itemId && extract.title ? extract.title : (item?.name ?? "");
+  const scanRarity = scan?.rarity;
+  const previewRarity =
+    result?.row.rarity ??
+    manualRarity ??
+    (scanRarity !== undefined &&
+    scanRarity !== null &&
+    item?.rows.some((row) => row.rarity === scanRarity)
+      ? scanRarity
+      : null);
 
   // Count only when the result panel is up, once per item — typing more
   // numbers on the same item is still one calculation.
@@ -232,7 +249,7 @@ export function CalculatorApp() {
     if (!result || loggedItemId.current === item.id) return;
     loggedItemId.current = item.id;
     setFeedbackSent(null);
-    const payload = scan ?? { imageDataUrl: null, processedText: "", rawText: "" };
+    const payload = scan ?? { imageDataUrl: null, nameText: "", processedText: "", rarity: null, rawText: "" };
     void logCalculation(payload).then((id) => {
       if (id !== null) {
         setCalculationId(id);
@@ -251,7 +268,7 @@ export function CalculatorApp() {
 
   const copyForDiscord = () => {
     if (!result || !tierInfo) return;
-    const text = buildDiscordText(result, tierInfo.label);
+    const text = buildDiscordText(result, tierInfo.label, displayName);
     // Called synchronously off the click — an awaited wrapper drops the user
     // gesture and uBlock Origin flags the clipboard write as clickjacking.
     if (navigator.clipboard?.writeText) {
@@ -336,6 +353,7 @@ export function CalculatorApp() {
               placeholder="Search items…"
               searchPlaceholder="Search by item or dungeon…"
               value={itemId}
+              {...(previewRarity === null ? {} : { valueColor: RARITY_INFO[previewRarity].color })}
             />
             {item && item.rows.length === 0 && (
               <p className="text-sm text-destructive">
@@ -414,7 +432,7 @@ export function CalculatorApp() {
                 className="mb-1 border-b border-foreground/20 pb-1 text-[11px] font-semibold uppercase tracking-widest"
                 style={{ color: RARITY_INFO[result.row.rarity].color }}
               >
-                {result.item.name} · {RARITY_INFO[result.row.rarity].label}
+                {displayName}
               </div>
               <div className="space-y-1">
                 <ResultRow
