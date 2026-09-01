@@ -25,6 +25,8 @@ export interface ExtractedTooltip {
   readonly upsTotal: number | null;
   /** Best name match. Null when nothing scored above the threshold. */
   readonly item: DqrItem | null;
+  /** Tooltip title as OCR read it ("Midgardian Mage Helmet"). Null if no name-like line. */
+  readonly title: string | null;
 }
 
 /** Letter→digit confusions common in OCR'd 8–10 digit DQR values. */
@@ -230,6 +232,18 @@ export function debugScore(line: string, name: string): number {
 
 const NAME_THRESHOLD = 0.55;
 const MAX_NAME_LINE = 40;
+const LABEL_LINE = /^(physical|spell|power|damage|health|upgrades?|sell|req)\b/i;
+
+function titleLine(text: string): string | null {
+  for (const rawLine of text.split("\n")) {
+    const line = rawLine.trim();
+    if (line.length === 0 || line.length > MAX_NAME_LINE) continue;
+    if ((line.match(/\d/g) ?? []).length >= 3) continue;
+    if (LABEL_LINE.test(line)) continue;
+    return line;
+  }
+  return null;
+}
 
 /** Best item match across every plausible name line of one OCR pass. */
 function passName(text: string): DqrItem | null {
@@ -260,12 +274,13 @@ export function extractTooltip(scan: TooltipScan): ExtractedTooltip {
   const processed = parsePass(scan.processedText);
   // The white item name only survives the thresholded pass (the color pass
   // washes it out), so names come from processed first.
-  const item = passName(scan.processedText) ?? passName(scan.rawText);
+  const item = passName(scan.nameText) ?? passName(scan.processedText) ?? passName(scan.rawText);
   return {
     health: raw.health ?? processed.health,
     item,
     physical: raw.physical ?? processed.physical,
     spell: raw.spell ?? processed.spell,
+    title: titleLine(scan.nameText) ?? titleLine(scan.processedText) ?? titleLine(scan.rawText),
     upsDone: raw.upsDone ?? processed.upsDone,
     upsTotal: raw.upsTotal ?? processed.upsTotal,
   };

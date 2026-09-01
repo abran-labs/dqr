@@ -126,8 +126,9 @@ After OCR (or manual entry), resolve the rarity row like this:
 
 1. Match the item name to a row group. Single-row items (the 33 legendaries/ultimates) skip the rest — no rarity question exists for them.
 2. Filter the group's rows: keep rows where **total upgrades**, **computed pot**, and (armor) **health** all fit.
-3. **Exactly one row survives → autofill.** Calculate and show the result. The user is never asked. This is the armor case and most fully-upgraded items.
-4. **More than one survives → ask.** Show a rarity selector pre-filled with only the surviving candidates (2–3 of 4), each showing what's at stake ("Rare: 90.8% · Epic: 51.9%"). Asking is acceptable here; silently guessing is not.
-5. **Zero survive → hard error.** Wrong numbers (OCR misread), a glitched item (numbers only fit the glitched rows), or a legacy item outside the formula's reach. Surface it, never force-fit.
+3. **Card color** (`docs/Info/OCR-Input.md`) picks among survivors when the screenshot chrome matches one of them. This is how weapons that sit in overlapping upgrade/pot bands (e.g. `assets/3.png` Ice Spellblade) autofill instead of asking.
+4. **Exactly one row survives → autofill.** Calculate and show the result. The user is never asked. This is the armor case and most fully-upgraded items.
+5. **More than one survives and color didn't pick → ask.** Show a rarity selector pre-filled with only the surviving candidates (2–3 of 4), each showing what's at stake ("Rare: 90.8% · Epic: 51.9%"). Asking is acceptable here; silently guessing from the numbers is not.
+6. **Zero survive → hard error.** Wrong numbers (OCR misread), a glitched item (numbers only fit the glitched rows), or a legacy item outside the formula's reach. Surface it, never force-fit.
 
 Note: `REQ Lvl.` cannot disambiguate rows — level requirement tracks the dungeon's difficulty, not the item's rarity. With rows confirmed as rarities, that tie-breaker idea is retired.

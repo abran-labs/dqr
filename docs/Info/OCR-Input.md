@@ -16,7 +16,18 @@ Upgrades: <done>/<total>              label cyan, value light purple
 Sell: <n>                             label + value yellow/gold
 ```
 
-**Text colors are fixed** regardless of item. Only the card background and border change — those encode rarity, not stats. This means color is a reliable channel for segmenting fields and can be used as a preprocessing step or a cross-check on OCR output.
+**Text colors are fixed** regardless of item. Only the card background and border change — those encode rarity, not stats. Color is a reliable channel for rarity: `src/lib/rarity-color.ts` votes on dark chrome pixels (bright text is ignored). Samples in `assets/Rarities/`.
+
+The item name is white. A white-only name plate (top of the tooltip) is OCRed separately — the gray/threshold pass drops the title on purple Epic cards (`assets/4.png` Crystalline Shard Staff).
+
+| Rarity | Chrome |
+|---|---|
+| Common | desaturated gray |
+| Uncommon | green (~116°) |
+| Rare | blue (~240°) |
+| Epic | purple (~292°) |
+| Legendary | orange (~38°) |
+| Ultimate | red (~0°) |
 
 Label wording varies: `Physical Damage:` vs `Physical power:`, `Spell Power:` vs `Spell power:`. Match case-insensitively and tolerate the line wrapping onto two lines (`Physical` / `power:` with the number to the right).
 
