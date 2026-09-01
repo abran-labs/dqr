@@ -5,61 +5,70 @@ import { scanTooltip, type TooltipScan } from "@/lib/ocr";
 import { cn } from "@/lib/utils";
 
 interface ImagePasteZoneProps {
-  readonly onScan: (scan: TooltipScan) => void;
-  /** Whether the last scan actually filled anything (item or numbers).
-   * Null until the first scan resolves. */
-  readonly autofilled: boolean | null;
+  /** Returns true when the scan produced an item or any number. */
+  readonly onScan: (scan: TooltipScan) => boolean;
 }
 
 type Status = "idle" | "processing" | "done" | "error";
 
-export function ImagePasteZone({ onScan, autofilled }: ImagePasteZoneProps) {
+export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
   const [status, setStatus] = React.useState<Status>("idle");
-  const [errorMsg, setErrorMsg] = React.useState("");
   const [dragOver, setDragOver] = React.useState(false);
   const [zoomed, setZoomed] = React.useState(false);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const previewUrlRef = React.useRef<string | null>(null);
+  const idleTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearIdleTimer = React.useCallback(() => {
+    if (idleTimerRef.current !== null) {
+      clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = null;
+    }
+  }, []);
+
+  const dropPreview = React.useCallback(() => {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    previewUrlRef.current = null;
+    setPreviewUrl(null);
+    setZoomed(false);
+  }, []);
+
+  const fail = React.useCallback(() => {
+    dropPreview();
+    setStatus("error");
+    clearIdleTimer();
+    idleTimerRef.current = setTimeout(() => {
+      idleTimerRef.current = null;
+      setStatus("idle");
+    }, 3000);
+  }, [clearIdleTimer, dropPreview]);
 
   const processImage = React.useCallback(
     async (source: File | Blob) => {
+      clearIdleTimer();
       setStatus("processing");
-      setErrorMsg("");
-
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      const newUrl = URL.createObjectURL(source);
-      setPreviewUrl(newUrl);
 
       try {
         const scan = await scanTooltip(source);
+        if (!onScan(scan)) {
+          fail();
+          return;
+        }
+        dropPreview();
+        const newUrl = URL.createObjectURL(source);
+        previewUrlRef.current = newUrl;
+        setPreviewUrl(newUrl);
         setStatus("done");
-        onScan(scan);
-        // Intentionally stays in "done" so the user can verify the image.
-        // A scan that extracted nothing (wrong image) is demoted to the
-        // error state by the effect below.
       } catch (err) {
         console.error("OCR failed:", err);
-        setErrorMsg("Invalid screenshot, no item data found.");
-        setStatus("error");
-        setTimeout(() => setStatus("idle"), 3000);
+        fail();
       }
     },
-    [onScan, previewUrl],
+    [clearIdleTimer, dropPreview, fail, onScan],
   );
 
-  // OCR "succeeds" on any image, so emptiness is only known after extraction
-  // (the autofilled prop). Treat it exactly like a thrown failure: red frame,
-  // one line of text, screenshot dropped, back to idle after 3s.
-  React.useEffect(() => {
-    if (autofilled !== false || status !== "done") return;
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(null);
-    setZoomed(false);
-    setErrorMsg("Invalid screenshot, no item data found.");
-    setStatus("error");
-    const timer = setTimeout(() => setStatus("idle"), 3000);
-    return () => clearTimeout(timer);
-  }, [autofilled, status, previewUrl]);
+  React.useEffect(() => () => clearIdleTimer(), [clearIdleTimer]);
 
   // Global paste listener
   React.useEffect(() => {
@@ -126,13 +135,13 @@ export function ImagePasteZone({ onScan, autofilled }: ImagePasteZoneProps) {
       }}
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
-      onClick={() => status !== "processing" && fileInputRef.current?.click()}
+      onClick={() => status !== "processing" && status !== "error" && fileInputRef.current?.click()}
       className={cn(
-        "relative cursor-pointer rounded-md border border-dashed p-4 text-center transition-all",
+        "relative cursor-pointer rounded-md border border-dashed p-4 text-center",
         dragOver
           ? "border-primary bg-primary/10"
-          : status === "error" || (status === "done" && autofilled === false)
-            ? "border-destructive/50 bg-destructive/5"
+          : status === "error"
+            ? "border-destructive bg-destructive/5"
             : status === "done"
               ? "border-success/50 bg-success/5"
               : "border-border/60 hover:border-border hover:bg-surface-high/40",
@@ -146,14 +155,14 @@ export function ImagePasteZone({ onScan, autofilled }: ImagePasteZoneProps) {
         className="hidden"
       />
 
-      {status === "processing" ? (
+      {status === "error" ? (
+        <div className="flex min-h-[5.5rem] items-center justify-center py-6 text-sm text-destructive">
+          Invalid screenshot: No item data found.
+        </div>
+      ) : status === "processing" ? (
         <div className="flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
           <span>Scanning image…</span>
-        </div>
-      ) : status === "error" || (status === "done" && autofilled === false) ? (
-        <div className="flex items-center justify-center gap-2 py-4 text-sm text-destructive">
-          <span>{errorMsg}</span>
         </div>
       ) : status === "done" ? (
         <div className="flex flex-col items-center justify-center gap-2 py-2">
@@ -177,10 +186,6 @@ export function ImagePasteZone({ onScan, autofilled }: ImagePasteZoneProps) {
             </span>
           </div>
           {zoomed && previewUrl && zoomOverlay(previewUrl, "Pasted tooltip screenshot")}
-        </div>
-      ) : status === "error" ? (
-        <div className="flex items-center justify-center gap-2 py-4 text-sm text-destructive">
-          <span>{errorMsg}</span>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center gap-4 py-6 sm:flex-row sm:gap-6">

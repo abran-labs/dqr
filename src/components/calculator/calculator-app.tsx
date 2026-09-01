@@ -100,8 +100,7 @@ function ResultRow({ label, value }: { label: string; value: React.ReactNode }) 
 export function CalculatorApp() {
   const [scan, setScan] = React.useState<TooltipScan | null>(null);
   const [extract, setExtract] = React.useState<ExtractedTooltip | null>(null);
-  const [autoFilled, setAutoFilled] = React.useState<boolean | null>(null);
-  const [scanCalculationId, setScanCalculationId] = React.useState<number | null>(null);
+  const [calculationId, setCalculationId] = React.useState<number | null>(null);
 
   const [itemId, setItemId] = React.useState<string>("");
   const [manualRarity, setManualRarity] = React.useState<Rarity | null>(null);
@@ -110,27 +109,23 @@ export function CalculatorApp() {
   const [upsTotalStr, setUpsTotalStr] = React.useState("");
   const [healthStr, setHealthStr] = React.useState("");
 
-  const [manualCalculationId, setManualCalculationId] = React.useState<number | null>(null);
   const [askFeedback, setAskFeedback] = React.useState(false);
   const [feedbackSent, setFeedbackSent] = React.useState<boolean | null>(null);
   const [copied, setCopied] = React.useState(false);
 
   const item = React.useMemo(() => ITEMS.find((i) => i.id === itemId), [itemId]);
 
-  const handleScan = (next: TooltipScan) => {
-    setScan(next);
-    setScanCalculationId(null);
-    setFeedbackSent(null);
-    // Autofill — a fresh scan replaces the whole form state. Implausible
-    // reads stay and surface as the fields' existing range errors.
+  const handleScan = React.useCallback((next: TooltipScan): boolean => {
     const ex = extractTooltip(next);
-    setExtract(ex);
-    // Success copy must match reality: the zone only claims "Auto-filled"
-    // when the scan actually produced an item or any number.
     const filled =
       ex.item !== null ||
       [ex.physical, ex.spell, ex.health, ex.upsDone, ex.upsTotal].some((v) => v !== null);
-    setAutoFilled(filled);
+    // Wrong image: don't log (counter stays put), don't wipe a previous fill.
+    if (!filled) return false;
+
+    setScan(next);
+    setFeedbackSent(null);
+    setExtract(ex);
     // Class-ordered stat candidates, first one inside the item's live stat
     // range wins (a DPS armor's physical line can misread tiny — "203" —
     // while the spell line holds the real value).
@@ -156,13 +151,8 @@ export function CalculatorApp() {
     setUpsDoneStr(ex.upsDone !== null ? String(ex.upsDone) : "");
     setUpsTotalStr(ex.upsTotal !== null ? String(ex.upsTotal) : "");
     setHealthStr(ex.item?.class === "dps" && ex.health !== null ? String(ex.health) : "");
-    void logCalculation(next).then((id) => {
-      if (id !== null) {
-        setScanCalculationId(id);
-        announceStatsUpdate();
-      }
-    });
-  };
+    return true;
+  }, []);
 
   const handleItemChange = (nextId: string) => {
     setItemId(nextId);
@@ -232,35 +222,33 @@ export function CalculatorApp() {
   const tier = result ? classifyTier(result.percentile) : null;
   const tierInfo = tier ? TIER_INFO[tier] : null;
 
-  // One logged calculation per settled result (debounced; scans log eagerly
-  // with their screenshot above). Occasional accuracy prompt: ~1 in 3.
-  const fingerprint =
-    item && result ? `${item.id}|${result.row.rarity}|${fields.stat}|${fields.done}|${fields.total}|${fields.health ?? ""}` : null;
-  const loggedFingerprint = React.useRef<string | null>(null);
+  // Count only when the result panel is up, once per item — typing more
+  // numbers on the same item is still one calculation.
+  const loggedItemId = React.useRef<string | null>(null);
   React.useEffect(() => {
+    if (!item) {
+      loggedItemId.current = null;
+      return;
+    }
+    if (!result || loggedItemId.current === item.id) return;
+    loggedItemId.current = item.id;
     setFeedbackSent(null);
     setAskFeedback(Math.random() < 0.34);
-    setManualCalculationId(null);
-    if (fingerprint === null || fingerprint === loggedFingerprint.current) return;
-    const timer = setTimeout(() => {
-      loggedFingerprint.current = fingerprint;
-      void logCalculation({ imageDataUrl: null, processedText: "", rawText: "" }).then((id) => {
-        if (id !== null) {
-          setManualCalculationId(id);
-          announceStatsUpdate();
-        }
-      });
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, [fingerprint]);
+    const payload = scan ?? { imageDataUrl: null, processedText: "", rawText: "" };
+    void logCalculation(payload).then((id) => {
+      if (id !== null) {
+        setCalculationId(id);
+        announceStatsUpdate();
+      }
+    });
+  }, [item, result, scan]);
 
-  const activeCalculationId = scan ? scanCalculationId : manualCalculationId;
-  const showFeedback = activeCalculationId !== null && askFeedback;
+  const showFeedback = calculationId !== null && askFeedback && result !== null;
 
   const sendFeedback = (accurate: boolean) => {
-    if (activeCalculationId === null || feedbackSent !== null) return;
+    if (calculationId === null || feedbackSent !== null) return;
     setFeedbackSent(accurate);
-    void submitFeedback(activeCalculationId, accurate).then(() => announceStatsUpdate());
+    void submitFeedback(calculationId, accurate).then(() => announceStatsUpdate());
   };
 
   const copyForDiscord = () => {
@@ -331,12 +319,11 @@ export function CalculatorApp() {
   return (
     <Card>
       <CardContent className="space-y-6 pt-6">
-        <ImagePasteZone autofilled={autoFilled} onScan={handleScan} />
+        <ImagePasteZone onScan={handleScan} />
 
         {/* Numbers came through but the name didn't — the user can finish the
-         job by picking. A scan with nothing at all is the wrong image (the
-         paste zone already says so). */}
-        {scan && extract && !extract.item && itemId === "" && autoFilled === true && (
+         job by picking. */}
+        {scan && extract && !extract.item && itemId === "" && (
           <p className="text-xs text-muted-foreground">Couldn't recognize item, pick it below.</p>
         )}
 
