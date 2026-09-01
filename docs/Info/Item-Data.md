@@ -51,7 +51,7 @@ Rarity mapping checked against wiki weapon tables (`Bronze Dagger` averages 6/2 
 | `War` / `Mage` | Warrior / Mage weapon (4 rows) |
 | `War Legend` / `Mage Legend` | Legendary weapon (1 row) |
 | `War Ultimate` / `Mage Ultimate` | Ultimate weapon (1 row) — Eden's Reaper, Eden's Vengeance, Hofund, Laevateinn |
-| `Legendary` | Legendary, class unstated — physical per `docs/Info/Pot-System.md` (Desert Fury, Crystalised Greatsword) |
+| `Legendary` | Hybrid war/mage legendary weapon → item class `hybrid` (Desert Fury, Crystalised Greatsword). Two offense tracks; see `docs/Info/Pot-System.md`. |
 | `Guardian` | Health-track armor |
 | `DPS Armor` | Damage/spell-track armor |
 

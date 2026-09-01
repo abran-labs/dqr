@@ -15,7 +15,7 @@ Winter Outpost onward. Legacy exceptions: `docs/Info/Item-Data.md`.
 
 ## Primary track
 
-Upgrades always go into one track.
+Upgrades go into one track, except hybrid legendaries (both physical and spell).
 
 | Class (CSV `Class`) | Primary | Also shown |
 |---|---|---|
@@ -23,7 +23,7 @@ Upgrades always go into one track.
 | `Mage`, `Mage Legend`, `Mage Ultimate` | Spell power | — |
 | `DPS Armor` | Damage or spell (armor's type) | Health (secondary) |
 | `Guardian` | **Health** | Physical / spell (secondary) |
-| `Legendary` | Physical damage | — |
+| `Legendary` (Desert Fury, Crystalised Greatsword) | Physical **and** spell | Hybrid weapons — two pots, same upgrade remaining × 10, one stored band |
 
 Armor has **two tracks**. `DPS Armor`: report both (player upgrades damage/spell; health still matters). `Guardian`: health is pot; damage is informational.
 

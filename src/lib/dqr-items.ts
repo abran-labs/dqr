@@ -4,7 +4,7 @@
   Data rules and rarity mapping: docs/Info/Item-Data.md.
 */
 
-export type ItemClass = "war" | "mage" | "guardian" | "dps";
+export type ItemClass = "war" | "mage" | "guardian" | "dps" | "hybrid";
 
 export type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary" | "ultimate";
 
@@ -77,7 +77,7 @@ export const ITEMS: readonly DqrItem[] = [
     id: "DT:Desert Fury",
     dungeon: "DT",
     name: "Desert Fury",
-    class: "war",
+    class: "hybrid",
     maxRarity: "legendary",
     rows: [
     { maxBase: 126, maxUps: 26, minBase: 114, minUps: 22, rarity: "legendary", minPot: 295, maxPot: 358 },
@@ -412,7 +412,7 @@ export const ITEMS: readonly DqrItem[] = [
     id: "WO:Crystalised Greatsword",
     dungeon: "WO",
     name: "Crystalised Greatsword",
-    class: "war",
+    class: "hybrid",
     maxRarity: "legendary",
     rows: [
     { maxBase: 1208, maxUps: 142, minBase: 1092, minUps: 128, rarity: "legendary" },

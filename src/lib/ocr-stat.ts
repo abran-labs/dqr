@@ -70,6 +70,12 @@ function pickClassStat(itemClass: ItemClass, ex: ExtractedTooltip, min: number |
       const value = accept(ex.physical, min, max);
       return { kind: value === null ? null : "physical", value };
     }
+    case "hybrid": {
+      const physical = accept(ex.physical, min, max);
+      if (physical !== null) return { kind: "physical", value: physical };
+      const spell = accept(ex.spell, min, max);
+      return { kind: spell === null ? null : "spell", value: spell };
+    }
     case "dps": {
       const physical = accept(ex.physical, min, max);
       const spell = accept(ex.spell, min, max);
@@ -115,6 +121,8 @@ export function statFieldLabel(item: DqrItem | null, kind: StatKind | null): str
       return "Spell Power";
     case "war":
       return "Physical Damage";
+    case "hybrid":
+      return kind === "spell" ? "Spell Power" : "Physical Damage";
     case "dps":
       return kind === "spell" ? "Spell Power" : "Physical Power";
     default:

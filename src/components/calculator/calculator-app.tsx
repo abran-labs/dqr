@@ -8,15 +8,13 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { DUNGEONS, ITEMS, RARITY_INFO, type DqrItem, type ItemClass, type ItemRarityRow, type Rarity } from "@/lib/dqr-items";
 import { buildDiscordText } from "@/lib/discord-copy";
-import { itemTracks } from "@/lib/item-tracks";
+import { itemTracks, TRACK_CHROME } from "@/lib/item-tracks";
 import {
   calculatePotential,
-  classifyTier,
   healthRange,
   potentialPercentile,
   resolveRarityRows,
   statRange,
-  TIER_INFO,
   upsRange,
   type NumberRange,
 } from "@/lib/pot-utils";
@@ -35,6 +33,7 @@ import { announceStatsUpdate, logCalculation, submitFeedback } from "@/lib/stats
 const CLASS_LABEL: Record<ItemClass, string> = {
   dps: "DPS armor",
   guardian: "Guardian armor",
+  hybrid: "Hybrid",
   mage: "Mage",
   war: "Warrior",
 };
@@ -79,6 +78,7 @@ export function CalculatorApp() {
   const [itemId, setItemId] = React.useState<string>("");
   const [manualRarity, setManualRarity] = React.useState<Rarity | null>(null);
   const [statStr, setStatStr] = React.useState("");
+  const [spellStr, setSpellStr] = React.useState("");
   const [upsDoneStr, setUpsDoneStr] = React.useState("");
   const [upsTotalStr, setUpsTotalStr] = React.useState("");
   const [healthStr, setHealthStr] = React.useState("");
@@ -107,9 +107,18 @@ export function CalculatorApp() {
     setFeedbackSent(null);
     setExtract(ex);
     const picked = pickTooltipStat(ex, ex.item);
+    const bounds = ex.item ? statRange(ex.item.rows) : null;
+    const inBounds = (value: number | null): value is number =>
+      value !== null && (bounds === null || (value >= bounds.min && value <= bounds.max));
     setItemId(ex.item?.id ?? "");
     setManualRarity(next.rarity);
-    setStatStr(picked.value !== null ? String(picked.value) : "");
+    if (ex.item?.class === "hybrid") {
+      setStatStr(inBounds(ex.physical) ? String(ex.physical) : "");
+      setSpellStr(inBounds(ex.spell) ? String(ex.spell) : "");
+    } else {
+      setStatStr(picked.value !== null ? String(picked.value) : "");
+      setSpellStr("");
+    }
     setUpsDoneStr(ex.upsDone !== null ? String(ex.upsDone) : "");
     setUpsTotalStr(ex.upsTotal !== null ? String(ex.upsTotal) : "");
     setHealthStr(ex.health !== null ? String(ex.health) : "");
@@ -127,6 +136,7 @@ export function CalculatorApp() {
     const total = parseNumber(upsTotalStr);
     const done = parseNumber(upsDoneStr);
     const stat = parseNumber(statStr);
+    const spell = parseNumber(spellStr);
     const health = parseNumber(healthStr);
     const rows = item?.rows ?? [];
     const ranges: { total: NumberRange | null; stat: NumberRange | null; health: NumberRange | null } = {
@@ -134,7 +144,7 @@ export function CalculatorApp() {
       stat: statRange(rows, done ?? undefined),
       health: healthRange(rows),
     };
-    const errors: { total?: string; done?: string; stat?: string; health?: string } = {};
+    const errors: { total?: string; done?: string; stat?: string; spell?: string; health?: string } = {};
     if (item && total !== null && ranges.total && (total < ranges.total.min || total > ranges.total.max)) {
       errors.total = `Total upgrades must be between ${fmt(ranges.total.min)} - ${fmt(ranges.total.max)}`;
     }
@@ -144,21 +154,28 @@ export function CalculatorApp() {
     if (item && stat !== null && ranges.stat && (stat < ranges.stat.min || stat > ranges.stat.max)) {
       errors.stat = `${statLabel} must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
     }
+    if (item && spell !== null && ranges.stat && (spell < ranges.stat.min || spell > ranges.stat.max)) {
+      errors.spell = `Spell Power must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
+    }
     if (health !== null && ranges.health && (health < ranges.health.min || health > ranges.health.max)) {
       errors.health = `Health must be between ${fmt(ranges.health.min)} - ${fmt(ranges.health.max)}`;
     }
-    return { done, errors, health, ranges, stat, total };
-  }, [item, statStr, upsDoneStr, upsTotalStr, healthStr, statLabel]);
+    return { done, errors, health, ranges, spell, stat, total };
+  }, [item, statStr, spellStr, upsDoneStr, upsTotalStr, healthStr, statLabel]);
 
   // Auto-resolution — runs on every keystroke, no calculate button.
   const resolution = React.useMemo(() => {
     if (!item) return { status: "empty" as const };
     if (item.rows.length === 0) return { status: "no-data" as const };
-    const { done, errors, health, stat, total } = fields;
-    if (stat === null || done === null || total === null) return { status: "empty" as const };
-    if (errors.total || errors.done || errors.stat || errors.health) return { status: "invalid" as const };
+    const { done, errors, health, spell, stat, total } = fields;
+    const hybrid = item.class === "hybrid";
+    const primary = hybrid ? (stat ?? spell) : stat;
+    if (primary === null || done === null || total === null) return { status: "empty" as const };
+    if (errors.total || errors.done || errors.stat || errors.spell || errors.health) {
+      return { status: "invalid" as const };
+    }
 
-    const pot = calculatePotential(stat, done, total);
+    const pot = calculatePotential(primary, done, total);
     const survivors = resolveRarityRows(item, { health: health ?? undefined, pot, upgradesTotal: total });
     if (survivors.length === 0) return { status: "no-fit" as const };
     if (manualRarity) {
@@ -185,6 +202,31 @@ export function CalculatorApp() {
   const tracks = result
     ? itemTracks({
         health: fields.health,
+        hybrid:
+          result.item.class === "hybrid" && fields.done !== null && fields.total !== null
+            ? {
+                physical:
+                  fields.stat === null
+                    ? null
+                    : {
+                        percentile: potentialPercentile(
+                          calculatePotential(fields.stat, fields.done, fields.total),
+                          result.row,
+                        ),
+                        pot: calculatePotential(fields.stat, fields.done, fields.total),
+                      },
+                spell:
+                  fields.spell === null
+                    ? null
+                    : {
+                        percentile: potentialPercentile(
+                          calculatePotential(fields.spell, fields.done, fields.total),
+                          result.row,
+                        ),
+                        pot: calculatePotential(fields.spell, fields.done, fields.total),
+                      },
+              }
+            : null,
         itemClass: result.item.class,
         offense: pickedStat?.kind === "spell" || result.item.class === "mage" ? "spell" : "physical",
         percentile: result.percentile,
@@ -218,6 +260,7 @@ export function CalculatorApp() {
     setItemId("");
     setManualRarity(null);
     setStatStr("");
+    setSpellStr("");
     setUpsDoneStr("");
     setUpsTotalStr("");
     setHealthStr("");
@@ -404,32 +447,61 @@ export function CalculatorApp() {
             error: fields.errors.done,
           })}
 
-          {numberField({
-            id: "stat-input",
-            label: statLabel,
-            onChange: setStatStr,
-            range: fields.ranges.stat,
-            tint: result ? TIER_INFO[classifyTier(result.percentile)].color : undefined,
-            value: statStr,
-            error:
-              fields.errors.stat ??
-              (resolution.status === "no-fit" && item
-                ? item.glitched
-                  ? "These numbers don't match this item's glitched rows. Double-check them."
-                  : `These numbers don't fit any rarity of the ${item.name} — double-check them (OCR can misread a digit).`
-                : undefined),
-          })}
+          {item?.class === "hybrid" ? (
+            <>
+              {numberField({
+                error: fields.errors.stat,
+                id: "stat-input",
+                label: "Physical Damage",
+                onChange: setStatStr,
+                range: fields.ranges.stat,
+                tint: TRACK_CHROME.physical,
+                value: statStr,
+              })}
+              {numberField({
+                error: fields.errors.spell,
+                id: "spell-input",
+                label: "Spell Power",
+                onChange: setSpellStr,
+                range: fields.ranges.stat,
+                tint: TRACK_CHROME.spell,
+                value: spellStr,
+              })}
+            </>
+          ) : (
+            numberField({
+              id: "stat-input",
+              label: statLabel,
+              onChange: setStatStr,
+              range: fields.ranges.stat,
+              tint:
+                item === undefined
+                  ? undefined
+                  : TRACK_CHROME[
+                      item.class === "guardian" || pickedStat?.kind === "health"
+                        ? "health"
+                        : pickedStat?.kind === "spell" || item.class === "mage"
+                          ? "spell"
+                          : "physical"
+                    ],
+              value: statStr,
+              error:
+                fields.errors.stat ??
+                (resolution.status === "no-fit" && item
+                  ? item.glitched
+                    ? "These numbers don't match this item's glitched rows. Double-check them."
+                    : `These numbers don't fit any rarity of the ${item.name} — double-check them (OCR can misread a digit).`
+                  : undefined),
+            })
+          )}
 
           {item && fields.ranges.health && (
             numberField({
               id: "health-input",
-              label: (
-                <>
-                  Health <span className="font-normal text-muted-foreground">(optional — sharpens rarity detection)</span>
-                </>
-              ),
+              label: "Health",
               onChange: setHealthStr,
               range: fields.ranges.health,
+              tint: TRACK_CHROME.health,
               value: healthStr,
               error: fields.errors.health,
             })

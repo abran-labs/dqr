@@ -1,4 +1,4 @@
-import { TRACK_LABEL, type Track } from "./item-tracks";
+import { trackHeading, type Track } from "./item-tracks";
 import { classifyTier, TIER_INFO } from "./pot-utils";
 
 const SEP = "> ---------------------------------------->";
@@ -11,10 +11,10 @@ export interface DiscordPaste {
 
 const fmt = (value: number): string => value.toLocaleString("en-US");
 
-function trackRows(track: Track, named: boolean): readonly string[] {
+function trackRows(track: Track, tracks: readonly Track[], named: boolean): readonly string[] {
   const pct = track.percentile.toFixed(1);
   const tier = TIER_INFO[classifyTier(track.percentile)].label;
-  const header = named ? [`> **${TRACK_LABEL[track.kind]}**`] : [];
+  const header = named ? [`> **${trackHeading(track, tracks)}**`] : [];
   const value =
     track.valueLabel === "Potential"
       ? `> :trophy: Potential: \`${fmt(track.value)}\``
@@ -27,7 +27,7 @@ export function buildDiscordText(paste: DiscordPaste): string {
   return [
     `**${paste.title}** · ${paste.rarity}`,
     SEP,
-    ...paste.tracks.flatMap((track) => trackRows(track, named)),
+    ...paste.tracks.flatMap((track) => trackRows(track, paste.tracks, named)),
     SEP,
   ].join("\n");
 }
