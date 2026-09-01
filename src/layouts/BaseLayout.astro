@@ -53,7 +53,8 @@ const pathname = Astro.url.pathname;
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="dark" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
     <title>{pageTitle}</title>
     <ClientRouter />
   </head>
