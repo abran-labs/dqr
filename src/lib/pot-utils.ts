@@ -18,11 +18,23 @@ export function rowPotRange(row: ItemRarityRow): { minPot: number; maxPot: numbe
   return { minPot: row.minBase + row.minUps * UPGRADE_STEP, maxPot: row.maxBase + row.maxUps * UPGRADE_STEP };
 }
 
+function clampedPercentile(value: number, min: number, max: number): number {
+  if (max <= min) return value >= max ? 100 : 0;
+  return Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
+}
+
 /** Percentile of a pot within the row's [min, max], clamped to 0..100. */
 export function potentialPercentile(pot: number, row: ItemRarityRow): number {
   const { minPot, maxPot } = rowPotRange(row);
-  if (maxPot <= minPot) return pot >= maxPot ? 100 : 0;
-  return Math.min(100, Math.max(0, ((pot - minPot) / (maxPot - minPot)) * 100));
+  return clampedPercentile(pot, minPot, maxPot);
+}
+
+/** DPS-armor health roll vs the unupgraded band. Null when the row has no health track. */
+export function healthPercentile(health: number, row: ItemRarityRow): number | null {
+  const min = row.lowestHealth;
+  const max = row.highestHealth;
+  if (min === undefined || max === undefined) return null;
+  return clampedPercentile(health, min, max);
 }
 
 export type Tier = "reverse-god" | "low" | "average" | "good" | "god";

@@ -1,20 +1,20 @@
-import { Check, Copy } from "lucide-react";
 import * as React from "react";
 
 import { ImagePasteZone } from "@/components/calculator/image-paste-zone";
-import { Button } from "@/components/ui/button";
+import { ResultPanel } from "@/components/calculator/result-panel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { DUNGEONS, ITEMS, RARITY_INFO, type DqrItem, type ItemClass, type ItemRarityRow, type Rarity } from "@/lib/dqr-items";
+import { buildDiscordText } from "@/lib/discord-copy";
+import { itemTracks } from "@/lib/item-tracks";
 import {
   calculatePotential,
   classifyTier,
   healthRange,
   potentialPercentile,
   resolveRarityRows,
-  rowPotRange,
   statRange,
   TIER_INFO,
   upsRange,
@@ -22,6 +22,7 @@ import {
 } from "@/lib/pot-utils";
 import { type TooltipScan } from "@/lib/ocr";
 import { extractTooltip, type ExtractedTooltip } from "@/lib/ocr-extract";
+import { pickTooltipStat, statFieldLabel } from "@/lib/ocr-stat";
 import { CALCULATOR_RESET_EVENT } from "@/lib/calculator-reset";
 import { announceStatsUpdate, logCalculation, submitFeedback } from "@/lib/stats-client";
 
@@ -30,13 +31,6 @@ import { announceStatsUpdate, logCalculation, submitFeedback } from "@/lib/stats
   fields stacked one under another, ranges as placeholders, live validation,
   auto-calculation (no button). Resolution flow: docs/Info/Item-Data.md.
 */
-
-const STAT_LABEL: Record<ItemClass, string> = {
-  dps: "Physical / Spell Power",
-  guardian: "Health",
-  mage: "Spell Power",
-  war: "Physical Damage",
-};
 
 const CLASS_LABEL: Record<ItemClass, string> = {
   dps: "DPS armor",
@@ -75,33 +69,6 @@ interface CalcResult {
   readonly row: ItemRarityRow;
   readonly pot: number;
   readonly percentile: number;
-  readonly math: { readonly stat: number; readonly done: number; readonly total: number };
-}
-
-const DISCORD_SEP = "> ---------------------------------------->";
-
-function buildDiscordText(result: CalcResult, tierLabel: string, title: string): string {
-  const pct = result.percentile.toFixed(1);
-  const lines = [
-    `**${title}**`,
-    `**\`${fmt(result.pot)} POT\`** | **\`${RARITY_INFO[result.row.rarity].label}\`** | **\`${pct}% ${tierLabel}\`**`,
-    DISCORD_SEP,
-    `> :trophy: Potential: \`${fmt(result.pot)}\``,
-    `> :chart_with_upwards_trend: Tier: \`${tierLabel}\` (${pct}%)`,
-    `> :arrow_up: Upgrades: \`${fmt(result.math.done)} / ${fmt(result.math.total)}\``,
-    `> :gem: ${STAT_LABEL[result.item.class]}: \`${fmt(result.math.stat)}\``,
-    DISCORD_SEP,
-  ];
-  return lines.join("\n");
-}
-
-function ResultRow({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="flex justify-between gap-2 text-sm">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-right font-semibold text-foreground">{value}</span>
-    </div>
-  );
 }
 
 export function CalculatorApp() {
@@ -122,6 +89,11 @@ export function CalculatorApp() {
   const copiedTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const item = React.useMemo(() => ITEMS.find((i) => i.id === itemId), [itemId]);
+  const pickedStat = React.useMemo(
+    () => (extract === null ? null : pickTooltipStat(extract, item ?? null)),
+    [extract, item],
+  );
+  const statLabel = statFieldLabel(item ?? null, pickedStat?.kind ?? null);
 
   const handleScan = React.useCallback((next: TooltipScan): boolean => {
     const ex = extractTooltip(next);
@@ -134,31 +106,13 @@ export function CalculatorApp() {
     setScan(next);
     setFeedbackSent(null);
     setExtract(ex);
-    // Class-ordered stat candidates, first one inside the item's live stat
-    // range wins (a DPS armor's physical line can misread tiny — "203" —
-    // while the spell line holds the real value).
-    const statCandidates: Array<number | null> = ex.item
-      ? ex.item.class === "guardian"
-        ? [ex.health]
-        : ex.item.class === "mage"
-          ? [ex.spell]
-          : ex.item.class === "war"
-            ? [ex.physical]
-            : [ex.physical, ex.spell]
-      : [ex.spell, ex.physical, ex.health];
-    const statRangeBounds = ex.item ? statRange(ex.item.rows) : null;
-    const stat =
-      statCandidates.find(
-        (cand): cand is number =>
-          cand !== null &&
-          (statRangeBounds === null || (cand >= statRangeBounds.min && cand <= statRangeBounds.max)),
-      ) ?? null;
+    const picked = pickTooltipStat(ex, ex.item);
     setItemId(ex.item?.id ?? "");
     setManualRarity(next.rarity);
-    setStatStr(stat !== null ? String(stat) : "");
+    setStatStr(picked.value !== null ? String(picked.value) : "");
     setUpsDoneStr(ex.upsDone !== null ? String(ex.upsDone) : "");
     setUpsTotalStr(ex.upsTotal !== null ? String(ex.upsTotal) : "");
-    setHealthStr(ex.item?.class === "dps" && ex.health !== null ? String(ex.health) : "");
+    setHealthStr(ex.health !== null ? String(ex.health) : "");
     return true;
   }, []);
 
@@ -188,13 +142,13 @@ export function CalculatorApp() {
       errors.done = "Upgrades can't exceed total upgrades.";
     }
     if (item && stat !== null && ranges.stat && (stat < ranges.stat.min || stat > ranges.stat.max)) {
-      errors.stat = `${STAT_LABEL[item.class]} must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
+      errors.stat = `${statLabel} must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
     }
     if (health !== null && ranges.health && (health < ranges.health.min || health > ranges.health.max)) {
       errors.health = `Health must be between ${fmt(ranges.health.min)} - ${fmt(ranges.health.max)}`;
     }
     return { done, errors, health, ranges, stat, total };
-  }, [item, statStr, upsDoneStr, upsTotalStr, healthStr]);
+  }, [item, statStr, upsDoneStr, upsTotalStr, healthStr, statLabel]);
 
   // Auto-resolution — runs on every keystroke, no calculate button.
   const resolution = React.useMemo(() => {
@@ -209,28 +163,35 @@ export function CalculatorApp() {
     if (survivors.length === 0) return { status: "no-fit" as const };
     if (manualRarity) {
       const chosen = survivors.find((row) => row.rarity === manualRarity);
-      if (chosen) return { status: "ok" as const, row: chosen, math: { done, stat, total }, pot };
+      if (chosen) return { status: "ok" as const, row: chosen, pot };
     }
     if (survivors.length === 1) {
-      return { status: "ok" as const, row: survivors[0] as ItemRarityRow, math: { done, stat, total }, pot };
+      return { status: "ok" as const, row: survivors[0] as ItemRarityRow, pot };
     }
-    return { status: "ambiguous" as const, survivors, math: { done, stat, total }, pot };
+    return { status: "ambiguous" as const, survivors, pot };
   }, [item, fields, manualRarity]);
 
   const result: CalcResult | null =
     item && resolution.status === "ok"
       ? {
           item,
-          math: resolution.math,
           percentile: potentialPercentile(resolution.pot, resolution.row),
           pot: resolution.pot,
           row: resolution.row,
         }
       : null;
-  const tier = result ? classifyTier(result.percentile) : null;
-  const tierInfo = tier ? TIER_INFO[tier] : null;
   const displayName =
     extract?.item?.id === itemId && extract.title ? extract.title : (item?.name ?? "");
+  const tracks = result
+    ? itemTracks({
+        health: fields.health,
+        itemClass: result.item.class,
+        offense: pickedStat?.kind === "spell" || result.item.class === "mage" ? "spell" : "physical",
+        percentile: result.percentile,
+        pot: result.pot,
+        row: result.row,
+      })
+    : [];
   const scanRarity = scan?.rarity;
   const previewRarity =
     result?.row.rarity ??
@@ -276,7 +237,6 @@ export function CalculatorApp() {
       window.removeEventListener("pageshow", onPageShow);
     };
   }, [resetCalculator]);
-
   React.useEffect(() => {
     if (!item) {
       loggedItemId.current = null;
@@ -303,8 +263,12 @@ export function CalculatorApp() {
   };
 
   const copyForDiscord = () => {
-    if (!result || !tierInfo) return;
-    const text = buildDiscordText(result, tierInfo.label, displayName);
+    if (!result || tracks.length === 0) return;
+    const text = buildDiscordText({
+      rarity: RARITY_INFO[result.row.rarity].label,
+      title: displayName,
+      tracks,
+    });
     // Called synchronously off the click — an awaited wrapper drops the user
     // gesture and uBlock Origin flags the clipboard write as clickjacking.
     if (navigator.clipboard?.writeText) {
@@ -442,10 +406,10 @@ export function CalculatorApp() {
 
           {numberField({
             id: "stat-input",
-            label: item ? STAT_LABEL[item.class] : "Stat",
+            label: statLabel,
             onChange: setStatStr,
             range: fields.ranges.stat,
-            tint: tierInfo?.color,
+            tint: result ? TIER_INFO[classifyTier(result.percentile)].color : undefined,
             value: statStr,
             error:
               fields.errors.stat ??
@@ -471,44 +435,19 @@ export function CalculatorApp() {
             })
           )}
 
-          {result && tierInfo && (
-            <div className="space-y-3 rounded-md border border-border bg-surface-low p-4">
-              <div
-                className="mb-1 border-b border-foreground/20 pb-1 text-[11px] font-semibold uppercase tracking-widest"
-                style={{ color: RARITY_INFO[result.row.rarity].color }}
-              >
-                {displayName}
-              </div>
-              <div className="space-y-1">
-                <ResultRow
-                  label="Potential"
-                  value={
-                    <span style={{ color: tierInfo.color }}>{fmt(result.pot)}</span>
-                  }
-                />
-                <ResultRow label="Percentile" value={`${result.percentile.toFixed(1)}%`} />
-                <ResultRow
-                  label="Tier"
-                  value={<span style={{ color: tierInfo.color }}>{tierInfo.label}</span>}
-                />
-                <ResultRow label={`Current ${STAT_LABEL[result.item.class]}`} value={fmt(result.math.stat)} />
-                <ResultRow
-                  label="Potential range"
-                  value={`${fmt(rowPotRange(result.row).minPot)} – ${fmt(rowPotRange(result.row).maxPot)}`}
-                />
-              </div>
-            </div>
+          {result && (
+            <ResultPanel
+              copied={copied}
+              onCopy={copyForDiscord}
+              rarityColor={RARITY_INFO[result.row.rarity].color}
+              title={displayName}
+              tracks={tracks}
+            />
           )}
 
-          {(result || showFeedback) && (
+          {showFeedback && (
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              {result && (
-                <Button onClick={copyForDiscord} size="sm" variant="outline">
-                  {copied ? <Check aria-hidden className="h-4 w-4" /> : <Copy aria-hidden className="h-4 w-4" />}
-                  {copied ? "Copied!" : "Copy for Discord"}
-                </Button>
-              )}
-              {showFeedback && feedbackSent === null && (
+              {feedbackSent === null && (
                 <>
                   <span className="text-xs text-muted-foreground">Was this accurate?</span>
                   <button
