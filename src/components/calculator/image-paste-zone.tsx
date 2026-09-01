@@ -188,26 +188,20 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
           {zoomed && previewUrl && zoomOverlay(previewUrl, "Pasted tooltip screenshot")}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-4 py-6 sm:flex-row sm:gap-6">
-          <div className="flex flex-col items-center gap-1.5">
-            <img
-              src="/example-tooltip.png"
-              alt="Example item tooltip screenshot"
-              className="h-20 rounded-sm border border-border/40 object-contain p-0.5"
-            />
-            <span className="text-[11px] text-muted-foreground/70">Example</span>
-          </div>
-          <div className="flex flex-col items-center gap-2 sm:items-start">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <ImageIcon className="h-4 w-4" />
-              <span>
-                Paste tooltip screenshot, drag image, or{" "}
-                <span className="underline">browse</span>
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground/70">
-              A Dungeon Quest Reborn item tooltip, like the one shown here.
-            </p>
+        <div className="flex flex-col items-center justify-center gap-4 py-6">
+          <img
+            src="/example-tooltip.webp"
+            alt="Example item tooltip screenshot"
+            width={269}
+            height={258}
+            className="h-24 w-auto object-contain opacity-40 brightness-125"
+          />
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <ImageIcon className="h-4 w-4" />
+            <span>
+              paste screenshot, drag image, or{" "}
+              <span className="underline">browse</span>
+            </span>
           </div>
         </div>
       )}
