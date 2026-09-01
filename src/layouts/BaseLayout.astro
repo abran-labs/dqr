@@ -38,10 +38,9 @@ interface Props {
 
 
 const {
-  title,
   description = "Item potential calculator for Dungeon Quest Reborn. Paste a tooltip, get its pot rating.",
 } = Astro.props;
-const pageTitle = title ? `DQR-Calc | ${title}` : "DQR-Calc";
+const pageTitle = "DQR Calculator";
 const pathname = Astro.url.pathname;
 ---
 
