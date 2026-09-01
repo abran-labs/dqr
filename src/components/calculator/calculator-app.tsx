@@ -22,6 +22,7 @@ import {
 } from "@/lib/pot-utils";
 import { type TooltipScan } from "@/lib/ocr";
 import { extractTooltip, type ExtractedTooltip } from "@/lib/ocr-extract";
+import { CALCULATOR_RESET_EVENT } from "@/lib/calculator-reset";
 import { announceStatsUpdate, logCalculation, submitFeedback } from "@/lib/stats-client";
 
 /*
@@ -117,6 +118,8 @@ export function CalculatorApp() {
 
   const [feedbackSent, setFeedbackSent] = React.useState<boolean | null>(null);
   const [copied, setCopied] = React.useState(false);
+  const [pasteGeneration, setPasteGeneration] = React.useState(0);
+  const copiedTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const item = React.useMemo(() => ITEMS.find((i) => i.id === itemId), [itemId]);
 
@@ -241,6 +244,39 @@ export function CalculatorApp() {
   // Count only when the result panel is up, once per item — typing more
   // numbers on the same item is still one calculation.
   const loggedItemId = React.useRef<string | null>(null);
+
+  const resetCalculator = React.useCallback(() => {
+    if (copiedTimerRef.current !== null) {
+      clearTimeout(copiedTimerRef.current);
+      copiedTimerRef.current = null;
+    }
+    loggedItemId.current = null;
+    setScan(null);
+    setExtract(null);
+    setCalculationId(null);
+    setItemId("");
+    setManualRarity(null);
+    setStatStr("");
+    setUpsDoneStr("");
+    setUpsTotalStr("");
+    setHealthStr("");
+    setFeedbackSent(null);
+    setCopied(false);
+    setPasteGeneration((generation) => generation + 1);
+  }, []);
+
+  React.useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) resetCalculator();
+    };
+    document.addEventListener(CALCULATOR_RESET_EVENT, resetCalculator);
+    window.addEventListener("pageshow", onPageShow);
+    return () => {
+      document.removeEventListener(CALCULATOR_RESET_EVENT, resetCalculator);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, [resetCalculator]);
+
   React.useEffect(() => {
     if (!item) {
       loggedItemId.current = null;
@@ -285,7 +321,11 @@ export function CalculatorApp() {
       document.body.removeChild(area);
     }
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (copiedTimerRef.current !== null) clearTimeout(copiedTimerRef.current);
+    copiedTimerRef.current = setTimeout(() => {
+      copiedTimerRef.current = null;
+      setCopied(false);
+    }, 2000);
   };
 
   const placeholderFor = (range: NumberRange | null): string => {
@@ -308,6 +348,7 @@ export function CalculatorApp() {
         {opts.label}
       </label>
       <Input
+        autoComplete="off"
         className={cn(opts.error && "border-destructive")}
         disabled={!item}
         id={opts.id}
@@ -334,7 +375,7 @@ export function CalculatorApp() {
   return (
     <Card>
       <CardContent className="space-y-6 pt-6">
-        <ImagePasteZone onScan={handleScan} />
+        <ImagePasteZone key={pasteGeneration} onScan={handleScan} />
 
         {/* Numbers came through but the name didn't — the user can finish the
          job by picking. */}
@@ -342,7 +383,11 @@ export function CalculatorApp() {
           <p className="text-xs text-muted-foreground">Couldn't recognize item, pick it below.</p>
         )}
 
-        <div className="space-y-4 rounded-lg border border-border bg-surface-lowest p-4">
+        <form
+          autoComplete="off"
+          className="space-y-4 rounded-lg border border-border bg-surface-lowest p-4"
+          onSubmit={(event) => event.preventDefault()}
+        >
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground" htmlFor="item-picker">
               Item
@@ -487,7 +532,7 @@ export function CalculatorApp() {
               )}
             </div>
           )}
-        </div>
+        </form>
       </CardContent>
     </Card>
   );

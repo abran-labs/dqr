@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { isMarketingNavLinkActive, type SiteNavLink } from "@/components/marketing/site-nav-links";
+import { requestCalculatorReset } from "@/lib/calculator-reset";
 import { cn } from "@/lib/utils";
 
 type MarketingNavProps = {
@@ -177,9 +178,14 @@ export function MarketingNav({ navLinks, pathname: initialPathname }: MarketingN
                 data-active={isActive ? "true" : "false"}
                 aria-current={isActive ? "page" : undefined}
                 className={navLinkClass}
-                onClick={() => {
+                onClick={(event) => {
                   // Optimistic move so the bar slides before/during client navigation.
                   setPathname(link.href);
+                  if (link.href !== "/") return;
+                  requestCalculatorReset();
+                  // Same-route ClientRouter no-ops — stop the click so we
+                  // reset in place instead of keeping the filled island.
+                  if (window.location.pathname === "/") event.preventDefault();
                 }}
               >
                 {content}
