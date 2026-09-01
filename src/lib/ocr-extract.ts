@@ -51,7 +51,7 @@ const VALUE = "[0-9bBgGiIlLoOqQsStTzZ,.]+";
 // `Physical power:`. Values wrap onto the first label line
 // (`Physical 739072` / `power:`) or follow the full label.
 const PHYS_RE = new RegExp(
-  `physical\\s*(?:(?:damage|power|dmg)\\s*[:.]?\\s*(${VALUE})|(${VALUE})\\s*(?:damage|power|dmg))`,
+  `physical\\s*(?:(?:damage|[prd]ower|dmg)\\s*[:.]?\\s*(${VALUE})|(${VALUE})\\s*(?:damage|[prd]ower|dmg))`,
   "i",
 );
 const SPELL_RE = new RegExp(

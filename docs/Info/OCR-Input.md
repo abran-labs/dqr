@@ -61,8 +61,8 @@ Armor samples name a **piece** (`Midgardian Mage Helmet`) while the dataset has 
 `src/lib/ocr.ts` + `src/components/image-paste-zone.tsx`:
 
 - Shared Tesseract.js worker singleton, browser-side, no server route.
-- `loadAndScale` canvas upscale before recognition.
-- Two parallel passes (color + preprocessed grayscale), merged text.
+- Same preprocess in browser and bun tests: `src/lib/ocr-pixels.ts` (Mitchell cubic color upscale, native threshold then nearest, white name plate). Not ImageMagick, not canvas `imageSmoothingQuality: "high"` (that bilinear path reads `739072` as `7139072`).
+- Two passes (color + threshold), merged text.
 - `similarity` / `bestMatch` fuzzy name lookup.
 - Upgrade pair repair in `src/lib/ocr-upgrades.ts`: dropped `/` concatenates equal halves (`2854028540`); `/` read as `1` (`28540128540`); doubled digit on done when it exceeds total.
 - Paste-anywhere, drag-drop, file picker, preview.

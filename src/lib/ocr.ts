@@ -1,14 +1,14 @@
 import Tesseract from "tesseract.js";
 
 import type { Rarity } from "./dqr-items";
-import { asDataUrl, detectRarity, namePlateImage, preprocessImage, upscaleImage } from "./ocr-canvas";
+import { asDataUrl, prepareTooltipCanvases } from "./ocr-canvas";
 import { DEFAULT_OCR_LANG, readOcrLang, type OcrLang } from "./ocr-lang";
 
 /*
   Client-side OCR for Dungeon Quest Reborn tooltips.
 
   Three sequential Tesseract passes (one worker — parallel recognize deadlocks):
-    1. Upscaled color — numbers and some labels.
+    1. Mitchell-upscaled color — numbers and some labels (`ocr-pixels.ts`).
     2. Native-threshold then nearest upscale — numbers; names on high-contrast cards.
     3. White name plate (top band) — white title on purple Epic cards (assets/4.png).
 
@@ -84,16 +84,11 @@ export async function scanTooltip(imageSource: File | Blob | string): Promise<To
   const run = async (): Promise<TooltipScan> => {
     const worker = await getWorker();
 
-    const [upscaledInput, processedInput, rarity, nameInput] = await Promise.all([
-      upscaleImage(imageSource),
-      preprocessImage(imageSource),
-      detectRarity(imageSource),
-      namePlateImage(imageSource),
-    ]);
+    const prepared = await prepareTooltipCanvases(imageSource);
 
-    const normalRun = await worker.recognize(upscaledInput);
-    const processedRun = await worker.recognize(processedInput);
-    const nameRun = nameInput === null ? null : await worker.recognize(nameInput);
+    const normalRun = await worker.recognize(prepared.color);
+    const processedRun = await worker.recognize(prepared.threshold);
+    const nameRun = prepared.namePlate === null ? null : await worker.recognize(prepared.namePlate);
 
     const rawText = normalRun.data.text.trim();
     const processedText = processedRun.data.text.trim();
@@ -103,10 +98,10 @@ export async function scanTooltip(imageSource: File | Blob | string): Promise<To
     }
 
     return {
-      imageDataUrl: asDataUrl(upscaledInput),
+      imageDataUrl: asDataUrl(prepared.color),
       nameText,
       processedText,
-      rarity,
+      rarity: prepared.rarity,
       rawText,
     };
   };
