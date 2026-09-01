@@ -1,65 +1,52 @@
 # Pot System
 
-"Pot" is short for **potential**: what an item's primary stat will be once every upgrade on it has been spent. Two copies of the same item at the same rarity roll different bases and different upgrade counts, so their pot differs. High pot = stronger item = more desirable.
+Pot = **potential**: primary stat after every upgrade is spent. Same item + rarity, different bases/upgrade counts → different pot.
 
 ## Formula
 
 ```
 potential = currentBase + upgradesRemaining * 10
-```
-
-Where:
-
-```
 upgradesRemaining = upgradesTotal - upgradesDone
 ```
 
-Each upgrade adds a flat **10** to the stat being upgraded. So an item with 0 upgrades spent has `potential = base + upgradesTotal * 10`, and a fully-upgraded item has `potential = currentStat` — the number on the tooltip *is* the pot.
+Each upgrade adds a flat **10**. 0 spent → `base + upgradesTotal * 10`. Fully upgraded → tooltip number **is** the pot.
 
-Applies to Winter Outpost and later dungeons. See `docs/Info/Item-Data.md` for the legacy-dungeon exceptions.
+Winter Outpost onward. Legacy exceptions: `docs/Info/Item-Data.md`.
 
-## Which stat is "the" stat
+## Primary track
 
-Every item has one track that matters for pot. Upgrades are always poured into that track.
+Upgrades always go into one track.
 
-| Class (CSV `Class`) | Primary track | Also shown |
+| Class (CSV `Class`) | Primary | Also shown |
 |---|---|---|
 | `War`, `War Legend`, `War Ultimate` | Physical damage | — |
 | `Mage`, `Mage Legend`, `Mage Ultimate` | Spell power | — |
-| `DPS Armor` | Physical damage or spell power (matches the armor's own type) | Health (secondary) |
+| `DPS Armor` | Damage or spell (armor's type) | Health (secondary) |
 | `Guardian` | **Health** | Physical / spell (secondary) |
 | `Legendary` | Physical damage | — |
 
-Armor therefore has **two tracks**. For `DPS Armor` the app reports both: the damage/spell track (which the player upgrades) and the health track (which they usually leave alone but still care about). For `Guardian` armor the health track is the pot; the damage numbers are informational only.
+Armor has **two tracks**. `DPS Armor`: report both (player upgrades damage/spell; health still matters). `Guardian`: health is pot; damage is informational.
 
 ## Percentile
-
-How good a roll is, relative to what that exact item at that exact rarity can produce:
 
 ```
 percentile = (potential - minPotential) / (maxPotential - minPotential) * 100
 ```
 
-Clamped to `0..100`. Reported to the user as "your item is N% optimal". Armor gets two percentiles, one per track.
-
-`minPotential` / `maxPotential` come from the item's rarity row (`docs/Info/Item-Data.md`).
+Clamped `0..100`. Shown as "N% optimal". Armor: one percentile per track. Min/max from the rarity row (`docs/Info/Item-Data.md`).
 
 ## Tiers
 
-The percentile is bucketed into five color-coded tiers so the verdict is readable at a glance.
-
 | Tier | Meaning | Band | Color |
 |---|---|---|---|
-| **Reverse God Pot** | The worst possible roll. Rare, and rare is fun — so it gets its own badge instead of being lumped in with Low. | `p ≤ 1` | **violet** |
+| **Reverse God Pot** | Worst possible roll. Own badge, not lumped into Low. | `p ≤ 1` | **violet** |
 | **Low Pot** | Bad roll. | `1 < p ≤ 30` | red |
 | **Average Pot** | Middle of the distribution. | `30 < p < 70` | yellow |
 | **Good Pot** | Above average. | `70 ≤ p < 99` | green |
-| **God Pot** | The best possible roll. | `p ≥ 99` | **gold** |
+| **God Pot** | Best possible roll. | `p ≥ 99` | **gold** |
 
-Decisions behind those numbers:
+- Violet: traffic-light already used; gold is God; violet = rare-special, not Low-red.
+- 1%/99% not exact min/max: late-game ranges span millions; exact cap is measure-zero. Slightly generous on purpose.
+- 30/70: rolls roughly uniform on `[min, max]`, so equal-width Average.
 
-- **Violet for Reverse God.** The traffic-light set (red/yellow/green) is fully used by Low/Average/Good, and gold belongs to God. Violet reads as "special-rare" while staying unmistakably distinct from both gold and the red of a merely-bad Low roll.
-- **1%/99% edges instead of exact equality.** Late-game pot ranges span millions of points; an exact `potential == maxPotential` hit is effectively a measure-zero event. The 1% bands keep the "you got THE roll" feeling reachable. Slightly generous by design.
-- **30/70 split for the middle.** Rolls are roughly uniform across `[min, max]`, so equal-width Average band keeps "average" honest.
-
-These are defaults, not physics. Thresholds and colors live in one config object next to the tier logic so they can be retuned without touching calculation code.
+Defaults, not physics. Thresholds + colors live in one config next to tier logic.

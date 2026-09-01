@@ -15,20 +15,15 @@ No account, no database, nothing stored. Everything runs in the browser.
 
 ## Status
 
-Early. The repository started as a clone of [AbyssFishTracker](https://github.com/abran-labs/AbyssFishTracker); the inherited fish/log/pond/auth code has been stripped and the stack migrated to Astro + Bun + TweakCN.
-
-See `docs/PLAN.md` for the roadmap.
+Early.
 
 ## Docs
 
 | Doc | Contents |
 |---|---|
-| `docs/PLAN.md` | Roadmap, decisions, open questions |
 | `docs/Info/Pot-System.md` | Pot formula, stat tracks, tier definitions |
 | `docs/Info/Item-Data.md` | Item dataset schema, dungeon codes, data quirks |
 | `docs/Info/OCR-Input.md` | Tooltip layout, OCR fields, sample screenshots |
-| `docs/SETUP.md` | Dependencies and first-time setup |
-| `docs/CMDS.md` | Project commands |
 
 ## Tech
 

@@ -1,10 +1,10 @@
 # OCR Input
 
-The app's input is a screenshot of a DQR item tooltip. Reference samples live in `assets/` (`1.png`–`4.png`).
+Input = screenshot of a DQR item tooltip. Local samples: `assets/` (`1.png`–`4.png`).
 
 ## Tooltip layout
 
-A bordered card, top to bottom:
+Bordered card, top to bottom:
 
 ```
         <Item Name>              white, centered, top
@@ -16,9 +16,9 @@ Upgrades: <done>/<total>              label cyan, value light purple
 Sell: <n>                             label + value yellow/gold
 ```
 
-**Text colors are fixed** regardless of item. Only the card background and border change — those encode rarity, not stats. Color is a reliable channel for rarity: `src/lib/rarity-color.ts` votes on dark chrome pixels (bright text is ignored). Samples in `assets/Rarities/`.
+**Text colors are fixed.** Card background + border encode rarity. `src/lib/rarity-color.ts` votes on dark chrome pixels (ignores bright text). Samples: `assets/Rarities/`.
 
-The item name is white. A white-only name plate (top of the tooltip) is OCRed separately — the gray/threshold pass drops the title on purple Epic cards (`assets/4.png` Crystalline Shard Staff).
+Item name is white. White-only name plate (top band) is OCRed separately — gray/threshold pass drops the title on purple Epic cards (`assets/4.png` Crystalline Shard Staff).
 
 | Rarity | Chrome |
 |---|---|
@@ -29,18 +29,18 @@ The item name is white. A white-only name plate (top of the tooltip) is OCRed se
 | Legendary | orange (~38°) |
 | Ultimate | red (~0°) |
 
-Label wording varies: `Physical Damage:` vs `Physical power:`, `Spell Power:` vs `Spell power:`. Match case-insensitively and tolerate the line wrapping onto two lines (`Physical` / `power:` with the number to the right).
+Label wording varies: `Physical Damage:` vs `Physical power:`, `Spell Power:` vs `Spell power:`. Match case-insensitively; tolerate wrap onto two lines (`Physical` / `power:` with the number to the right).
 
-## Fields the app needs
+## Fields
 
 | Field | Required | Notes |
 |---|---|---|
 | Item name | yes | Fuzzy-matched against the item list |
 | Physical damage | yes for War/Legendary | Current value, post-upgrades-so-far |
 | Spell power | yes for Mage | Current value |
-| Health | armor only | Green line, present only on armor |
-| Upgrades done / total | yes | `done` drives `upgradesRemaining = total - done` |
-| `REQ Lvl.` | optional | Level requirement — dungeon-based, cannot disambiguate rarity rows |
+| Health | armor only | Green line |
+| Upgrades done / total | yes | `done` → `upgradesRemaining = total - done` |
+| `REQ Lvl.` | optional | Dungeon-based; cannot disambiguate rarity |
 | Sell | no | Ignore |
 
 ## Sample screenshots
@@ -52,24 +52,22 @@ Label wording varies: `Physical Damage:` vs `Physical power:`, `Spell Power:` vs
 | `assets/3.png` | Ice Spellblade | Mage weapon | `330961/330961` | Fully upgraded |
 | `assets/4.png` | Crystalline Shard Staff | Mage weapon | `0/282463` | **Un-upgraded** → displayed spell power is the base |
 
-The 0-upgrades and max-upgrades cases are the two ends of the range; both must work. Partial upgrades are the general case.
+0-upgrades and max-upgrades are the range ends; both must work. Partial upgrades are the general case.
 
-## Notable mismatches in the samples
+Armor samples name a **piece** (`Midgardian Mage Helmet`) while the dataset has the **set** (`Midgardian`). Strip class/piece qualifiers. Pieces share set min/max — string match, not a data gap. See armor-set quirk in `docs/Info/Item-Data.md`.
 
-The armor samples name a **piece** (`Midgardian Mage Helmet`, `Midgardian Mage Armor`) while the dataset only has the **set** (`Midgardian`). Name matching has to strip the class/piece qualifiers to find the row. Pieces share the set's min/max ranges, so this is a pure string-matching problem, not a data gap. See the armor-set bullet in `docs/Info/Item-Data.md`.
+## Pipeline
 
-## Reuse from AbyssFishLog
-
-`src/lib/ocr.ts` and `src/components/image-paste-zone.tsx` carry over structurally:
+`src/lib/ocr.ts` + `src/components/image-paste-zone.tsx`:
 
 - Shared Tesseract.js worker singleton, browser-side, no server route.
 - `loadAndScale` canvas upscale before recognition.
-- Two parallel passes (color + preprocessed grayscale) with merged text.
-- `similarity` / `bestMatch` fuzzy string matching for the name lookup.
-- Paste-anywhere listener, drag-drop, file picker, preview.
+- Two parallel passes (color + preprocessed grayscale), merged text.
+- `similarity` / `bestMatch` fuzzy name lookup.
+- Paste-anywhere, drag-drop, file picker, preview.
 
-What gets replaced: every field extractor (they parse fish weight, stars, mutations), the Discord-text parsing path, and the sanity-correction logic. The number-recovery idea is still worth keeping — DQR numbers are long (8–10 digits) and a single OCR digit error is both likely and catastrophic. Cross-check every extracted number against the matched item's plausible range before accepting it.
+DQR numbers are 8–10 digits; one OCR digit error is catastrophic. Cross-check every extracted number against the matched item's plausible range before accepting.
 
-## Accuracy requirement
+## Accuracy
 
-The tool is only useful if OCR is right. The text is large, high-contrast, and fixed-color, so this should be achievable — but the failure mode (a confidently wrong pot) is worse than no answer. Prefer flagging a field for manual confirmation over guessing.
+Wrong pot is worse than no answer. Prefer flagging a field for manual confirmation over guessing.
