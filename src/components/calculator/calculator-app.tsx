@@ -109,7 +109,6 @@ export function CalculatorApp() {
   const [upsTotalStr, setUpsTotalStr] = React.useState("");
   const [healthStr, setHealthStr] = React.useState("");
 
-  const [askFeedback, setAskFeedback] = React.useState(false);
   const [feedbackSent, setFeedbackSent] = React.useState<boolean | null>(null);
   const [copied, setCopied] = React.useState(false);
 
@@ -233,7 +232,6 @@ export function CalculatorApp() {
     if (!result || loggedItemId.current === item.id) return;
     loggedItemId.current = item.id;
     setFeedbackSent(null);
-    setAskFeedback(Math.random() < 0.34);
     const payload = scan ?? { imageDataUrl: null, processedText: "", rawText: "" };
     void logCalculation(payload).then((id) => {
       if (id !== null) {
@@ -243,7 +241,7 @@ export function CalculatorApp() {
     });
   }, [item, result, scan]);
 
-  const showFeedback = calculationId !== null && askFeedback && result !== null;
+  const showFeedback = calculationId !== null && result !== null;
 
   const sendFeedback = (accurate: boolean) => {
     if (calculationId === null || feedbackSent !== null) return;
@@ -467,7 +465,7 @@ export function CalculatorApp() {
                 </>
               )}
               {feedbackSent !== null && (
-                <span className="text-xs text-muted-foreground">Thanks — recorded.</span>
+                <span className="text-xs text-muted-foreground">Thanks</span>
               )}
             </div>
           )}
