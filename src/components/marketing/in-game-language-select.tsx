@@ -38,7 +38,11 @@ export function InGameLanguageSelect() {
         value={lang}
       >
         {OCR_LANGUAGES.map((item) => (
-          <option key={item.code} value={item.code}>
+          <option
+            key={item.code}
+            value={item.code}
+            className="bg-background text-foreground"
+          >
             {item.label}
           </option>
         ))}
