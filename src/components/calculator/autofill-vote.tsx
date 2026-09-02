@@ -1,12 +1,22 @@
 import * as React from "react";
 
 import type { AutofillField } from "@/lib/autofill-feedback";
+import {
+  readShowAutofillVote,
+  subscribeShowAutofillVotes,
+  writeShowAutofillVote,
+} from "@/lib/autofill-vote-pref";
 import { announceStatsUpdate, submitFeedback } from "@/lib/stats-client";
 
 export function AutofillVote(props: {
   readonly calculationId: number | null;
   readonly field: AutofillField;
 }) {
+  const show = React.useSyncExternalStore(
+    subscribeShowAutofillVotes,
+    () => readShowAutofillVote(props.field),
+    () => true,
+  );
   const [sent, setSent] = React.useState<boolean | null>(null);
   const locked = React.useRef(false);
   const pending = React.useRef<boolean | null>(null);
@@ -19,6 +29,8 @@ export function AutofillVote(props: {
       if (ok) announceStatsUpdate();
     });
   }, [props.calculationId, props.field]);
+
+  if (!show) return null;
 
   if (sent !== null) {
     return <span className="text-xs text-muted-foreground">Thanks</span>;
@@ -53,6 +65,13 @@ export function AutofillVote(props: {
         type="button"
       >
         No
+      </button>
+      <button
+        className="text-xs text-muted-foreground/40 underline hover:text-muted-foreground/70"
+        onClick={() => writeShowAutofillVote(props.field, false)}
+        type="button"
+      >
+        Never show again
       </button>
     </div>
   );
