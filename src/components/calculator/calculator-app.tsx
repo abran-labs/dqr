@@ -48,7 +48,7 @@ const CLASS_LABEL: Record<ItemClass, string> = {
 
 const DUNGEON_BY_CODE = new Map(DUNGEONS.map((dungeon) => [dungeon.code, dungeon] as const));
 
-const fmt = (value: number): string => value.toLocaleString("en-US");
+const fmt = (value: number): string => String(value);
 
 const parseNumber = (value: string): number | null => {
   const cleaned = value.replace(/[,_\s]/g, "");
