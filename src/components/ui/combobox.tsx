@@ -16,6 +16,7 @@ export interface ComboboxOption {
 }
 
 export interface ComboboxProps {
+  id?: string;
   options: ComboboxOption[];
   value?: string | undefined;
   onChange?: (value: string) => void;
@@ -35,6 +36,7 @@ export interface ComboboxProps {
 */
 
 export function Combobox({
+  id,
   options,
   value,
   onChange,
@@ -115,6 +117,8 @@ export function Combobox({
     setHighlightIndex(0);
   }, [visible]);
 
+  const errorId = id === undefined ? undefined : `${id}-error`;
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (!open) {
       if (event.key === "Enter" || event.key === "ArrowDown" || event.key === " ") {
@@ -148,7 +152,10 @@ export function Combobox({
   return (
     <div ref={containerRef} className={cn("relative", className)}>
       <button
+        aria-describedby={error ? errorId : undefined}
+        aria-invalid={error ? true : undefined}
         disabled={disabled}
+        id={id}
         onClick={() => setOpen(!open)}
         onKeyDown={handleKeyDown}
         type="button"
@@ -173,7 +180,11 @@ export function Combobox({
         />
       </button>
 
-      {error && errorMessage && <p className="mt-1 text-xs text-destructive">{errorMessage}</p>}
+      {error && errorMessage && (
+        <p className="mt-1 text-xs text-destructive" id={errorId} role="alert">
+          {errorMessage}
+        </p>
+      )}
 
       {open && (
         <div className="absolute z-50 mt-1 w-full animate-in fade-in-0 zoom-in-95 rounded-sm border border-border bg-surface-lowest text-popover-foreground shadow-lg">

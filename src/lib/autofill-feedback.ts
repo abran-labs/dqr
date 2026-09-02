@@ -5,7 +5,6 @@
 
 import type { ExtractedTooltip } from "./ocr-extract";
 import { pickTooltipStat } from "./ocr-stat";
-import { statRange } from "./pot-utils";
 
 export const AUTOFILL_FIELDS = [
   "item",
@@ -19,6 +18,7 @@ export const AUTOFILL_FIELDS = [
 export type AutofillField = (typeof AUTOFILL_FIELDS)[number];
 
 const FIELD_SET: ReadonlySet<string> = new Set(AUTOFILL_FIELDS);
+export const AUTOFILL_FAILURE_MESSAGE = "Failed to autofill.";
 
 export function isAutofillField(value: string): value is AutofillField {
   return FIELD_SET.has(value);
@@ -33,6 +33,23 @@ export type AutofillForm = {
   readonly healthStr: string;
   readonly fields: readonly AutofillField[];
 };
+
+export function missingAutofillFields(
+  autofillRan: boolean,
+  filledFields: readonly AutofillField[],
+): readonly AutofillField[] {
+  if (!autofillRan) return [];
+  return AUTOFILL_FIELDS.filter((field) => !filledFields.includes(field));
+}
+
+export function autofillFailureMessage(
+  field: AutofillField,
+  value: string,
+  missingFields: readonly AutofillField[],
+): string | undefined {
+  if (value !== "" || !missingFields.includes(field)) return undefined;
+  return AUTOFILL_FAILURE_MESSAGE;
+}
 
 export type FeedbackPayload = {
   readonly calculationId: number;
@@ -56,18 +73,13 @@ function numStr(value: number | null): string {
 
 export function autofillFromExtract(ex: ExtractedTooltip): AutofillForm {
   const picked = pickTooltipStat(ex, ex.item);
-  const bounds = ex.item ? statRange(ex.item.rows) : null;
-  const inBounds = (value: number | null): value is number =>
-    value !== null && (bounds === null || (value >= bounds.min && value <= bounds.max));
 
   const hybrid = ex.item?.class === "hybrid";
   const itemId = ex.item?.id ?? "";
   const statStr = hybrid
-    ? inBounds(ex.physical)
-      ? String(ex.physical)
-      : ""
+    ? numStr(ex.physical)
     : numStr(picked.value);
-  const spellStr = hybrid ? (inBounds(ex.spell) ? String(ex.spell) : "") : "";
+  const spellStr = hybrid ? numStr(ex.spell) : "";
   const upsDoneStr = numStr(ex.upsDone);
   const upsTotalStr = numStr(ex.upsTotal);
   const healthStr = numStr(ex.health);

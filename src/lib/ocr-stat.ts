@@ -59,31 +59,32 @@ function boundsOf(item: DqrItem | null): { min: number; max: number } | null {
 function pickClassStat(itemClass: ItemClass, ex: ExtractedTooltip, min: number | null, max: number | null): PickedStat {
   switch (itemClass) {
     case "guardian": {
-      const value = accept(ex.health, min, max);
-      return { kind: value === null ? null : "health", value };
+      return { kind: "health", value: ex.health };
     }
     case "mage": {
-      const value = accept(ex.spell, min, max);
-      return { kind: value === null ? null : "spell", value };
+      return { kind: "spell", value: ex.spell };
     }
     case "war": {
-      const value = accept(ex.physical, min, max);
-      return { kind: value === null ? null : "physical", value };
+      return { kind: "physical", value: ex.physical };
     }
     case "hybrid": {
       const physical = accept(ex.physical, min, max);
       if (physical !== null) return { kind: "physical", value: physical };
       const spell = accept(ex.spell, min, max);
-      return { kind: spell === null ? null : "spell", value: spell };
+      if (spell !== null) return { kind: "spell", value: spell };
+      const value = larger(ex.physical, ex.spell);
+      return { kind: kindFor(value, ex), value };
     }
     case "dps": {
       const physical = accept(ex.physical, min, max);
       const spell = accept(ex.spell, min, max);
       const track = titleTrack(ex.title);
-      if (track === "physical" && physical !== null) return { kind: "physical", value: physical };
-      if (track === "spell" && spell !== null) return { kind: "spell", value: spell };
+      if (track === "physical") return { kind: "physical", value: ex.physical };
+      if (track === "spell") return { kind: "spell", value: ex.spell };
       const value = larger(physical, spell);
-      return { kind: kindFor(value, ex), value };
+      if (value !== null) return { kind: kindFor(value, ex), value };
+      const raw = larger(ex.physical, ex.spell);
+      return { kind: kindFor(raw, ex), value: raw };
     }
     default:
       return assertNever(itemClass);

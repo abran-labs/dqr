@@ -25,7 +25,12 @@ import { extractTooltip, type ExtractedTooltip } from "@/lib/ocr-extract";
 import { pickTooltipStat, statFieldLabel } from "@/lib/ocr-stat";
 import { CALCULATOR_RESET_EVENT } from "@/lib/calculator-reset";
 import { announceStatsUpdate, logCalculation } from "@/lib/stats-client";
-import { autofillFromExtract, type AutofillField } from "@/lib/autofill-feedback";
+import {
+  autofillFailureMessage,
+  autofillFromExtract,
+  missingAutofillFields,
+  type AutofillField,
+} from "@/lib/autofill-feedback";
 
 /*
   Calculator island — AbyssFishLog-style form (docs/ai/design-system.md):
@@ -98,6 +103,19 @@ export function CalculatorApp() {
     [extract, item],
   );
   const statLabel = statFieldLabel(item ?? null, pickedStat?.kind ?? null);
+  const filledFields = new Set(autofilled);
+  const missingFields = missingAutofillFields(extract !== null, autofilled);
+  const itemAutofillError = autofillFailureMessage("item", itemId, missingFields);
+  const statAutofillField: AutofillField | undefined =
+    item === undefined || item.class === "hybrid"
+      ? undefined
+      : item.class === "guardian"
+        ? "health"
+        : item.class === "mage"
+          ? "spell"
+          : pickedStat?.kind === "spell"
+            ? "spell"
+            : "physical";
 
   const handleScan = React.useCallback((next: TooltipScan): boolean => {
     const ex = extractTooltip(next);
@@ -130,6 +148,16 @@ export function CalculatorApp() {
   }, []);
 
   const handleItemChange = (nextId: string) => {
+    if (extract !== null && itemId === "" && !autofilled.includes("item")) {
+      const selectedItem = ITEMS.find((candidate) => candidate.id === nextId);
+      if (selectedItem !== undefined) {
+        const fill = autofillFromExtract({ ...extract, item: selectedItem });
+        setAutofilled(fill.fields.filter((field) => field !== "item"));
+        setStatStr(fill.statStr);
+        setSpellStr(fill.spellStr);
+        setHealthStr(fill.healthStr);
+      }
+    }
     setItemId(nextId);
     if (!scan?.rarity) setManualRarity(null);
   };
@@ -156,7 +184,8 @@ export function CalculatorApp() {
       errors.done = "Upgrades can't exceed total upgrades.";
     }
     if (item && stat !== null && ranges.stat && (stat < ranges.stat.min || stat > ranges.stat.max)) {
-      errors.stat = `${statLabel} must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
+      const label = item.class === "hybrid" ? "Physical Damage" : statLabel;
+      errors.stat = `${label} must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
     }
     if (item && spell !== null && ranges.stat && (spell < ranges.stat.min || spell > ranges.stat.max)) {
       errors.spell = `Spell Power must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
@@ -302,7 +331,6 @@ export function CalculatorApp() {
     });
   }, [item, result, scan]);
 
-  const filledFields = new Set(autofilled);
   const voteFor = (field: AutofillField): React.ReactNode => {
     if (!filledFields.has(field)) return null;
     if (field !== "item" && itemId === "") return null;
@@ -357,6 +385,7 @@ export function CalculatorApp() {
   };
 
   const numberField = (opts: {
+    autofillField?: AutofillField | undefined;
     id: string;
     label: React.ReactNode;
     onChange: (value: string) => void;
@@ -365,26 +394,41 @@ export function CalculatorApp() {
     value: string;
     error?: string | undefined;
     vote: React.ReactNode;
-  }) => (
-    <div className="space-y-2">
-      <label className="text-sm font-medium text-foreground" htmlFor={opts.id}>
-        {opts.label}
-      </label>
-      <Input
-        autoComplete="off"
-        className={cn(opts.error && "border-destructive")}
-        disabled={!item}
-        id={opts.id}
-        inputMode="numeric"
-        onChange={(e) => opts.onChange(e.target.value)}
-        placeholder={placeholderFor(opts.range)}
-        style={opts.tint ? { color: opts.tint } : undefined}
-        value={opts.value}
-      />
-      {opts.error && <p className="text-sm text-destructive">{opts.error}</p>}
-      {opts.vote}
-    </div>
-  );
+  }) => {
+    const error =
+      opts.error ??
+      (item === undefined || opts.autofillField === undefined
+        ? undefined
+        : autofillFailureMessage(opts.autofillField, opts.value, missingFields));
+    const errorId = `${opts.id}-error`;
+
+    return (
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground" htmlFor={opts.id}>
+          {opts.label}
+        </label>
+        <Input
+          autoComplete="off"
+          aria-describedby={error ? errorId : undefined}
+          aria-invalid={error ? true : undefined}
+          className={cn(error && "border-destructive")}
+          disabled={!item}
+          id={opts.id}
+          inputMode="numeric"
+          onChange={(e) => opts.onChange(e.target.value)}
+          placeholder={placeholderFor(opts.range)}
+          style={opts.tint ? { color: opts.tint } : undefined}
+          value={opts.value}
+        />
+        {error && (
+          <p className="text-sm text-destructive" id={errorId} role="alert">
+            {error}
+          </p>
+        )}
+        {opts.vote}
+      </div>
+    );
+  };
 
   const rarityOptions: ComboboxOption[] =
     resolution.status === "ambiguous"
@@ -400,12 +444,6 @@ export function CalculatorApp() {
     <Card>
       <CardContent className="space-y-6 pt-6">
         <ImagePasteZone key={pasteGeneration} onScan={handleScan} />
-
-        {/* Numbers came through but the name didn't — the user can finish the
-         job by picking. */}
-        {scan && extract && !extract.item && itemId === "" && (
-          <p className="text-xs text-muted-foreground">Couldn't recognize item, pick it below.</p>
-        )}
 
         <form
           autoComplete="off"
@@ -430,6 +468,9 @@ export function CalculatorApp() {
               )}
             </div>
             <Combobox
+              error={itemAutofillError !== undefined}
+              errorMessage={itemAutofillError}
+              id="item-picker"
               onChange={handleItemChange}
               options={itemOptions}
               placeholder="Search items…"
@@ -451,6 +492,7 @@ export function CalculatorApp() {
                 Rarity
               </label>
               <Combobox
+                id="rarity-picker"
                 onChange={(next) => setManualRarity(next as Rarity)}
                 options={rarityOptions}
                 placeholder="Fits multiple rarities — pick one…"
@@ -461,6 +503,7 @@ export function CalculatorApp() {
           )}
 
           {numberField({
+            autofillField: "totalUpgrades",
             id: "ups-total",
             label: "Total upgrades",
             onChange: setUpsTotalStr,
@@ -471,6 +514,7 @@ export function CalculatorApp() {
           })}
 
           {numberField({
+            autofillField: "upgrades",
             id: "ups-done",
             label: "Upgrades",
             onChange: setUpsDoneStr,
@@ -483,6 +527,7 @@ export function CalculatorApp() {
           {item?.class === "hybrid" ? (
             <>
               {numberField({
+                autofillField: "physical",
                 error: fields.errors.stat,
                 id: "stat-input",
                 label: "Physical Damage",
@@ -493,6 +538,7 @@ export function CalculatorApp() {
                 vote: voteFor("physical"),
               })}
               {numberField({
+                autofillField: "spell",
                 error: fields.errors.spell,
                 id: "spell-input",
                 label: "Spell Power",
@@ -505,6 +551,7 @@ export function CalculatorApp() {
             </>
           ) : (
             numberField({
+              autofillField: statAutofillField,
               id: "stat-input",
               label: statLabel,
               onChange: setStatStr,
@@ -539,6 +586,7 @@ export function CalculatorApp() {
 
           {item && fields.ranges.health && (
             numberField({
+              autofillField: "health",
               id: "health-input",
               label: "Health",
               onChange: setHealthStr,

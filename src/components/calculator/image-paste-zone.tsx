@@ -176,7 +176,10 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
       />
 
       {status === "error" ? (
-        <div className="flex min-h-[5.5rem] items-center justify-center py-6 text-sm text-destructive">
+        <div
+          className="flex min-h-[5.5rem] items-center justify-center py-6 text-sm text-destructive"
+          role="alert"
+        >
           Invalid screenshot: No item data found.
         </div>
       ) : status === "processing" ? (
