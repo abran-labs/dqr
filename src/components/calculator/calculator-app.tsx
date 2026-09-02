@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { ImagePasteZone } from "@/components/calculator/image-paste-zone";
 import { ResultPanel } from "@/components/calculator/result-panel";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
@@ -298,6 +299,16 @@ export function CalculatorApp() {
   }, [item, result, scan]);
 
   const showFeedback = calculationId !== null && result !== null;
+  const isDirty =
+    itemId !== "" ||
+    scan !== null ||
+    extract !== null ||
+    manualRarity !== null ||
+    statStr !== "" ||
+    spellStr !== "" ||
+    upsDoneStr !== "" ||
+    upsTotalStr !== "" ||
+    healthStr !== "";
 
   const sendFeedback = (accurate: boolean) => {
     if (calculationId === null || feedbackSent !== null) return;
@@ -392,9 +403,20 @@ export function CalculatorApp() {
 
         <form
           autoComplete="off"
-          className="space-y-4 rounded-lg border border-border bg-surface-lowest p-4"
+          className="relative space-y-4 rounded-lg border border-border bg-surface-lowest p-4"
           onSubmit={(event) => event.preventDefault()}
         >
+          {isDirty && (
+            <Button
+              className="absolute right-3 top-3 h-auto px-1 py-0 hover:bg-transparent"
+              onClick={resetCalculator}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              Clear
+            </Button>
+          )}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground" htmlFor="item-picker">
               Item
