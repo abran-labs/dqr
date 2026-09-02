@@ -60,7 +60,7 @@ const pathname = Astro.url.pathname;
   <body class="relative font-sans">
     <StarsBackground client:load transition:persist="stars-background" />
     <div class="relative flex min-h-dvh flex-col">
-      <header class="pointer-events-none fixed inset-x-0 top-0 z-[2] px-2 md:relative md:px-4">
+      <header class="pointer-events-none relative z-[2] px-4">
         <div class="pointer-events-auto relative mx-auto flex h-14 w-full max-w-3xl items-center justify-center">
           <MarketingNav
             client:load
@@ -70,14 +70,14 @@ const pathname = Astro.url.pathname;
             pathname={pathname}
           />
         </div>
-        <div class="pointer-events-auto mx-auto flex w-full max-w-3xl justify-end pb-1 md:fixed md:right-4 md:top-3 md:z-[3] md:w-auto md:pb-0">
+        <div class="pointer-events-auto mx-auto hidden w-full max-w-3xl justify-end pb-1 md:fixed md:right-4 md:top-3 md:z-[3] md:flex md:w-auto md:pb-0">
           <InGameLanguageSelect client:load transition:persist="ocr-lang" />
         </div>
         <div class="pb-1 md:pb-2">
           <StatsStrip client:load transition:persist="stats-strip" />
         </div>
       </header>
-      <div class="relative z-[1] flex flex-1 flex-col px-4 pt-2 md:pt-0">
+      <div class="relative z-[1] flex flex-1 flex-col px-4">
         <slot />
       </div>
       <MarketingFooter

@@ -17,7 +17,6 @@ export function MarketingNav({ navLinks, pathname: initialPathname }: MarketingN
   const hasMeasuredRef = useRef(false);
   const readyFrameRef = useRef<number | null>(null);
   const [pathname, setPathname] = useState(initialPathname);
-  const [isMobileNavFloating, setIsMobileNavFloating] = useState(false);
   const [activeIndicator, setActiveIndicator] = useState({
     left: 0,
     width: 0,
@@ -28,30 +27,6 @@ export function MarketingNav({ navLinks, pathname: initialPathname }: MarketingN
   useEffect(() => {
     setPathname(initialPathname);
   }, [initialPathname]);
-
-  useEffect(() => {
-    let scrollFrame: number | null = null;
-
-    const syncFloatingState = () => {
-      setIsMobileNavFloating(window.scrollY > 40);
-      scrollFrame = null;
-    };
-
-    const queueFloatingStateSync = () => {
-      if (scrollFrame !== null) return;
-      scrollFrame = window.requestAnimationFrame(syncFloatingState);
-    };
-
-    syncFloatingState();
-    window.addEventListener("scroll", queueFloatingStateSync, { passive: true });
-    document.addEventListener("astro:page-load", queueFloatingStateSync);
-
-    return () => {
-      if (scrollFrame !== null) window.cancelAnimationFrame(scrollFrame);
-      window.removeEventListener("scroll", queueFloatingStateSync);
-      document.removeEventListener("astro:page-load", queueFloatingStateSync);
-    };
-  }, []);
 
   useEffect(() => {
     const syncPathname = () => {
@@ -147,14 +122,7 @@ export function MarketingNav({ navLinks, pathname: initialPathname }: MarketingN
   }, []);
 
   return (
-    <nav
-      className={cn(
-        "relative rounded-lg border border-transparent px-2 transition-[transform,background-color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none md:rounded-none md:border-transparent md:bg-transparent md:px-0 md:transform-none",
-        isMobileNavFloating &&
-          "translate-y-2 border-white/15 bg-white/[0.03] motion-reduce:translate-y-0",
-      )}
-      aria-label="Primary"
-    >
+    <nav className="relative" aria-label="Primary">
       <div ref={navLinksRef} className="relative flex items-center gap-2 md:gap-3">
         {navLinks.map((link, index) => {
           const isActive = isMarketingNavLinkActive(pathname, link);
