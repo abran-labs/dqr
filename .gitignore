@@ -26,6 +26,7 @@ Thumbs.db
 
 # Local runtime caches
 .cache
+.playwright-mcp
 
 # Local sample screenshots (dev/test only)
 assets/
