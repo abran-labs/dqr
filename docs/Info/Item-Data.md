@@ -21,7 +21,7 @@ Gilded Skies (`GS`, 74 rows) is in the sheet, beyond DQR content (Northern Lands
 
 ## Dungeon codes
 
-Release order. In DQR everything is legacy by default.
+Release order. In DQR everything is legacy by default. Calculator dropdown, search, and name-match ties list **hardest first** (`NL` → `DT`).
 
 | Code | Dungeon |
 |---|---|
