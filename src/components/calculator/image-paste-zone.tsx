@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Image as ImageIcon, Loader2 } from "lucide-react";
 
+import { isGeckoEngine, readClipboardImage } from "@/lib/clipboard-image";
 import { scanTooltip, type TooltipScan } from "@/lib/ocr";
 import { cn } from "@/lib/utils";
 
@@ -104,6 +105,18 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
     e.target.value = "";
   };
 
+  const handleZoneClick = async () => {
+    if (status === "processing" || status === "error") return;
+    if (!isGeckoEngine((property, value) => CSS.supports(property, value))) {
+      const blob = await readClipboardImage(navigator.clipboard);
+      if (blob) {
+        await processImage(blob);
+        return;
+      }
+    }
+    fileInputRef.current?.click();
+  };
+
   const preview = (src: string, alt: string) => (
     <div className="relative w-48 overflow-hidden rounded border border-border/50 shadow-sm">
       <img src={src} alt={alt} className="h-32 w-full object-contain" />
@@ -139,7 +152,9 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
       }}
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
-      onClick={() => status !== "processing" && status !== "error" && fileInputRef.current?.click()}
+      onClick={() => {
+        void handleZoneClick();
+      }}
       className={cn(
         "relative cursor-pointer rounded-md border border-dashed p-4 text-center",
         dragOver
@@ -156,6 +171,7 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
         type="file"
         accept="image/*"
         onChange={handleFileChange}
+        onClick={(e) => e.stopPropagation()}
         className="hidden"
       />
 
