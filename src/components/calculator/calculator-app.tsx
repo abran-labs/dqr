@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { AutofillVote } from "@/components/calculator/autofill-vote";
 import { ImagePasteZone } from "@/components/calculator/image-paste-zone";
 import { ResultPanel } from "@/components/calculator/result-panel";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,8 @@ import { type TooltipScan } from "@/lib/ocr";
 import { extractTooltip, type ExtractedTooltip } from "@/lib/ocr-extract";
 import { pickTooltipStat, statFieldLabel } from "@/lib/ocr-stat";
 import { CALCULATOR_RESET_EVENT } from "@/lib/calculator-reset";
-import { announceStatsUpdate, logCalculation, submitFeedback } from "@/lib/stats-client";
+import { announceStatsUpdate, logCalculation } from "@/lib/stats-client";
+import { autofillFromExtract, type AutofillField } from "@/lib/autofill-feedback";
 
 /*
   Calculator island — AbyssFishLog-style form (docs/ai/design-system.md):
@@ -84,10 +86,11 @@ export function CalculatorApp() {
   const [upsTotalStr, setUpsTotalStr] = React.useState("");
   const [healthStr, setHealthStr] = React.useState("");
 
-  const [feedbackSent, setFeedbackSent] = React.useState<boolean | null>(null);
+  const [autofilled, setAutofilled] = React.useState<readonly AutofillField[]>([]);
   const [copied, setCopied] = React.useState(false);
   const [pasteGeneration, setPasteGeneration] = React.useState(0);
   const copiedTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loggedFromScan = React.useRef(false);
 
   const item = React.useMemo(() => ITEMS.find((i) => i.id === itemId), [itemId]);
   const pickedStat = React.useMemo(
@@ -105,24 +108,24 @@ export function CalculatorApp() {
     if (!filled) return false;
 
     setScan(next);
-    setFeedbackSent(null);
     setExtract(ex);
-    const picked = pickTooltipStat(ex, ex.item);
-    const bounds = ex.item ? statRange(ex.item.rows) : null;
-    const inBounds = (value: number | null): value is number =>
-      value !== null && (bounds === null || (value >= bounds.min && value <= bounds.max));
-    setItemId(ex.item?.id ?? "");
+    const fill = autofillFromExtract(ex);
+    setAutofilled(fill.fields);
+    setItemId(fill.itemId);
     setManualRarity(next.rarity);
-    if (ex.item?.class === "hybrid") {
-      setStatStr(inBounds(ex.physical) ? String(ex.physical) : "");
-      setSpellStr(inBounds(ex.spell) ? String(ex.spell) : "");
-    } else {
-      setStatStr(picked.value !== null ? String(picked.value) : "");
-      setSpellStr("");
-    }
-    setUpsDoneStr(ex.upsDone !== null ? String(ex.upsDone) : "");
-    setUpsTotalStr(ex.upsTotal !== null ? String(ex.upsTotal) : "");
-    setHealthStr(ex.health !== null ? String(ex.health) : "");
+    setStatStr(fill.statStr);
+    setSpellStr(fill.spellStr);
+    setUpsDoneStr(fill.upsDoneStr);
+    setUpsTotalStr(fill.upsTotalStr);
+    setHealthStr(fill.healthStr);
+    loggedFromScan.current = true;
+    setCalculationId(null);
+    void logCalculation(next).then((id) => {
+      if (id !== null) {
+        setCalculationId(id);
+        announceStatsUpdate();
+      }
+    });
     return true;
   }, []);
 
@@ -255,6 +258,7 @@ export function CalculatorApp() {
       copiedTimerRef.current = null;
     }
     loggedItemId.current = null;
+    loggedFromScan.current = false;
     setScan(null);
     setExtract(null);
     setCalculationId(null);
@@ -265,7 +269,7 @@ export function CalculatorApp() {
     setUpsDoneStr("");
     setUpsTotalStr("");
     setHealthStr("");
-    setFeedbackSent(null);
+    setAutofilled([]);
     setCopied(false);
     setPasteGeneration((generation) => generation + 1);
   }, []);
@@ -282,13 +286,13 @@ export function CalculatorApp() {
     };
   }, [resetCalculator]);
   React.useEffect(() => {
+    if (loggedFromScan.current) return;
     if (!item) {
       loggedItemId.current = null;
       return;
     }
     if (!result || loggedItemId.current === item.id) return;
     loggedItemId.current = item.id;
-    setFeedbackSent(null);
     const payload = scan ?? { imageDataUrl: null, nameText: "", processedText: "", rarity: null, rawText: "" };
     void logCalculation(payload).then((id) => {
       if (id !== null) {
@@ -298,7 +302,13 @@ export function CalculatorApp() {
     });
   }, [item, result, scan]);
 
-  const showFeedback = calculationId !== null && result !== null;
+  const filledFields = new Set(autofilled);
+  const voteFor = (field: AutofillField): React.ReactNode => {
+    if (!filledFields.has(field)) return null;
+    if (field !== "item" && itemId === "") return null;
+    return <AutofillVote calculationId={calculationId} field={field} />;
+  };
+
   const isDirty =
     itemId !== "" ||
     scan !== null ||
@@ -309,12 +319,6 @@ export function CalculatorApp() {
     upsDoneStr !== "" ||
     upsTotalStr !== "" ||
     healthStr !== "";
-
-  const sendFeedback = (accurate: boolean) => {
-    if (calculationId === null || feedbackSent !== null) return;
-    setFeedbackSent(accurate);
-    void submitFeedback(calculationId, accurate).then(() => announceStatsUpdate());
-  };
 
   const copyForDiscord = () => {
     if (!result || tracks.length === 0) return;
@@ -360,6 +364,7 @@ export function CalculatorApp() {
     tint?: string | undefined;
     value: string;
     error?: string | undefined;
+    vote: React.ReactNode;
   }) => (
     <div className="space-y-2">
       <label className="text-sm font-medium text-foreground" htmlFor={opts.id}>
@@ -377,6 +382,7 @@ export function CalculatorApp() {
         value={opts.value}
       />
       {opts.error && <p className="text-sm text-destructive">{opts.error}</p>}
+      {opts.vote}
     </div>
   );
 
@@ -434,6 +440,7 @@ export function CalculatorApp() {
                 No min/max data recorded for this item yet — the source sheet has no numbers for it.
               </p>
             )}
+            {voteFor("item")}
           </div>
 
           {resolution.status === "ambiguous" && (
@@ -458,6 +465,7 @@ export function CalculatorApp() {
             range: fields.ranges.total,
             value: upsTotalStr,
             error: fields.errors.total,
+            vote: voteFor("totalUpgrades"),
           })}
 
           {numberField({
@@ -467,6 +475,7 @@ export function CalculatorApp() {
             range: fields.total !== null ? { min: 0, max: fields.total } : null,
             value: upsDoneStr,
             error: fields.errors.done,
+            vote: voteFor("upgrades"),
           })}
 
           {item?.class === "hybrid" ? (
@@ -479,6 +488,7 @@ export function CalculatorApp() {
                 range: fields.ranges.stat,
                 tint: TRACK_CHROME.physical,
                 value: statStr,
+                vote: voteFor("physical"),
               })}
               {numberField({
                 error: fields.errors.spell,
@@ -488,6 +498,7 @@ export function CalculatorApp() {
                 range: fields.ranges.stat,
                 tint: TRACK_CHROME.spell,
                 value: spellStr,
+                vote: voteFor("spell"),
               })}
             </>
           ) : (
@@ -514,6 +525,13 @@ export function CalculatorApp() {
                     ? "These numbers don't match this item's glitched rows. Double-check them."
                     : `These numbers don't fit any rarity of the ${item.name} — double-check them (OCR can misread a digit).`
                   : undefined),
+              vote: filledFields.has("physical")
+                ? voteFor("physical")
+                : filledFields.has("spell")
+                  ? voteFor("spell")
+                  : fields.ranges.health
+                    ? null
+                    : voteFor("health"),
             })
           )}
 
@@ -526,6 +544,7 @@ export function CalculatorApp() {
               tint: TRACK_CHROME.health,
               value: healthStr,
               error: fields.errors.health,
+              vote: voteFor("health"),
             })
           )}
 
@@ -539,32 +558,6 @@ export function CalculatorApp() {
             />
           )}
 
-          {showFeedback && (
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              {feedbackSent === null && (
-                <>
-                  <span className="text-xs text-muted-foreground">Was this accurate?</span>
-                  <button
-                    className="text-xs font-medium text-green-400 underline hover:text-green-300"
-                    onClick={() => sendFeedback(true)}
-                    type="button"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    className="text-xs font-medium text-red-400 underline hover:text-red-300"
-                    onClick={() => sendFeedback(false)}
-                    type="button"
-                  >
-                    No
-                  </button>
-                </>
-              )}
-              {feedbackSent !== null && (
-                <span className="text-xs text-muted-foreground">Thanks</span>
-              )}
-            </div>
-          )}
         </form>
       </CardContent>
     </Card>

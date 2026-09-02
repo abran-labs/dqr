@@ -6,7 +6,7 @@
     GET  /api/stats?stat=items    -> shields.io endpoint JSON
     GET  /api/stats?stat=accuracy -> shields.io endpoint JSON
     POST /api/events              -> { type: "calculation" } -> { id }
-    POST /api/feedback            -> { calculationId, accurate } -> { success }
+    POST /api/feedback            -> { calculationId, field, accurate } -> { success }
 
   Run: bun run server/index.ts   (script `bun run stats`)
 
@@ -25,6 +25,9 @@ import { dirname, resolve } from "node:path";
 
 import { Database } from "bun:sqlite";
 
+import { parseFeedbackPayload } from "../src/lib/autofill-feedback";
+import { openStatsStore } from "./stats-store";
+
 const PORT = Number(process.env.PORT ?? 4322);
 const DB_PATH = resolve(process.env.DQR_STATS_DB ?? `${import.meta.dir}/data/stats.db`);
 const IMAGES_DIR = resolve(`${import.meta.dir}/data/images`);
@@ -34,57 +37,11 @@ const MAX_IMAGE_BYTES = 6 * 1024 * 1024;
 mkdirSync(dirname(DB_PATH), { recursive: true });
 mkdirSync(IMAGES_DIR, { recursive: true });
 
-const db = new Database(DB_PATH, { create: true });
-db.run(`
-  CREATE TABLE IF NOT EXISTS calculations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    accurate INTEGER,
-    verification TEXT,
-    ocr_raw_text TEXT,
-    ocr_processed_text TEXT,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-  );
-  CREATE INDEX IF NOT EXISTS idx_calculations_accurate ON calculations(accurate);
-`);
-// Older databases predate the logging columns.
-for (const column of ["ocr_raw_text TEXT", "ocr_processed_text TEXT"]) {
-  try {
-    db.run(`ALTER TABLE calculations ADD COLUMN ${column}`);
-  } catch {
-    // Column already exists.
-  }
+const store = openStatsStore(new Database(DB_PATH, { create: true }));
+
+function assertNever(value: never): never {
+  throw new Error(`unexpected: ${String(value)}`);
 }
-
-const insertCalculation = db.query(
-  "INSERT INTO calculations (accurate, verification, ocr_raw_text, ocr_processed_text) VALUES (NULL, NULL, ?1, ?2)",
-);
-const countCalculations = db.query<{ total: number }, []>("SELECT COUNT(*) AS total FROM calculations");
-const feedbackTotals = db.query<{ total: number; accurate: number }, []>(
-  "SELECT COUNT(*) AS total, COALESCE(SUM(accurate), 0) AS accurate FROM calculations WHERE accurate IS NOT NULL",
-);
-const applyFeedback = db.query(
-  "UPDATE calculations SET accurate = ?1 WHERE id = ?2 AND accurate IS NULL",
-);
-
-interface Aggregate {
-  readonly itemsCalculated: number;
-  readonly feedbackTotal: number;
-  readonly feedbackAccurate: number;
-  readonly accuracy: number | null;
-}
-
-const readAggregate = (): Aggregate => {
-  const items = countCalculations.get()?.total ?? 0;
-  const feedback = feedbackTotals.get();
-  const feedbackTotal = feedback?.total ?? 0;
-  const feedbackAccurate = feedback?.accurate ?? 0;
-  return {
-    accuracy: feedbackTotal > 0 ? Math.round((feedbackAccurate / feedbackTotal) * 1000) / 10 : null,
-    feedbackAccurate,
-    feedbackTotal,
-    itemsCalculated: items,
-  };
-};
 
 const shields = (label: string, message: string, color: string) => ({
   schemaVersion: 1,
@@ -151,11 +108,10 @@ const handleEvents = async (request: Request): Promise<Response> => {
   }
 
   lastEventAt.set(key, now);
-  const { lastInsertRowid } = insertCalculation.run(
+  const id = store.insertCalculation(
     typeof rawText === "string" ? rawText : null,
     typeof processedText === "string" ? processedText : null,
   );
-  const id = Number(lastInsertRowid);
 
   if (imageBytes !== null && dataUrlMatch !== null) {
     const extension = dataUrlMatch[1] === "jpeg" ? "jpg" : (dataUrlMatch[1] ?? "png");
@@ -172,21 +128,26 @@ const handleFeedback = async (request: Request): Promise<Response> => {
     return json({ error: "Invalid JSON body" }, 400);
   }
 
-  const { calculationId, accurate } = (body ?? {}) as Partial<Record<string, unknown>>;
-  if (typeof calculationId !== "number" || !Number.isInteger(calculationId) || typeof accurate !== "boolean") {
+  const parsed = parseFeedbackPayload(body);
+  if (parsed === null) {
     return json({ error: "Invalid request" }, 400);
   }
 
-  const changed = applyFeedback.run(accurate ? 1 : 0, calculationId).changes;
-  if (changed === 0) {
-    return json({ error: "Unknown calculation or feedback already recorded" }, 404);
+  const result = store.applyFieldFeedback(parsed.calculationId, parsed.field, parsed.accurate);
+  switch (result) {
+    case "ok":
+      return json({ success: true });
+    case "duplicate":
+    case "missing":
+      return json({ error: "Unknown calculation or feedback already recorded" }, 404);
+    default:
+      return assertNever(result);
   }
-  return json({ success: true });
 };
 
 const handleStats = (request: Request): Response => {
   const stat = new URL(request.url).searchParams.get("stat");
-  const aggregate = readAggregate();
+  const aggregate = store.readAggregate();
 
   if (stat === "items") {
     return json(shields("items calculated", aggregate.itemsCalculated.toLocaleString("en-US"), "orange"));

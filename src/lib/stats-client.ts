@@ -4,6 +4,8 @@
   Set PUBLIC_STATS_API_URL to override (e.g. a full tunnel URL).
 */
 
+import type { AutofillField } from "./autofill-feedback";
+
 export interface StatsSummary {
   readonly itemsCalculated: number;
   readonly feedbackTotal: number;
@@ -54,10 +56,14 @@ export async function logCalculation(scan: {
   }
 }
 
-export async function submitFeedback(calculationId: number, accurate: boolean): Promise<boolean> {
+export async function submitFeedback(
+  calculationId: number,
+  field: AutofillField,
+  accurate: boolean,
+): Promise<boolean> {
   try {
     const response = await fetch(`${BASE}/feedback`, {
-      body: JSON.stringify({ calculationId, accurate }),
+      body: JSON.stringify({ accurate, calculationId, field }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     });
