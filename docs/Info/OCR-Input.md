@@ -35,7 +35,7 @@ Label wording varies: `Physical Damage:` vs `Physical power:`, `Spell Power:` vs
 
 | Field | Required | Notes |
 |---|---|---|
-| Item name | yes | Fuzzy-matched against the item list |
+| Item name | preferred | Fuzzy-matched against the item list. If the title is missing, a unique stat fingerprint (upgrades + primary, plus health/rarity when they disambiguate) may identify the item; overlapping fingerprints stay unmatched. |
 | Physical damage | yes for War/Legendary | Current value, post-upgrades-so-far |
 | Spell power | yes for Mage | Current value |
 | Health | armor only | Green line |
@@ -63,7 +63,7 @@ Armor samples name a **piece** (`Midgardian Mage Helmet`) while the dataset has 
 - Shared Tesseract.js worker singleton, browser-side, no server route.
 - Same preprocess in browser and bun tests: `src/lib/ocr-pixels.ts` (Mitchell cubic color upscale, native threshold then nearest, white name plate). Not ImageMagick, not canvas `imageSmoothingQuality: "high"` (that bilinear path reads `739072` as `7139072`).
 - Two passes (color + threshold), merged text.
-- `similarity` / `bestMatch` fuzzy name lookup.
+- `similarity` / `bestMatch` fuzzy name lookup. Unique-stat fallback in `src/lib/item-guess.ts` when no title scores.
 - Upgrade pair repair in `src/lib/ocr-upgrades.ts`: dropped `/` concatenates equal halves (`2854028540`); `/` read as `1` (`28540128540`); doubled digit on done when it exceeds total.
 - Paste-anywhere, drag-drop, file picker, preview.
 

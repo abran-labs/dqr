@@ -15,6 +15,7 @@
 */
 
 import { ITEMS, type DqrItem } from "./dqr-items";
+import { guessItem } from "./item-guess";
 import type { TooltipScan } from "./ocr";
 import { parseUpgradePair, preferUpgradePair } from "./ocr-upgrades";
 
@@ -281,16 +282,29 @@ export function extractTooltip(scan: TooltipScan): ExtractedTooltip {
   const processed = parsePass(scan.processedText);
   // The white item name only survives the thresholded pass (the color pass
   // washes it out), so names come from processed first.
-  const item = passName(scan.nameText) ?? passName(scan.processedText) ?? passName(scan.rawText);
+  const named = passName(scan.nameText) ?? passName(scan.processedText) ?? passName(scan.rawText);
   const ups = preferUpgradePair(
     { done: raw.upsDone, total: raw.upsTotal },
     { done: processed.upsDone, total: processed.upsTotal },
   );
+  const health = raw.health ?? processed.health;
+  const physical = raw.physical ?? processed.physical;
+  const spell = raw.spell ?? processed.spell;
+  const item =
+    named ??
+    guessItem({
+      health,
+      physical,
+      rarity: scan.rarity,
+      spell,
+      upsDone: ups.done,
+      upsTotal: ups.total,
+    });
   return {
-    health: raw.health ?? processed.health,
+    health,
     item,
-    physical: raw.physical ?? processed.physical,
-    spell: raw.spell ?? processed.spell,
+    physical,
+    spell,
     title: titleLine(scan.nameText) ?? titleLine(scan.processedText) ?? titleLine(scan.rawText),
     upsDone: ups.done,
     upsTotal: ups.total,
