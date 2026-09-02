@@ -1,12 +1,20 @@
 # Dependencies
 node_modules
 
+# Local-only project guidance, scripts, and tests
+/AGENTS.md
+/scripts/
+*.test.*
+
 # Astro build output
 .astro
 dist
 
 # TypeScript
 *.tsbuildinfo
+
+# Local OCR language data; public copy is served from /public.
+/eng.traineddata
 
 # Env files
 .env

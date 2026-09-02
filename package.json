@@ -10,7 +10,6 @@
     "preview": "astro preview",
     "check": "astro check",
     "typecheck": "astro check",
-    "gen:items": "bun run scripts/build-dqr-items.ts",
     "stats": "bun run server/index.ts"
   },
   "dependencies": {

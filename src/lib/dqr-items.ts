@@ -1,6 +1,6 @@
 /*
   GENERATED FILE — do not edit by hand.
-  Source: docs/Info/DQR_Min_Max_List.csv via scripts/build-dqr-items.ts (bun run gen:items).
+  Source: docs/Info/DQR_Min_Max_List.csv.
   Data rules and rarity mapping: docs/Info/Item-Data.md.
 */
 
