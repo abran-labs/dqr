@@ -1,7 +1,8 @@
-import { IconBrandDiscord, IconBrandGithub } from "@tabler/icons-react";
+import { IconBrandDiscord, IconBrandGithub, IconBrandYoutube } from "@tabler/icons-react";
 import { Heart } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export type MarketingFooterNavLink = {
   label: string;
@@ -9,7 +10,7 @@ export type MarketingFooterNavLink = {
 };
 
 export type MarketingFooterSocialLink = {
-  id: "github" | "x" | "roblox" | "discord";
+  id: "github" | "x" | "youtube" | "roblox" | "discord";
   label: string;
   href: string;
 };
@@ -45,6 +46,8 @@ const socialIcon = (id: MarketingFooterSocialLink["id"]): ReactNode => {
       return <IconBrandGithub className="h-5 w-5" stroke={1.8} />;
     case "x":
       return <XIcon className="h-4 w-4" />;
+    case "youtube":
+      return <IconBrandYoutube className="h-5 w-5" stroke={1.8} />;
     case "roblox":
       return (
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -109,14 +112,14 @@ export function MarketingFooter({ brandLine, rightsLine, navLinks, socialLinks }
             </nav>
           ) : null}
 
-          <div className="flex items-center justify-end gap-1 sm:gap-4">
+          <div className="flex items-center justify-end gap-1">
             {socialLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 target="_blank"
                 rel="noreferrer"
-                className={socialLinkClass}
+                className={cn(socialLinkClass, link.id === "youtube" && "hidden md:inline-flex")}
                 aria-label={link.label}
               >
                 {socialIcon(link.id)}
