@@ -37,7 +37,7 @@ Thumbs.db
 .playwright-mcp
 
 # Local sample screenshots (dev/test only)
-assets/
+/assets/
 
 # Private workflow/agent docs. Public game facts: docs/Info/
 /docs/*
