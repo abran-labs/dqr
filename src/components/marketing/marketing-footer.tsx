@@ -1,4 +1,4 @@
-import { IconBrandDiscord, IconBrandGithub, IconBrandYoutube } from "@tabler/icons-react";
+import { IconBrandDiscord, IconBrandGithub } from "@tabler/icons-react";
 import { Heart } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ export type MarketingFooterNavLink = {
 };
 
 export type MarketingFooterSocialLink = {
-  id: "github" | "x" | "youtube" | "roblox" | "discord";
+  id: "github" | "x" | "roblox" | "discord";
   label: string;
   href: string;
 };
@@ -45,8 +45,6 @@ const socialIcon = (id: MarketingFooterSocialLink["id"]): ReactNode => {
       return <IconBrandGithub className="h-5 w-5" stroke={1.8} />;
     case "x":
       return <XIcon className="h-4 w-4" />;
-    case "youtube":
-      return <IconBrandYoutube className="h-5 w-5" stroke={1.8} />;
     case "roblox":
       return (
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -81,16 +79,13 @@ export function MarketingFooter({ brandLine, rightsLine, navLinks, socialLinks }
   return (
     <footer className="relative z-[1] px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto h-px w-full max-w-[1120px] bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,hsl(var(--muted))_78%,transparent),transparent)]" />
-      <div className="mx-auto grid w-full max-w-[1120px] grid-cols-[minmax(0,1fr)_auto] items-end gap-x-2 gap-y-4 pt-7 sm:gap-x-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+      <div className="mx-auto grid w-full max-w-[1120px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-x-2 gap-y-4 pt-7 sm:gap-x-6">
         <div className="grid gap-1.5 text-sm text-muted-foreground">
           <p>{brandLine}</p>
           <p>{rightsLine}</p>
         </div>
 
-        <div className="col-span-2 flex flex-col items-center text-center md:col-span-1 md:col-start-2 md:row-start-1">
-          <p className="mb-2 text-sm text-muted-foreground">
-            If you find this useful, consider supporting the project.
-          </p>
+        <div className="col-start-2 row-start-1 flex flex-col items-center text-center">
           <Button
             asChild
             variant="secondary"
@@ -103,7 +98,7 @@ export function MarketingFooter({ brandLine, rightsLine, navLinks, socialLinks }
           </Button>
         </div>
 
-        <div className="col-start-2 row-start-1 grid justify-items-end gap-3 sm:gap-4 md:col-start-3">
+        <div className="col-start-3 row-start-1 grid justify-items-end gap-3 sm:gap-4">
           {navLinks.length > 0 ? (
             <nav className="flex flex-wrap items-center justify-end gap-3 sm:gap-4" aria-label="Footer">
               {navLinks.map((link) => (
@@ -114,7 +109,7 @@ export function MarketingFooter({ brandLine, rightsLine, navLinks, socialLinks }
             </nav>
           ) : null}
 
-          <div className="flex flex-wrap items-center justify-end gap-1 sm:gap-4">
+          <div className="flex items-center justify-end gap-1 sm:gap-4">
             {socialLinks.map((link) => (
               <a
                 key={link.label}
