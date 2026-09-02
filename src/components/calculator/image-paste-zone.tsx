@@ -118,11 +118,15 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
         setZoomed(false);
       }}
     >
-      <div className="relative aspect-video w-full max-w-2xl overflow-hidden rounded-md border border-border bg-black/50 shadow-2xl">
-        <img src={src} alt={alt} className="h-full w-full object-contain" />
-      </div>
-      <div className="pointer-events-none absolute right-4 top-4 rounded bg-black/50 px-3 py-1.5 text-sm text-white/50">
-        Click anywhere to close
+      <div className="flex max-h-full max-w-2xl flex-col items-center gap-3">
+        <img
+          src={src}
+          alt={alt}
+          className="block max-h-[min(80vh,24rem)] w-auto max-w-full rounded-md border border-border object-contain shadow-2xl"
+        />
+        <div className="pointer-events-none rounded bg-black/50 px-3 py-1.5 text-sm text-white/50">
+          Click anywhere to close
+        </div>
       </div>
     </div>
   );
