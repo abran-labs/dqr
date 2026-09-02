@@ -409,24 +409,26 @@ export function CalculatorApp() {
 
         <form
           autoComplete="off"
-          className="relative space-y-4 rounded-lg border border-border bg-surface-lowest p-4"
+          className="space-y-4 rounded-lg border border-border bg-surface-lowest p-4"
           onSubmit={(event) => event.preventDefault()}
         >
-          {isDirty && (
-            <Button
-              className="absolute right-3 top-3 h-auto px-1 py-0 hover:bg-transparent"
-              onClick={resetCalculator}
-              size="sm"
-              type="button"
-              variant="ghost"
-            >
-              Clear
-            </Button>
-          )}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground" htmlFor="item-picker">
-              Item
-            </label>
+            <div className="flex items-center justify-between gap-2">
+              <label className="text-sm font-medium text-foreground" htmlFor="item-picker">
+                Item
+              </label>
+              {isDirty && (
+                <Button
+                  className="h-auto px-1 py-0 hover:bg-transparent"
+                  onClick={resetCalculator}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
             <Combobox
               onChange={handleItemChange}
               options={itemOptions}
