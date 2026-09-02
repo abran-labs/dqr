@@ -66,6 +66,7 @@ Armor samples name a **piece** (`Midgardian Mage Helmet`) while the dataset has 
 - `similarity` / `bestMatch` fuzzy name lookup. Unique-stat fallback in `src/lib/item-guess.ts` when no title scores.
 - Upgrade pair repair in `src/lib/ocr-upgrades.ts`: dropped `/` concatenates equal halves (`2854028540`); `/` read as `1` (`28540128540`); doubled digit on done when it exceeds total.
 - Paste-anywhere, drag-drop, file picker, preview.
+- Field-targeted paste (`src/lib/ocr-field.ts`): pasting an image while a number input is focused reads only that field's line (tooltip crop) or the bare number (digits-only crop) and drops it in unvalidated — the form's live range check flags implausible reads. Number inputs accept digits only.
 
 DQR numbers are 8–10 digits; one OCR digit error is catastrophic. Cross-check every extracted number against the matched item's plausible range before accepting.
 

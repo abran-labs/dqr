@@ -20,7 +20,8 @@ import {
   upsRange,
   type NumberRange,
 } from "@/lib/pot-utils";
-import { type TooltipScan } from "@/lib/ocr";
+import { type TooltipScan, scanTooltip } from "@/lib/ocr";
+import { readFieldPaste, type PasteField } from "@/lib/ocr-field";
 import { extractTooltip, type ExtractedTooltip } from "@/lib/ocr-extract";
 import { pickTooltipStat, statFieldLabel } from "@/lib/ocr-stat";
 import { CALCULATOR_RESET_EVENT } from "@/lib/calculator-reset";
@@ -94,7 +95,13 @@ export function CalculatorApp() {
   const [autofilled, setAutofilled] = React.useState<readonly AutofillField[]>([]);
   const [copied, setCopied] = React.useState(false);
   const [pasteGeneration, setPasteGeneration] = React.useState(0);
+  const [fieldNote, setFieldNote] = React.useState<{
+    id: string;
+    message: string;
+    tone: "info" | "error";
+  } | null>(null);
   const copiedTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const noteTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const loggedFromScan = React.useRef(false);
 
   const item = React.useMemo(() => ITEMS.find((i) => i.id === itemId), [itemId]);
@@ -146,6 +153,59 @@ export function CalculatorApp() {
     });
     return true;
   }, []);
+
+  // Paste an image straight into one field: read just that field's value
+  // (docs/Info/OCR-Input.md labels, or the bare number in a zoomed crop)
+  // and drop it in — range checks stay with the form's live validation.
+  const pasteIntoField = React.useCallback(
+    async (field: PasteField, id: string, blob: Blob) => {
+      if (noteTimerRef.current !== null) {
+        clearTimeout(noteTimerRef.current);
+        noteTimerRef.current = null;
+      }
+      setFieldNote({ id, message: "Scanning image…", tone: "info" });
+      const fail = (message: string) => {
+        setFieldNote({ id, message, tone: "error" });
+        noteTimerRef.current = setTimeout(() => {
+          noteTimerRef.current = null;
+          setFieldNote(null);
+        }, 5000);
+      };
+      try {
+        const scan = await scanTooltip(blob);
+        const read = readFieldPaste(field, scan, item ?? null);
+        if (read.value === null) {
+          fail("Couldn't read a number from that image — paste the value manually.");
+          return;
+        }
+        if (read.done !== null) setUpsDoneStr(String(read.done));
+        if (read.total !== null) setUpsTotalStr(String(read.total));
+        const value = String(read.value);
+        switch (field) {
+          case "upsDone":
+            setUpsDoneStr(value);
+            break;
+          case "upsTotal":
+            setUpsTotalStr(value);
+            break;
+          case "stat":
+            setStatStr(value);
+            break;
+          case "spell":
+            setSpellStr(value);
+            break;
+          case "health":
+            setHealthStr(value);
+            break;
+        }
+        setFieldNote(null);
+      } catch (err) {
+        console.error("Field OCR failed:", err);
+        fail("Couldn't read that image — paste the value manually.");
+      }
+    },
+    [item],
+  );
 
   const handleItemChange = (nextId: string) => {
     if (extract !== null && itemId === "" && !autofilled.includes("item")) {
@@ -286,6 +346,11 @@ export function CalculatorApp() {
       clearTimeout(copiedTimerRef.current);
       copiedTimerRef.current = null;
     }
+    if (noteTimerRef.current !== null) {
+      clearTimeout(noteTimerRef.current);
+      noteTimerRef.current = null;
+    }
+    setFieldNote(null);
     loggedItemId.current = null;
     loggedFromScan.current = false;
     setScan(null);
@@ -389,6 +454,7 @@ export function CalculatorApp() {
     id: string;
     label: React.ReactNode;
     onChange: (value: string) => void;
+    pasteField: PasteField;
     range: NumberRange | null;
     tint?: string | undefined;
     value: string;
@@ -401,6 +467,7 @@ export function CalculatorApp() {
         ? undefined
         : autofillFailureMessage(opts.autofillField, opts.value, missingFields));
     const errorId = `${opts.id}-error`;
+    const note = fieldNote?.id === opts.id ? fieldNote : null;
 
     return (
       <div className="space-y-2">
@@ -409,13 +476,32 @@ export function CalculatorApp() {
         </label>
         <Input
           autoComplete="off"
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={error ? errorId : note ? `${opts.id}-note` : undefined}
           aria-invalid={error ? true : undefined}
           className={cn(error && "border-destructive")}
           disabled={!item}
           id={opts.id}
           inputMode="numeric"
-          onChange={(e) => opts.onChange(e.target.value)}
+          onChange={(e) => {
+            // Digits only — a stray letter must not silently blank the
+            // parsed value out of the calculation. When filtering changes
+            // nothing, the controlled input keeps the typed junk unless
+            // the DOM is reset here.
+            const next = e.target.value.replace(/\D+/g, "");
+            if (e.target.value !== next) e.target.value = next;
+            opts.onChange(next);
+          }}
+          onPaste={(e) => {
+            const image = Array.from(e.clipboardData?.items ?? []).find((entry) =>
+              entry.type.startsWith("image/"),
+            );
+            if (image === undefined) return;
+            // Field paste wins over the whole-form paste zone.
+            e.preventDefault();
+            e.stopPropagation();
+            const blob = image.getAsFile();
+            if (blob !== null) void pasteIntoField(opts.pasteField, opts.id, blob);
+          }}
           placeholder={placeholderFor(opts.range)}
           style={opts.tint ? { color: opts.tint } : undefined}
           value={opts.value}
@@ -423,6 +509,15 @@ export function CalculatorApp() {
         {error && (
           <p className="text-sm text-destructive" id={errorId} role="alert">
             {error}
+          </p>
+        )}
+        {note && (
+          <p
+            className={cn("text-sm", note.tone === "error" ? "text-destructive" : "text-muted-foreground")}
+            id={`${opts.id}-note`}
+            role="status"
+          >
+            {note.message}
           </p>
         )}
         {opts.vote}
@@ -507,6 +602,7 @@ export function CalculatorApp() {
             id: "ups-total",
             label: "Total upgrades",
             onChange: setUpsTotalStr,
+            pasteField: "upsTotal",
             range: fields.ranges.total,
             value: upsTotalStr,
             error: fields.errors.total,
@@ -518,6 +614,7 @@ export function CalculatorApp() {
             id: "ups-done",
             label: "Upgrades",
             onChange: setUpsDoneStr,
+            pasteField: "upsDone",
             range: fields.total !== null ? { min: 0, max: fields.total } : null,
             value: upsDoneStr,
             error: fields.errors.done,
@@ -532,6 +629,7 @@ export function CalculatorApp() {
                 id: "stat-input",
                 label: "Physical Damage",
                 onChange: setStatStr,
+                pasteField: "stat",
                 range: fields.ranges.stat,
                 tint: TRACK_CHROME.physical,
                 value: statStr,
@@ -543,6 +641,7 @@ export function CalculatorApp() {
                 id: "spell-input",
                 label: "Spell Power",
                 onChange: setSpellStr,
+                pasteField: "spell",
                 range: fields.ranges.stat,
                 tint: TRACK_CHROME.spell,
                 value: spellStr,
@@ -555,6 +654,7 @@ export function CalculatorApp() {
               id: "stat-input",
               label: statLabel,
               onChange: setStatStr,
+              pasteField: "stat",
               range: fields.ranges.stat,
               tint:
                 item === undefined
@@ -590,6 +690,7 @@ export function CalculatorApp() {
               id: "health-input",
               label: "Health",
               onChange: setHealthStr,
+              pasteField: "health",
               range: fields.ranges.health,
               tint: TRACK_CHROME.health,
               value: healthStr,
