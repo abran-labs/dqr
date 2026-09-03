@@ -378,6 +378,13 @@ export function describeRows(
  * classifiable tooltip rows locates it without template matching.
  */
 export function cropToCard(src: PixelBuffer, rows: readonly TextRow[]): PixelBuffer | null {
+  // A chrome-panel detector was tried here (vote for the dominant dark rarity
+  // hue, keep the block where it dominates) and measured WORSE: 96.8% -> 89.9%.
+  // It clipped real content, because the rarity tint continues past the card
+  // into the scene behind it and the panel edge is not where the hue stops.
+  // Junk rows are handled at selection time instead - see `bestCandidate` in
+  // `ocr-rows.ts`, which ranks rows by confidence, ink and geometry rather
+  // than trusting whichever row appears first.
   const useful = rows.filter((r) => r.kind !== null);
   if (useful.length < 2) return null;
 

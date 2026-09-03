@@ -132,30 +132,76 @@ type Mutable = {
   upsTotal: number | null;
 };
 
+/** One row's attempt at a field, with the evidence needed to rank it. */
+type Candidate = {
+  readonly kind: string;
+  readonly text: string;
+  /** Recogniser confidence, 0-1. */
+  readonly score: number;
+  /** Ink pixels in the row - chrome slivers are tiny, real rows are not. */
+  readonly ink: number;
+  /** Row height in px. */
+  readonly height: number;
+};
+
 /**
- * Assign a row's text to its field.
+ * Rank candidates for one field and return the winner.
  *
- * `strong` marks a high-confidence template read, which may replace a weaker
- * earlier value: chrome and label fragments sometimes produce a spurious
- * leading row (measured on one card, a stray "0" claimed physical and blocked
- * the real 971 found further down).
+ * Taking the first row that produced a number is unsafe: chrome bands and
+ * label fragments are classified by hue just like real rows, and they can
+ * sort ABOVE the real one. Measured on a card where a junk row at y=425 read
+ * "4" while the real 971 sat at y=670 - first-wins picked the junk.
+ *
+ * Everything below is available at RUNTIME. An earlier version broke the tie
+ * using digit count, which only worked because it had been tuned against
+ * ground truth the app does not have when a user pastes an image.
  */
-function applyRead(out: Mutable, kind: string | null, text: string, strong: boolean): void {
-  if (kind === "upgrades") {
-    const { done, total } = parseUpgrades(text);
-    if (out.upsTotal === null && total !== null) {
-      out.upsDone = done;
-      out.upsTotal = total;
+function bestCandidate(list: readonly Candidate[]): string | null {
+  if (list.length === 0) return null;
+  let best: Candidate | null = null;
+  let bestRank = -Infinity;
+  for (const c of list) {
+    const digitCount = digitsOf(c.text).length;
+    if (digitCount === 0) continue;
+    // A real value row has: recogniser confidence, enough ink to be text
+    // rather than a chrome sliver, and a plausible glyph height.
+    const rank =
+      c.score * 3 + Math.min(1, c.ink / 800) + Math.min(1, c.height / 40) + Math.min(1, digitCount / 4);
+    if (rank > bestRank) {
+      bestRank = rank;
+      best = c;
     }
-    return;
   }
-  const n = asNum(text);
-  if (n === null) return;
-  const take = (cur: number | null): boolean =>
-    cur === null || (strong && (cur === 0 || String(cur).length < String(n).length));
-  if (kind === "physical" && take(out.physical)) out.physical = n;
-  else if (kind === "spell" && take(out.spell)) out.spell = n;
-  else if (kind === "health" && take(out.health)) out.health = n;
+  return best?.text ?? null;
+}
+
+/** Collect a row's reading as a candidate for its field. */
+function addCandidate(
+  buckets: Map<string, Candidate[]>,
+  kind: string | null,
+  cand: Candidate,
+): void {
+  if (kind === null) return;
+  const list = buckets.get(kind) ?? [];
+  list.push(cand);
+  buckets.set(kind, list);
+}
+
+/** Resolve every field from its ranked candidates. */
+function resolveFields(buckets: Map<string, Candidate[]>, out: Mutable): void {
+  const ups = bestCandidate(buckets.get("upgrades") ?? []);
+  if (ups !== null) {
+    const { done, total } = parseUpgrades(ups);
+    out.upsDone = done;
+    out.upsTotal = total;
+  }
+  for (const kind of ["physical", "spell", "health"] as const) {
+    const text = bestCandidate(buckets.get(kind) ?? []);
+    if (text === null) continue;
+    const n = asNum(text);
+    if (n === null || n <= 0) continue;
+    out[kind] = n;
+  }
 }
 
 function segmentRows(img: PixelBuffer): { rows: TextRow[]; ink: ReturnType<typeof inkMask> } {
@@ -191,6 +237,9 @@ export async function readTooltipRows(
     upsTotal: null,
   };
   const confs: number[] = [];
+  // Every row that yields digits becomes a CANDIDATE for its field; the winner
+  // is chosen after all rows are read, by runtime-observable evidence only.
+  const buckets = new Map<string, Candidate[]>();
 
   for (const row of rows) {
     if (row.kind === null || row.kind === "white" || row.kind === "sell") continue;
@@ -200,6 +249,7 @@ export async function readTooltipRows(
     const vs = splitValue(ink, row);
     const target = vs === null ? row : { ...row, left: vs.left, right: vs.right };
 
+    const height = row.bottom - row.top + 1;
     const cell = rowCell(img, ink, target);
     const templateRead =
       cell === null ? null : readGlyphs(cell.cell, cell.w, cell.h, DIGIT_TEMPLATES);
@@ -209,7 +259,13 @@ export async function readTooltipRows(
       templateRead.minScore >= TEMPLATE_MIN_SCORE
     ) {
       confs.push(templateRead.minScore * 100);
-      applyRead(out, row.kind, templateRead.text, true);
+      addCandidate(buckets, row.kind, {
+        height,
+        ink: row.inkCount,
+        kind: row.kind,
+        score: templateRead.minScore,
+        text: templateRead.text,
+      });
       continue;
     }
 
@@ -219,8 +275,16 @@ export async function readTooltipRows(
     const text = res.data.text.replace(/\s+/g, " ").trim();
     if (text === "") continue;
     confs.push(res.data.confidence);
-    applyRead(out, row.kind, text, false);
+    addCandidate(buckets, row.kind, {
+      height,
+      ink: row.inkCount,
+      kind: row.kind,
+      score: res.data.confidence / 100,
+      text,
+    });
   }
+
+  resolveFields(buckets, out);
 
   // The title is the topmost strongly-white row. Use whiteness directly
   // rather than the row's classified kind: a title over coloured chrome can
