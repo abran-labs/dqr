@@ -5,7 +5,6 @@ import "@fontsource/manrope/600.css";
 import { ClientRouter } from "astro:transitions";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import type { MarketingFooterNavLink, MarketingFooterSocialLink } from "@/components/marketing/marketing-footer";
-import { InGameLanguageSelect } from "@/components/marketing/in-game-language-select";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import type { SiteNavLink } from "@/components/marketing/site-nav-links";
 import { StarsBackground } from "@/components/marketing/stars-background";
@@ -69,9 +68,6 @@ const pathname = Astro.url.pathname;
             navLinks={navLinks}
             pathname={pathname}
           />
-        </div>
-        <div class="pointer-events-auto mx-auto hidden w-full max-w-3xl justify-end pb-1 md:fixed md:right-4 md:top-3 md:z-[3] md:flex md:w-auto md:pb-0">
-          <InGameLanguageSelect client:load transition:persist="ocr-lang" />
         </div>
         <div class="pb-1 md:pb-2">
           <StatsStrip client:load transition:persist="stats-strip" />
