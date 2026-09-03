@@ -287,9 +287,18 @@ export function extractTooltip(scan: TooltipScan): ExtractedTooltip {
     { done: raw.upsDone, total: raw.upsTotal },
     { done: processed.upsDone, total: processed.upsTotal },
   );
-  const health = raw.health ?? processed.health;
-  const physical = raw.physical ?? processed.physical;
-  const spell = raw.spell ?? processed.spell;
+  // Structured reads from `ocr-rows.ts` win when present. `undefined` means
+  // the scan came from a caller that never ran the row reader (tests, legacy
+  // fixtures), so fall back to parsing the text passes.
+  const health = scan.health !== undefined ? scan.health : (raw.health ?? processed.health);
+  const physical =
+    scan.physical !== undefined ? scan.physical : (raw.physical ?? processed.physical);
+  const spell = scan.spell !== undefined ? scan.spell : (raw.spell ?? processed.spell);
+  const structuredUps =
+    scan.upsTotal !== undefined || scan.upsDone !== undefined
+      ? { done: scan.upsDone ?? null, total: scan.upsTotal ?? null }
+      : null;
+  const finalUps = structuredUps ?? ups;
   const item =
     named ??
     guessItem({
@@ -297,8 +306,8 @@ export function extractTooltip(scan: TooltipScan): ExtractedTooltip {
       physical,
       rarity: scan.rarity,
       spell,
-      upsDone: ups.done,
-      upsTotal: ups.total,
+      upsDone: finalUps.done,
+      upsTotal: finalUps.total,
     });
   return {
     health,
@@ -306,7 +315,7 @@ export function extractTooltip(scan: TooltipScan): ExtractedTooltip {
     physical,
     spell,
     title: titleLine(scan.nameText) ?? titleLine(scan.processedText) ?? titleLine(scan.rawText),
-    upsDone: ups.done,
-    upsTotal: ups.total,
+    upsDone: finalUps.done,
+    upsTotal: finalUps.total,
   };
 }

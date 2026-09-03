@@ -2,15 +2,23 @@ import Tesseract from "tesseract.js";
 
 import type { Rarity } from "./dqr-items";
 import { asDataUrl, prepareTooltipCanvases } from "./ocr-canvas";
-import { DEFAULT_OCR_LANG, readOcrLang, type OcrLang } from "./ocr-lang";
+import { readTooltipRows } from "./ocr-rows";
 
 /*
   Client-side OCR for Dungeon Quest Reborn tooltips.
 
-  Three sequential Tesseract passes (one worker — parallel recognize deadlocks):
-    1. Mitchell-upscaled color — numbers and some labels (`ocr-pixels.ts`).
-    2. Native-threshold then nearest upscale — numbers; names on high-contrast cards.
-    3. White name plate (top band) — white title on purple Epic cards (assets/4.png).
+  Structure-first (`ocr-rows.ts`): find the card, split it into text rows,
+  identify each row by the colour DQR renders it in, then read only that row's
+  value as digits — via fixed-font template matching, falling back to Tesseract
+  when glyph cutting is ambiguous.
+
+  Measured on the labeled corpus (bench/): 96.8% field accuracy, 2 wrong values,
+  versus 75.9% / 11 wrong for the previous whole-card text pipeline.
+
+  English only. Tooltip VALUES are Arabic digits in every locale, so the
+  structured reader works regardless of the in-game language; only the item
+  name needs English, and a missed name falls back to the numeric fingerprint
+  in `item-guess.ts`.
 
   See docs/Info/OCR-Input.md.
 */
@@ -28,40 +36,31 @@ export interface TooltipScan {
   readonly rarity: Rarity | null;
   /** White-glyph pass (item name + REQ Lvl). Empty when the plate could not be built. */
   readonly nameText: string;
+
+  /* Structured reads from `ocr-rows.ts`. `undefined` means this scan came
+     from a caller that did not run the row reader (tests, legacy fixtures),
+     so `ocr-extract.ts` falls back to parsing the text passes. `null` means
+     the reader ran and genuinely found nothing. */
+  readonly physical?: number | null;
+  readonly spell?: number | null;
+  readonly health?: number | null;
+  readonly upsDone?: number | null;
+  readonly upsTotal?: number | null;
+  /** Mean per-row recogniser confidence, 0-100. */
+  readonly confidence?: number | null;
 }
 
-// Shared worker. English uses uncompressed /eng.traineddata (gzip off —
+// Shared worker. English uses the uncompressed /eng.traineddata (gzip off —
 // tesseract.js would otherwise request a .gz that 404s and kill the worker).
-// Other languages download from the tesseract.js CDN on first use.
 let workerPromise: Promise<Tesseract.Worker> | null = null;
-let workerLang: OcrLang | null = null;
-
-async function createLangWorker(
-  lang: OcrLang,
-  previous: Promise<Tesseract.Worker> | null,
-): Promise<Tesseract.Worker> {
-  if (previous !== null) {
-    let old: Tesseract.Worker | null = null;
-    try {
-      old = await previous;
-    } catch (err) {
-      if (!(err instanceof Error)) throw err;
-    }
-    if (old !== null) await old.terminate();
-  }
-  const bundledEnglish = lang === DEFAULT_OCR_LANG;
-  return Tesseract.createWorker(lang, undefined, {
-    gzip: !bundledEnglish,
-    logger: () => {},
-    ...(bundledEnglish ? { langPath: "/" } : {}),
-  });
-}
 
 async function getWorker(): Promise<Tesseract.Worker> {
-  const lang = readOcrLang();
-  if (workerPromise !== null && workerLang === lang) return workerPromise;
-  workerPromise = createLangWorker(lang, workerPromise);
-  workerLang = lang;
+  if (workerPromise !== null) return workerPromise;
+  workerPromise = Tesseract.createWorker("eng", undefined, {
+    gzip: false,
+    langPath: "/",
+    logger: () => {},
+  });
   return workerPromise;
 }
 
@@ -69,7 +68,6 @@ async function getWorker(): Promise<Tesseract.Worker> {
 export function invalidateWorker(): void {
   const previous = workerPromise;
   workerPromise = null;
-  workerLang = null;
   if (previous === null) return;
   void previous.then(
     (worker) => worker.terminate(),
@@ -86,23 +84,44 @@ export async function scanTooltip(imageSource: File | Blob | string): Promise<To
 
     const prepared = await prepareTooltipCanvases(imageSource);
 
-    const normalRun = await worker.recognize(prepared.color);
-    const processedRun = await worker.recognize(prepared.threshold);
-    const nameRun = prepared.namePlate === null ? null : await worker.recognize(prepared.namePlate);
+    // Structured read. Falls back to the legacy whole-card text pass only
+    // when the image could not be decoded to pixels (cross-origin canvas).
+    if (prepared.pixels === null) {
+      const normalRun = await worker.recognize(prepared.color);
+      const rawText = normalRun.data.text.trim();
+      if (rawText === "") throw new Error("No item data found in image.");
+      return {
+        imageDataUrl: asDataUrl(prepared.color),
+        nameText: "",
+        processedText: rawText,
+        rarity: prepared.rarity,
+        rawText,
+      };
+    }
 
-    const rawText = normalRun.data.text.trim();
-    const processedText = processedRun.data.text.trim();
-    const nameText = nameRun?.data.text.trim() ?? "";
-    if (rawText === "" && processedText === "") {
+    const reads = await readTooltipRows(worker, prepared.pixels);
+    const found =
+      reads.physical !== null ||
+      reads.spell !== null ||
+      reads.health !== null ||
+      reads.upsTotal !== null;
+    if (!found && reads.nameText === "") {
       throw new Error("No item data found in image.");
     }
 
     return {
+      confidence: reads.confidence,
+      health: reads.health,
       imageDataUrl: asDataUrl(prepared.color),
-      nameText,
-      processedText,
+      nameText: reads.nameText,
+      physical: reads.physical,
+      // Kept for the stats log and for `ocr-field.ts` bare-number crops.
+      processedText: reads.nameText,
       rarity: prepared.rarity,
-      rawText,
+      rawText: reads.nameText,
+      spell: reads.spell,
+      upsDone: reads.upsDone,
+      upsTotal: reads.upsTotal,
     };
   };
 

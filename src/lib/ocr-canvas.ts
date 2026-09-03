@@ -9,10 +9,13 @@ import { detectRarityFromPixels, type PixelBuffer } from "./rarity-color";
 type ImageSource = File | Blob | string;
 
 export type PreparedTooltip = {
+  /** Upscaled colour canvas. Logged with the stats API, and the OCR input on
+   *  the fallback path when pixels are unavailable. */
   readonly color: string | HTMLCanvasElement;
-  readonly namePlate: HTMLCanvasElement | null;
   readonly rarity: Rarity | null;
-  readonly threshold: string | HTMLCanvasElement;
+  /** Native RGBA for the structured reader (`ocr-rows.ts`). Null when the
+   *  image could not be decoded to pixels (tainted cross-origin canvas). */
+  readonly pixels: PixelBuffer | null;
 };
 
 async function loadImage(imageSource: ImageSource): Promise<HTMLImageElement | null> {
@@ -68,14 +71,13 @@ export async function prepareTooltipCanvases(imageSource: ImageSource): Promise<
   const native = await nativeBuffer(imageSource);
   if (!native) {
     const url = blobUrl(imageSource);
-    return { color: url, namePlate: null, rarity: null, threshold: url };
+    return { color: url, pixels: null, rarity: null };
   }
   const passes = prepareTooltipPasses(native);
   return {
     color: bufferToCanvas(passes.color),
-    namePlate: passes.namePlate === null ? null : bufferToCanvas(passes.namePlate),
+    pixels: native,
     rarity: detectRarityFromPixels(native),
-    threshold: bufferToCanvas(passes.threshold),
   };
 }
 
