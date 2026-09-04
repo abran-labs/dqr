@@ -312,6 +312,8 @@ export function describeRows(
   const { mask, width } = ink;
   const out: TextRow[] = [];
 
+  const colInk = new Uint8Array(width);
+
   for (const band of bands) {
     let left = width;
     let right = -1;
@@ -319,12 +321,14 @@ export function describeRows(
     let white = 0;
     let sx = 0;
     let sy = 0;
+    colInk.fill(0);
 
     for (let y = band.top; y <= band.bottom; y += 1) {
       const base = y * width;
       for (let x = 0; x < width; x += 1) {
         if (mask[base + x] !== 1) continue;
         inkCount += 1;
+        colInk[x] = 1;
         if (x < left) left = x;
         if (x > right) right = x;
         const i = (base + x) * 4;
@@ -339,6 +343,43 @@ export function describeRows(
       }
     }
     if (right < 0 || inkCount === 0) continue;
+
+    // Reject bands whose SHAPE cannot be text, before asking what colour they
+    // are. Hue alone cannot do this: card chrome shares hues with real fields
+    // (gold Legendary chrome sits on `sell`'s 50deg, red Ultimate chrome on
+    // `physical`'s 6deg), so a colour-only classifier hands chrome a field and
+    // it competes with the real row.
+    //
+    // Text has a distinctive footprint, measured across the corpus:
+    //   real text rows : 44-79% of columns inked, 9-21 separate column runs
+    //   chrome slivers : 0.4-3.6% of columns, 2-4 runs, spanning the full card
+    //                    width - the card's own left/right border with nothing
+    //                    between it
+    //   divider bars   : 52-92% ink density in a SINGLE run, every column full
+    // The gap between the groups is wide (3.6% vs 5.6% column fill), so this
+    // does not need a finely tuned threshold.
+    let cols = 0;
+    let runs = 0;
+    let prevOn = false;
+    for (let x = left; x <= right; x += 1) {
+      const on = colInk[x] === 1;
+      if (on) {
+        cols += 1;
+        if (!prevOn) runs += 1;
+      }
+      prevOn = on;
+    }
+    const bandW = right - left + 1;
+    const bandH = band.bottom - band.top + 1;
+    const colFill = bandW > 0 ? cols / bandW : 0;
+    const density = bandW > 0 && bandH > 0 ? inkCount / (bandW * bandH) : 0;
+
+    // A wide band with almost no inked columns is border bleed, not a line of
+    // text. Requiring several runs as well keeps a legitimately short value
+    // (a lone "7") from being discarded.
+    if (colFill < 0.05 && runs <= 4) continue;
+    // A near-solid single stripe is a divider rule.
+    if (density > 0.45 && runs <= 3) continue;
 
     let hue = 0;
     if (sx !== 0 || sy !== 0) {
