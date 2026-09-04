@@ -211,7 +211,7 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
           {zoomed && previewUrl && zoomOverlay(previewUrl, "Pasted tooltip screenshot")}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-4 py-6">
+        <div className="flex flex-col items-center justify-center gap-4 pb-4 pt-6">
           <img
             src="/example-tooltip.webp"
             alt="Example item tooltip screenshot"
@@ -219,16 +219,18 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
             height={258}
             className="h-24 w-auto object-contain opacity-40 brightness-125"
           />
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <ImageIcon className="h-4 w-4" />
-            <span>
-              paste screenshot, drag image, or{" "}
-              <span className="underline">browse</span>
-            </span>
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <ImageIcon className="h-4 w-4" />
+              <span>
+                paste screenshot, drag image, or{" "}
+                <span className="underline">browse</span>
+              </span>
+            </div>
+            <p className="text-[11px] text-muted-foreground/60">
+              Higher resolution = better accuracy.
+            </p>
           </div>
-          <p className="-mt-2 text-[11px] text-muted-foreground/60">
-            Higher resolution → better accuracy.
-          </p>
         </div>
       )}
     </div>
