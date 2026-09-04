@@ -69,6 +69,18 @@ const PALETTE: readonly { kind: FieldKind; hue: number; tol: number }[] = [
 ];
 
 
+/** Hue vote resolution for row classification: 24 bins of 15 degrees. */
+const HUE_BIN_DEG = 15;
+const HUE_BINS = 360 / HUE_BIN_DEG;
+/** Share of a row's saturated ink the winning field colour must hold. */
+const KIND_MIN_SHARE = 0.5;
+/* A colour winning at least this share of a card's rows is chrome, not a
+   field: real fields appear once each, chrome bleeds into everything. */
+const CHROME_DOMINANCE = 0.6;
+const CHROME_MIN_ROWS = 4;
+/** How strong a runner-up must be, relative to chrome, to take the row. */
+const CHROME_OVERRIDE = 0.5;
+
 export type InkMask = {
   readonly mask: Uint8Array;
   readonly width: number;
@@ -302,6 +314,65 @@ export function findRows(ink: InkMask, minHeightFrac = 0.012): TextRow[] {
   return out as unknown as TextRow[];
 }
 
+/**
+ * The field colour that wins on nearly every row, i.e. the card's chrome.
+ *
+ * Real tooltip fields occur once per card, so no legitimate field colour can
+ * dominate the whole card. Chrome does, because it bleeds into every row.
+ * Returns null when no colour is that dominant, which is the common case.
+ */
+function dominantChromeKind(
+  src: PixelBuffer,
+  ink: InkMask,
+  bands: readonly { top: number; bottom: number }[],
+): FieldKind | null {
+  if (bands.length < CHROME_MIN_ROWS) return null;
+  const { data } = src;
+  const { mask, width } = ink;
+  const bins = new Float64Array(HUE_BINS);
+  const wins = new Map<FieldKind, number>();
+  let scored = 0;
+
+  for (const band of bands) {
+    bins.fill(0);
+    let sat = 0;
+    for (let y = band.top; y <= band.bottom; y += 1) {
+      const base = y * width;
+      for (let x = 0; x < width; x += 1) {
+        if (mask[base + x] !== 1) continue;
+        const i = (base + x) * 4;
+        const hsv = rgbToHsv(data[i] ?? 0, data[i + 1] ?? 0, data[i + 2] ?? 0);
+        if (hsv.s < 0.18) continue;
+        const bin = Math.min(HUE_BINS - 1, Math.floor(hsv.h / HUE_BIN_DEG));
+        bins[bin] = (bins[bin] ?? 0) + hsv.s;
+        sat += hsv.s;
+      }
+    }
+    if (sat <= 0) continue;
+    let bestKind: FieldKind | null = null;
+    let bestSum = 0;
+    for (const p of PALETTE) {
+      let sum = 0;
+      for (let i = 0; i < HUE_BINS; i += 1) {
+        const centre = i * HUE_BIN_DEG + HUE_BIN_DEG / 2;
+        if (hueDist(centre, p.hue) <= p.tol) sum += bins[i] ?? 0;
+      }
+      if (sum > bestSum) {
+        bestSum = sum;
+        bestKind = p.kind;
+      }
+    }
+    scored += 1;
+    if (bestKind !== null) wins.set(bestKind, (wins.get(bestKind) ?? 0) + 1);
+  }
+
+  if (scored < CHROME_MIN_ROWS) return null;
+  for (const [kind, n] of wins) {
+    if (n / scored >= CHROME_DOMINANCE) return kind;
+  }
+  return null;
+}
+
 /** Attach horizontal extent + colour identity to each band. */
 export function describeRows(
   src: PixelBuffer,
@@ -313,6 +384,8 @@ export function describeRows(
   const out: TextRow[] = [];
 
   const colInk = new Uint8Array(width);
+  const hueBins = new Float64Array(HUE_BINS);
+  const chromeKind = dominantChromeKind(src, ink, bands);
 
   for (const band of bands) {
     let left = width;
@@ -322,6 +395,7 @@ export function describeRows(
     let sx = 0;
     let sy = 0;
     colInk.fill(0);
+    hueBins.fill(0);
 
     for (let y = band.top; y <= band.bottom; y += 1) {
       const base = y * width;
@@ -339,6 +413,11 @@ export function describeRows(
           const rad = (hsv.h * Math.PI) / 180;
           sx += Math.cos(rad) * hsv.s;
           sy += Math.sin(rad) * hsv.s;
+          // Separate histogram, used ONLY to choose the row's field. `hue`
+          // itself stays the mean, because `renderRow` keeps pixels within 46
+          // degrees of it and moving it erases real glyph strokes.
+          const bin = Math.min(HUE_BINS - 1, Math.floor(hsv.h / HUE_BIN_DEG));
+          hueBins[bin] = (hueBins[bin] ?? 0) + hsv.s;
         }
       }
     }
@@ -393,15 +472,79 @@ export function describeRows(
     // "white" (measured: 61.png's Upgrades row, hue 204, was classified
     // white and its value silently dropped). Only fall back to white when
     // no palette hue matches.
-    let kind: FieldKind | null = null;
-    let best = Infinity;
-    for (const p of PALETTE) {
-      const d = hueDist(hue, p.hue);
-      if (d <= p.tol && d < best) {
-        best = d;
-        kind = p.kind;
+    // Classify by VOTE over the row's hue histogram, not by the distance from
+    // its mean hue to each palette entry.
+    //
+    // A mean is a bad summary when a row contains two colours. On Legendary
+    // (gold) cards the light-purple Spell text picks up gold chrome bleed:
+    //   72.png  55% of ink at 285deg (spell) + 11% gold
+    //           -> mean 315deg, outside every window, row DROPPED
+    //   61.png  42% of ink at 285deg (spell)
+    //           -> mean 358deg, stolen by `physical` at 6deg
+    // Both rows are overwhelmingly purple; only the average disagreed.
+    //
+    // Summing each palette entry's own window keeps a colour that is spread
+    // across two bins competitive with an interfering colour concentrated in
+    // one - the case that defeats a naive peak-bin vote on 61.png.
+    const ranked = PALETTE.map((p) => {
+      let sum = 0;
+      for (let i = 0; i < HUE_BINS; i += 1) {
+        const centre = i * HUE_BIN_DEG + HUE_BIN_DEG / 2;
+        if (hueDist(centre, p.hue) <= p.tol) sum += hueBins[i] ?? 0;
+      }
+      return { kind: p.kind, sum };
+    }).sort((a, b) => b.sum - a.sum);
+
+    let winner = ranked[0] ?? null;
+    // Discount the card's own chrome colour.
+    //
+    // On a heavily tinted card the chrome matches one palette entry and bleeds
+    // into EVERY row, so "highest score wins" labels the whole card that one
+    // field. Measured on 61.png (Legendary/gold, chrome on `sell` at 50deg),
+    // six of seven rows scored majority `sell` - including the true Spell row
+    // (sell 57% vs spell 37%), whose value was then dropped because the reader
+    // ignores `sell`.
+    //
+    // Chrome is card-wide; a field colour belongs to one row. So when a colour
+    // wins nearly every row it is treated as chrome, and a runner-up holding a
+    // real share of the row takes precedence.
+    const second = ranked[1];
+    if (
+      winner !== null &&
+      chromeKind !== null &&
+      winner.kind === chromeKind &&
+      second !== undefined &&
+      second.sum >= winner.sum * CHROME_OVERRIDE
+    ) {
+      winner = second;
+    }
+    let kind: FieldKind | null = winner !== null && winner.sum > 0 ? winner.kind : null;
+    const bestScore = winner?.sum ?? 0;
+    // Require the winning colour to actually account for a fair share of the
+    // row's saturated ink. Voting alone will always name SOME field, so a row
+    // whose colour is mostly off-palette - a wrapped label bleeding chrome, or
+    // a title over a tinted card - would otherwise be handed a field and then
+    // compete against the real value row (measured on 69.png: the wrapped
+    // "Upgrades:" label at 64% whiteness was voted `upgrades` and displaced
+    // the true value below it).
+    //
+    // The share is measured against the ink that is NOT the card's chrome.
+    // Otherwise heavy chrome bleed dilutes every row below the bar and the
+    // whole card falls back to `white`, silently dropping its values.
+    let satTotal = 0;
+    for (let i = 0; i < HUE_BINS; i += 1) satTotal += hueBins[i] ?? 0;
+    let chromeInk = 0;
+    if (chromeKind !== null && kind !== chromeKind) {
+      const chrome = PALETTE.find((p) => p.kind === chromeKind);
+      if (chrome !== undefined) {
+        for (let i = 0; i < HUE_BINS; i += 1) {
+          const centre = i * HUE_BIN_DEG + HUE_BIN_DEG / 2;
+          if (hueDist(centre, chrome.hue) <= chrome.tol) chromeInk += hueBins[i] ?? 0;
+        }
       }
     }
+    const judged = satTotal - chromeInk;
+    if (judged > 0 && bestScore / judged < KIND_MIN_SHARE) kind = null;
     // Genuinely white text (item name, REQ Lvl) is overwhelmingly desaturated;
     // a coloured row with anti-aliasing tops out well below that.
     if (whiteness > 0.82) kind = "white";
