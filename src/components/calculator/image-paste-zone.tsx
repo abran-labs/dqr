@@ -226,6 +226,9 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
               <span className="underline">browse</span>
             </span>
           </div>
+          <p className="-mt-2 text-[11px] text-muted-foreground/60">
+            Higher resolution → better accuracy.
+          </p>
         </div>
       )}
     </div>
