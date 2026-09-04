@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { DUNGEONS, ITEMS, RARITY_INFO, type DqrItem, type ItemClass, type ItemRarityRow, type Rarity } from "@/lib/dqr-items";
 import { buildDiscordText } from "@/lib/discord-copy";
+import { displayItemName } from "@/lib/item-display";
 import { itemTracks, TRACK_CHROME } from "@/lib/item-tracks";
 import {
   calculatePotential,
@@ -238,6 +239,11 @@ export function CalculatorApp() {
       stat: statRange(rows, done ?? undefined),
       health: healthRange(rows),
     };
+    // Done-agnostic bounds: a correct stat with a misread `done` falls outside
+    // the narrow window but inside this one. Only blame the stat when it fits
+    // nowhere; otherwise leave it clean so resolution falls through to the
+    // generic no-fit message instead of flagging the wrong field.
+    const wideStat = statRange(rows);
     const errors: { total?: string; done?: string; stat?: string; spell?: string; health?: string } = {};
     if (item && total !== null && ranges.total && (total < ranges.total.min || total > ranges.total.max)) {
       errors.total = `Total upgrades must be between ${fmt(ranges.total.min)} - ${fmt(ranges.total.max)}`;
@@ -246,11 +252,15 @@ export function CalculatorApp() {
       errors.done = "Upgrades can't exceed total upgrades.";
     }
     if (item && stat !== null && ranges.stat && (stat < ranges.stat.min || stat > ranges.stat.max)) {
-      const label = item.class === "hybrid" ? "Physical Damage" : statLabel;
-      errors.stat = `${label} must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
+      if (!wideStat || stat < wideStat.min || stat > wideStat.max) {
+        const label = item.class === "hybrid" ? "Physical Damage" : statLabel;
+        errors.stat = `${label} must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
+      }
     }
     if (item && spell !== null && ranges.stat && (spell < ranges.stat.min || spell > ranges.stat.max)) {
-      errors.spell = `Spell Power must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
+      if (!wideStat || spell < wideStat.min || spell > wideStat.max) {
+        errors.spell = `Spell Power must be between ${fmt(ranges.stat.min)} - ${fmt(ranges.stat.max)}`;
+      }
     }
     if (health !== null && ranges.health && (health < ranges.health.min || health > ranges.health.max)) {
       errors.health = `Health must be between ${fmt(ranges.health.min)} - ${fmt(ranges.health.max)}`;
@@ -292,8 +302,10 @@ export function CalculatorApp() {
           row: resolution.row,
         }
       : null;
-  const displayName =
-    extract?.item?.id === itemId && extract.title ? extract.title : (item?.name ?? "");
+  // Title always comes from the selected dataset item — OCR titles are
+  // often wrong. Armor appends a closed-set piece suffix (item-display).
+  const displayOffense = pickedStat?.kind === "spell" || item?.class === "mage" ? "spell" : "physical";
+  const displayName = displayItemName(item, displayOffense, extract?.title ?? null);
   const tracks = result
     ? itemTracks({
         health: fields.health,
