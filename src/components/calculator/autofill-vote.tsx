@@ -18,8 +18,16 @@ export function AutofillVote(props: {
     () => true,
   );
   const [sent, setSent] = React.useState<boolean | null>(null);
+  const [dismissed, setDismissed] = React.useState(false);
   const locked = React.useRef(false);
   const pending = React.useRef<boolean | null>(null);
+
+  // "Thanks" is brief — auto-dismiss shortly after voting.
+  React.useEffect(() => {
+    if (sent === null) return;
+    const timer = setTimeout(() => setDismissed(true), 1500);
+    return () => clearTimeout(timer);
+  }, [sent]);
 
   React.useEffect(() => {
     if (props.calculationId === null || pending.current === null) return;
@@ -30,7 +38,7 @@ export function AutofillVote(props: {
     });
   }, [props.calculationId, props.field]);
 
-  if (!show) return null;
+  if (!show || dismissed) return null;
 
   if (sent !== null) {
     return <span className="text-xs text-muted-foreground">Thanks</span>;

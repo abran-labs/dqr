@@ -93,6 +93,7 @@ export function CalculatorApp() {
   const [healthStr, setHealthStr] = React.useState("");
 
   const [autofilled, setAutofilled] = React.useState<readonly AutofillField[]>([]);
+  const [scanGen, setScanGen] = React.useState(0);
   const [copied, setCopied] = React.useState(false);
   const [pasteGeneration, setPasteGeneration] = React.useState(0);
   const [fieldNote, setFieldNote] = React.useState<{
@@ -134,6 +135,7 @@ export function CalculatorApp() {
 
     setScan(next);
     setExtract(ex);
+    setScanGen((gen) => gen + 1);
     const fill = autofillFromExtract(ex);
     setAutofilled(fill.fields);
     setItemId(fill.itemId);
@@ -399,7 +401,8 @@ export function CalculatorApp() {
   const voteFor = (field: AutofillField): React.ReactNode => {
     if (!filledFields.has(field)) return null;
     if (field !== "item" && itemId === "") return null;
-    return <AutofillVote calculationId={calculationId} field={field} />;
+    // Remount per scan so a previous "Thanks" never carries over to new fills.
+    return <AutofillVote key={`${field}-${scanGen}`} calculationId={calculationId} field={field} />;
   };
 
   const isDirty =
