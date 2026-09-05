@@ -21,7 +21,7 @@ import {
   upsRange,
   type NumberRange,
 } from "@/lib/pot-utils";
-import { type TooltipScan, scanTooltip } from "@/lib/ocr";
+import { type TooltipScan, scanTooltip, RaidBossError } from "@/lib/ocr";
 import { readFieldPaste, type PasteField } from "@/lib/ocr-field";
 import { extractTooltip, type ExtractedTooltip } from "@/lib/ocr-extract";
 import { pickTooltipStat, statFieldLabel } from "@/lib/ocr-stat";
@@ -204,7 +204,11 @@ export function CalculatorApp() {
         setFieldNote(null);
       } catch (err) {
         console.error("Field OCR failed:", err);
-        fail("Couldn't read that image — paste the value manually.");
+        fail(
+          err instanceof RaidBossError
+            ? err.message
+            : "Couldn't read that image — paste the value manually.",
+        );
       }
     },
     [item],

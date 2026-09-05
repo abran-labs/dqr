@@ -2,7 +2,7 @@ import * as React from "react";
 import { Image as ImageIcon, Loader2 } from "lucide-react";
 
 import { isGeckoEngine, readClipboardImage } from "@/lib/clipboard-image";
-import { scanTooltip, type TooltipScan } from "@/lib/ocr";
+import { scanTooltip, RaidBossError, type TooltipScan } from "@/lib/ocr";
 import { cn } from "@/lib/utils";
 
 interface ImagePasteZoneProps {
@@ -17,6 +17,7 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
   const [dragOver, setDragOver] = React.useState(false);
   const [zoomed, setZoomed] = React.useState(false);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const previewUrlRef = React.useRef<string | null>(null);
   const idleTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,19 +36,24 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
     setZoomed(false);
   }, []);
 
-  const fail = React.useCallback(() => {
-    dropPreview();
-    setStatus("error");
-    clearIdleTimer();
-    idleTimerRef.current = setTimeout(() => {
-      idleTimerRef.current = null;
-      setStatus("idle");
-    }, 3000);
-  }, [clearIdleTimer, dropPreview]);
+  const fail = React.useCallback(
+    (message?: string) => {
+      dropPreview();
+      setErrorMessage(message ?? null);
+      setStatus("error");
+      clearIdleTimer();
+      idleTimerRef.current = setTimeout(() => {
+        idleTimerRef.current = null;
+        setStatus("idle");
+      }, 3000);
+    },
+    [clearIdleTimer, dropPreview],
+  );
 
   const processImage = React.useCallback(
     async (source: File | Blob) => {
       clearIdleTimer();
+      setErrorMessage(null);
       setStatus("processing");
 
       try {
@@ -63,7 +69,7 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
         setStatus("done");
       } catch (err) {
         console.error("OCR failed:", err);
-        fail();
+        fail(err instanceof RaidBossError ? err.message : undefined);
       }
     },
     [clearIdleTimer, dropPreview, fail, onScan],
@@ -180,7 +186,7 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
           className="flex min-h-[5.5rem] items-center justify-center py-6 text-sm text-destructive"
           role="alert"
         >
-          Invalid screenshot: No item data found.
+          Invalid screenshot: {errorMessage ?? "No item data found."}
         </div>
       ) : status === "processing" ? (
         <div className="flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground">

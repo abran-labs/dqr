@@ -50,6 +50,26 @@ export interface TooltipScan {
   readonly confidence?: number | null;
 }
 
+/**
+ * Boss-raid drops render "+N" after the name ("Twisted Wood Greatsword +30").
+ * Those items aren't in the dataset, so scanning one must fail loudly instead
+ * of fuzzy-matching a wrong dungeon item.
+ */
+export class RaidBossError extends Error {
+  readonly title: string;
+  constructor(title: string) {
+    super("Boss raid items haven't been added yet.");
+    this.name = "RaidBossError";
+    this.title = title;
+  }
+}
+
+/** Cleaned tooltip title when it carries a raid "+N" suffix, else null. */
+export function raidBossTitle(name: string): string | null {
+  const title = name.replace(/^[|\s]+/, "").replace(/[|\s]+$/, "").trim();
+  return /\+\d{1,3}\s*$/.test(title) ? title : null;
+}
+
 // Shared worker. English uses the uncompressed /eng.traineddata (gzip off —
 // tesseract.js would otherwise request a .gz that 404s and kill the worker).
 let workerPromise: Promise<Tesseract.Worker> | null = null;
@@ -90,6 +110,9 @@ export async function scanTooltip(imageSource: File | Blob | string): Promise<To
       const normalRun = await worker.recognize(prepared.color);
       const rawText = normalRun.data.text.trim();
       if (rawText === "") throw new Error("No item data found in image.");
+      const firstLine = rawText.split("\n")[0]?.trim() ?? "";
+      const legacyRaid = raidBossTitle(firstLine);
+      if (legacyRaid !== null) throw new RaidBossError(legacyRaid);
       return {
         imageDataUrl: asDataUrl(prepared.color),
         nameText: "",
@@ -100,6 +123,8 @@ export async function scanTooltip(imageSource: File | Blob | string): Promise<To
     }
 
     const reads = await readTooltipRows(worker, prepared.pixels);
+    const raid = raidBossTitle(reads.nameText);
+    if (raid !== null) throw new RaidBossError(raid);
     const found =
       reads.physical !== null ||
       reads.spell !== null ||
