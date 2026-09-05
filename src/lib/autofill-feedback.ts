@@ -4,6 +4,7 @@
 */
 
 import type { ExtractedTooltip } from "./ocr-extract";
+import { constrainExtractToItem } from "./ocr-extract";
 import { pickTooltipStat } from "./ocr-stat";
 
 export const AUTOFILL_FIELDS = [
@@ -72,17 +73,20 @@ function numStr(value: number | null): string {
 }
 
 export function autofillFromExtract(ex: ExtractedTooltip): AutofillForm {
-  const picked = pickTooltipStat(ex, ex.item);
+  // Gate fills against the identified item's ranges: an impossible read is
+  // left blank for the user instead of autofilled into a red error.
+  const gated = constrainExtractToItem(ex);
+  const picked = pickTooltipStat(gated, gated.item);
 
-  const hybrid = ex.item?.class === "hybrid";
-  const itemId = ex.item?.id ?? "";
+  const hybrid = gated.item?.class === "hybrid";
+  const itemId = gated.item?.id ?? "";
   const statStr = hybrid
-    ? numStr(ex.physical)
+    ? numStr(gated.physical)
     : numStr(picked.value);
-  const spellStr = hybrid ? numStr(ex.spell) : "";
-  const upsDoneStr = numStr(ex.upsDone);
-  const upsTotalStr = numStr(ex.upsTotal);
-  const healthStr = numStr(ex.health);
+  const spellStr = hybrid ? numStr(gated.spell) : "";
+  const upsDoneStr = numStr(gated.upsDone);
+  const upsTotalStr = numStr(gated.upsTotal);
+  const healthStr = numStr(gated.health);
 
   const fields: AutofillField[] = [];
   if (itemId !== "") fields.push("item");

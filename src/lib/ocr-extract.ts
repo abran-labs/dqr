@@ -18,6 +18,7 @@ import { ITEMS, type DqrItem } from "./dqr-items";
 import { guessItem } from "./item-guess";
 import type { TooltipScan } from "./ocr";
 import { parseUpgradePair, preferUpgradePair } from "./ocr-upgrades";
+import { healthRange, statRange, upsRange } from "./pot-utils";
 
 export interface ExtractedTooltip {
   readonly physical: number | null;
@@ -318,4 +319,43 @@ export function extractTooltip(scan: TooltipScan): ExtractedTooltip {
     upsDone: finalUps.done,
     upsTotal: finalUps.total,
   };
+}
+
+/*
+  Range gate for autofill: once the item is known, a read outside every
+  rarity row's union range cannot be that item's value — it is a misread.
+  Nulling it turns WRONG into MISSING (blank field + "Failed to autofill.")
+  instead of filling an impossible number. Reads the item cannot judge
+  (no rows, no band for the track) pass through untouched, and a done that
+  merely exceeds total is kept — the form attributes that one to upgrades.
+*/
+export function constrainExtractToItem(ex: ExtractedTooltip): ExtractedTooltip {
+  const item = ex.item;
+  if (item === null || item.rows.length === 0) return ex;
+  const ups = upsRange(item.rows);
+  const wide = statRange(item.rows);
+  const hr = healthRange(item.rows);
+
+  let { health, physical, spell, upsDone, upsTotal } = ex;
+  if (upsTotal !== null && ups !== null && (upsTotal < ups.min || upsTotal > ups.max)) upsTotal = null;
+  if (upsDone !== null && ups !== null && (upsDone < 0 || upsDone > ups.max)) upsDone = null;
+  if (physical !== null && wide !== null && (physical < wide.min || physical > wide.max)) physical = null;
+  if (spell !== null && wide !== null && (spell < wide.min || spell > wide.max)) spell = null;
+  if (health !== null) {
+    if (item.class === "guardian") {
+      if (wide !== null && (health < wide.min || health > wide.max)) health = null;
+    } else if (hr !== null && (health < hr.min || health > hr.max)) {
+      health = null;
+    }
+  }
+  if (
+    health === ex.health &&
+    physical === ex.physical &&
+    spell === ex.spell &&
+    upsDone === ex.upsDone &&
+    upsTotal === ex.upsTotal
+  ) {
+    return ex;
+  }
+  return { ...ex, health, physical, spell, upsDone, upsTotal };
 }
