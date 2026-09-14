@@ -31,6 +31,53 @@ export const DEFAULT_STRIP: StripOpts = {
   targetH: 48,
 };
 
+/** End of a colon wholly inside left recovery padding, before the value. */
+function marginColonEnd(ink: InkMask, valueLeft: number): number | null {
+  let left = -1;
+  let right = -1;
+  for (let x = 0; x < valueLeft; x++) {
+    let on = false;
+    for (let y = 0; y < ink.height; y++) {
+      if (ink.mask[y * ink.width + x] === 1) on = true;
+    }
+    if (on) {
+      if (left === -1) left = x;
+      right = x;
+    } else if (left !== -1) break;
+  }
+  // Require a blank column before the value; its faint edge may occupy padding.
+  if (left === -1 || right + 1 >= valueLeft) return null;
+
+  const bands: { readonly top: number; readonly bottom: number }[] = [];
+  let top = -1;
+  for (let y = 0; y <= ink.height; y++) {
+    let on = false;
+    if (y < ink.height) {
+      for (let x = left; x <= right; x++) {
+        if (ink.mask[y * ink.width + x] === 1) on = true;
+      }
+    }
+    if (on && top === -1) top = y;
+    else if (!on && top !== -1) {
+      bands.push({ bottom: y - 1, top });
+      top = -1;
+    }
+  }
+  const [upper, lower] = bands;
+  if (bands.length !== 2 || upper === undefined || lower === undefined) return null;
+  const upperH = upper.bottom - upper.top + 1;
+  const lowerH = lower.bottom - lower.top + 1;
+  const width = right - left + 1;
+  // Two compact, similarly sized dots with a clear vertical gap, not a digit.
+  const largest = Math.max(upperH, lowerH);
+  const smallest = Math.min(upperH, lowerH);
+  if (
+    largest > width * 2 || smallest < width / 2 || largest > smallest * 2 ||
+    lower.top - upper.bottom - 1 < largest
+  ) return null;
+  return right + 1;
+}
+
 /**
  * Binarise one row using an Otsu threshold computed over that row only.
  *
@@ -104,6 +151,12 @@ function binariseRow(
         if (hsv.s < 0.14) continue;
         if (hueDist(hsv.h, row.hue) > 46) out[p] = 0;
       }
+    }
+    // Padding recovers dim digits, but can also bring back the label's ':'.
+    // Remove only its two-dot shape before either recognizer sees it.
+    const colonEnd = marginColonEnd({ height: h, mask: out, width: w }, row.left - x0);
+    if (colonEnd !== null) {
+      for (let y = 0; y < h; y++) out.fill(0, y * w, y * w + colonEnd);
     }
   }
   void ink;
