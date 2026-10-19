@@ -44,15 +44,24 @@ const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en" class="dark" transition:name="root" transition:animate="none">
+<html
+  lang="en"
+  class="dark"
+  style="background-color: #09090b"
+  transition:name="root"
+  transition:animate="none"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#09090b" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <title>{pageTitle}</title>
     <ClientRouter />
   </head>

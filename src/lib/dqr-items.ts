@@ -1,6 +1,6 @@
 /*
   GENERATED FILE — do not edit by hand.
-  Source: docs/Info/DQR_Min_Max_List.csv.
+  Source: docs/Info/DQR_Min_Max_List.csv via scripts/build-dqr-items.ts (bun run gen:items).
   Data rules and rarity mapping: docs/Info/Item-Data.md.
 */
 
@@ -25,9 +25,10 @@ export interface DungeonInfo {
   color: string;
 }
 
-export type DungeonCode = "DT" | "WO" | "PI" | "KC" | "UW" | "SP" | "TC" | "GH" | "SS" | "OO" | "VC" | "AT" | "EF" | "NL";
+export type DungeonCode = "DT" | "WO" | "PI" | "KC" | "UW" | "SP" | "TC" | "GH" | "SS" | "OO" | "VC" | "AT" | "EF" | "NL" | "GS";
 
 export const DUNGEONS: DungeonInfo[] = [
+  { code: "GS", name: "Gilded Skies", color: "#FACC15" },
   { code: "NL", name: "Northern Lands", color: "#5EEAD4" },
   { code: "EF", name: "Enchanted Forest", color: "#C4B5FD" },
   { code: "AT", name: "Aquatic Temple", color: "#1EA0FF" },
@@ -73,6 +74,260 @@ export interface DqrItem {
 }
 
 export const ITEMS: readonly DqrItem[] = [
+  {
+    id: "GS:Gildenscale Oath And Aegis",
+    dungeon: "GS",
+    name: "Gildenscale Oath And Aegis",
+    class: "war",
+    maxRarity: "legendary",
+    rows: [
+    { maxBase: 146475000, maxUps: 892500, minBase: 132525000, minUps: 807500, rarity: "legendary" },
+    ],
+  },
+  {
+    id: "GS:Daybreak And Gildensong",
+    dungeon: "GS",
+    name: "Daybreak And Gildensong",
+    class: "mage",
+    maxRarity: "legendary",
+    rows: [
+    { maxBase: 146475000, maxUps: 892500, minBase: 132525000, minUps: 807500, rarity: "legendary" },
+    ],
+  },
+  {
+    id: "GS:Dracani Flanged Mace",
+    dungeon: "GS",
+    name: "Dracani Flanged Mace",
+    class: "war",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 73500000, maxUps: 454650, minBase: 66500000, minUps: 411350, rarity: "common" },
+    { maxBase: 77700000, maxUps: 466200, minBase: 70300000, minUps: 421800, rarity: "uncommon" },
+    { maxBase: 80850000, maxUps: 477750, minBase: 73150000, minUps: 432250, rarity: "rare" },
+    { maxBase: 84000000, maxUps: 489300, minBase: 76000000, minUps: 442700, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Dracani Gilded Sword",
+    dungeon: "GS",
+    name: "Dracani Gilded Sword",
+    class: "war",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 63000000, maxUps: 420000, minBase: 57000000, minUps: 380000, rarity: "common" },
+    { maxBase: 67200000, maxUps: 431550, minBase: 60800000, minUps: 390450, rarity: "uncommon" },
+    { maxBase: 70350000, maxUps: 443100, minBase: 63650000, minUps: 400900, rarity: "rare" },
+    { maxBase: 73500000, maxUps: 454650, minBase: 66500000, minUps: 411350, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Dracani Royal Glaive",
+    dungeon: "GS",
+    name: "Dracani Royal Glaive",
+    class: "war",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 84000000, maxUps: 489300, minBase: 76000000, minUps: 442700, rarity: "common" },
+    { maxBase: 88200000, maxUps: 500850, minBase: 79800000, minUps: 453150, rarity: "uncommon" },
+    { maxBase: 91350000, maxUps: 512400, minBase: 82650000, minUps: 463600, rarity: "rare" },
+    { maxBase: 94500000, maxUps: 525000, minBase: 85500000, minUps: 475000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Oathsworn Halberd",
+    dungeon: "GS",
+    name: "Oathsworn Halberd",
+    class: "war",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 118998600, maxUps: 735000, minBase: 107665400, minUps: 665000, rarity: "common" },
+    { maxBase: 123082050, maxUps: 777000, minBase: 111359950, minUps: 703000, rarity: "uncommon" },
+    { maxBase: 127165500, maxUps: 808500, minBase: 115054500, minUps: 731500, rarity: "rare" },
+    { maxBase: 131250000, maxUps: 840000, minBase: 118750000, minUps: 760000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Oathsworn Hammer",
+    dungeon: "GS",
+    name: "Oathsworn Hammer",
+    class: "war",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 94500000, maxUps: 525000, minBase: 85500000, minUps: 475000, rarity: "common" },
+    { maxBase: 98583450, maxUps: 567000, minBase: 89194550, minUps: 513000, rarity: "uncommon" },
+    { maxBase: 102666900, maxUps: 598500, minBase: 92889100, minUps: 541500, rarity: "rare" },
+    { maxBase: 106750350, maxUps: 630000, minBase: 96583650, minUps: 570000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Oathsworn Sword And Shield",
+    dungeon: "GS",
+    name: "Oathsworn Sword And Shield",
+    class: "war",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 106750350, maxUps: 630000, minBase: 96583650, minUps: 570000, rarity: "common" },
+    { maxBase: 110833800, maxUps: 672000, minBase: 100278200, minUps: 608000, rarity: "uncommon" },
+    { maxBase: 114917250, maxUps: 703500, minBase: 103972750, minUps: 636500, rarity: "rare" },
+    { maxBase: 118998600, maxUps: 735000, minBase: 107665400, minUps: 665000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Dracani Gilded Lance",
+    dungeon: "GS",
+    name: "Dracani Gilded Lance",
+    class: "mage",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 84000000, maxUps: 489300, minBase: 76000000, minUps: 442700, rarity: "common" },
+    { maxBase: 88200000, maxUps: 500850, minBase: 79800000, minUps: 453150, rarity: "uncommon" },
+    { maxBase: 91350000, maxUps: 512400, minBase: 82650000, minUps: 463600, rarity: "rare" },
+    { maxBase: 94500000, maxUps: 525000, minBase: 85500000, minUps: 475000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Dracani Gilded Staff",
+    dungeon: "GS",
+    name: "Dracani Gilded Staff",
+    class: "mage",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 94500000, maxUps: 525000, minBase: 85500000, minUps: 475000, rarity: "common" },
+    { maxBase: 98583450, maxUps: 567000, minBase: 89194550, minUps: 513000, rarity: "uncommon" },
+    { maxBase: 102666900, maxUps: 598500, minBase: 92889100, minUps: 541500, rarity: "rare" },
+    { maxBase: 106750350, maxUps: 630000, minBase: 96583650, minUps: 570000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Dracani Spellclaws",
+    dungeon: "GS",
+    name: "Dracani Spellclaws",
+    class: "mage",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 63000000, maxUps: 420000, minBase: 57000000, minUps: 380000, rarity: "common" },
+    { maxBase: 67200000, maxUps: 431550, minBase: 60800000, minUps: 390450, rarity: "uncommon" },
+    { maxBase: 70350000, maxUps: 443100, minBase: 63650000, minUps: 400900, rarity: "rare" },
+    { maxBase: 73500000, maxUps: 454650, minBase: 66500000, minUps: 411350, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Oathsworn Spellblade",
+    dungeon: "GS",
+    name: "Oathsworn Spellblade",
+    class: "mage",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 73500000, maxUps: 454650, minBase: 66500000, minUps: 411350, rarity: "common" },
+    { maxBase: 77700000, maxUps: 466200, minBase: 70300000, minUps: 421800, rarity: "uncommon" },
+    { maxBase: 80850000, maxUps: 477750, minBase: 73150000, minUps: 432250, rarity: "rare" },
+    { maxBase: 84000000, maxUps: 489300, minBase: 76000000, minUps: 442700, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Oathsworn Spellscythe",
+    dungeon: "GS",
+    name: "Oathsworn Spellscythe",
+    class: "mage",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 106750350, maxUps: 630000, minBase: 96583650, minUps: 570000, rarity: "common" },
+    { maxBase: 110833800, maxUps: 672000, minBase: 100278200, minUps: 608000, rarity: "uncommon" },
+    { maxBase: 114917250, maxUps: 703500, minBase: 103972750, minUps: 636500, rarity: "rare" },
+    { maxBase: 118998600, maxUps: 735000, minBase: 107665400, minUps: 665000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Oathsworn Staff And Tome",
+    dungeon: "GS",
+    name: "Oathsworn Staff And Tome",
+    class: "mage",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 118998600, maxUps: 735000, minBase: 107665400, minUps: 665000, rarity: "common" },
+    { maxBase: 123082050, maxUps: 777000, minBase: 111359950, minUps: 703000, rarity: "uncommon" },
+    { maxBase: 127165500, maxUps: 808500, minBase: 115054500, minUps: 731500, rarity: "rare" },
+    { maxBase: 131250000, maxUps: 840000, minBase: 118750000, minUps: 760000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Dracani",
+    dungeon: "GS",
+    name: "Dracani",
+    class: "dps",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 6090000, maxUps: 147000, minBase: 5510000, minUps: 133000, rarity: "common", health: 161000000, lowestHealth: 152950000, highestHealth: 169050000 },
+    { maxBase: 6720000, maxUps: 168000, minBase: 6080000, minUps: 152000, rarity: "uncommon", health: 179000000, lowestHealth: 170050000, highestHealth: 187950000 },
+    { maxBase: 7350000, maxUps: 189000, minBase: 6650000, minUps: 171000, rarity: "rare", health: 197000000, lowestHealth: 187150000, highestHealth: 206850000 },
+    { maxBase: 7980000, maxUps: 210000, minBase: 7220000, minUps: 190000, rarity: "epic", health: 215000000, lowestHealth: 204250000, highestHealth: 225750000 },
+    ],
+  },
+  {
+    id: "GS:Gildenscale",
+    dungeon: "GS",
+    name: "Gildenscale",
+    class: "dps",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 9765000, maxUps: 315000, minBase: 8835000, minUps: 285000, rarity: "common", health: 306000000, lowestHealth: 290700000, highestHealth: 321300000 },
+    { maxBase: 10464300, maxUps: 332850, minBase: 9467700, minUps: 301150, rarity: "uncommon", health: 332330000, lowestHealth: 315713500, highestHealth: 348946500 },
+    { maxBase: 11163600, maxUps: 350700, minBase: 10100400, minUps: 317300, rarity: "rare", health: 358660000, lowestHealth: 340727000, highestHealth: 376593000 },
+    { maxBase: 11865000, maxUps: 367500, minBase: 10735000, minUps: 332500, rarity: "epic", health: 385000000, lowestHealth: 365750000, highestHealth: 404250000 },
+    ],
+  },
+  {
+    id: "GS:Oathsworn",
+    dungeon: "GS",
+    name: "Oathsworn",
+    class: "dps",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 7980000, maxUps: 210000, minBase: 7220000, minUps: 190000, rarity: "common", health: 215000000, lowestHealth: 204250000, highestHealth: 225750000 },
+    { maxBase: 8574300, maxUps: 246750, minBase: 7757700, minUps: 223250, rarity: "uncommon", health: 245333000, lowestHealth: 233066350, highestHealth: 257599650 },
+    { maxBase: 9168600, maxUps: 283500, minBase: 8295400, minUps: 256500, rarity: "rare", health: 275666000, lowestHealth: 261882700, highestHealth: 289449300 },
+    { maxBase: 9765000, maxUps: 315000, minBase: 8835000, minUps: 285000, rarity: "epic", health: 306000000, lowestHealth: 290700000, highestHealth: 321300000 },
+    ],
+  },
+  {
+    id: "GS:Dracani Guardian",
+    dungeon: "GS",
+    name: "Dracani Guardian",
+    class: "guardian",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 270480000, maxUps: 147000, minBase: 244720000, minUps: 133000, rarity: "common" },
+    { maxBase: 300019650, maxUps: 168000, minBase: 271446350, minUps: 152000, rarity: "uncommon" },
+    { maxBase: 329559300, maxUps: 189000, minBase: 298172700, minUps: 171000, rarity: "rare" },
+    { maxBase: 359100000, maxUps: 210000, minBase: 324900000, minUps: 190000, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Gildenscale Guardian",
+    dungeon: "GS",
+    name: "Gildenscale Guardian",
+    class: "guardian",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 510720000, maxUps: 315000, minBase: 462080000, minUps: 285000, rarity: "common" },
+    { maxBase: 554610000, maxUps: 332850, minBase: 501790000, minUps: 301150, rarity: "uncommon" },
+    { maxBase: 598500000, maxUps: 350700, minBase: 541500000, minUps: 317300, rarity: "rare" },
+    { maxBase: 642390000, maxUps: 367500, minBase: 581210000, minUps: 332500, rarity: "epic" },
+    ],
+  },
+  {
+    id: "GS:Oathsworn Guardian",
+    dungeon: "GS",
+    name: "Oathsworn Guardian",
+    class: "guardian",
+    maxRarity: "epic",
+    rows: [
+    { maxBase: 359100000, maxUps: 210000, minBase: 324900000, minUps: 190000, rarity: "common" },
+    { maxBase: 409639650, maxUps: 246750, minBase: 370626350, minUps: 223250, rarity: "uncommon" },
+    { maxBase: 460179300, maxUps: 283500, minBase: 416352700, minUps: 256500, rarity: "rare" },
+    { maxBase: 510720000, maxUps: 315000, minBase: 462080000, minUps: 285000, rarity: "epic" },
+    ],
+  },
   {
     id: "NL:Hofund",
     dungeon: "NL",

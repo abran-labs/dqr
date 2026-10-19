@@ -2,7 +2,7 @@
 
 Source: `docs/Info/DQR_Min_Max_List.csv` — 1358 data rows (~494 blank padding), 362 items, 14 dungeons. Generator writes `src/lib/dqr-items.ts` (app source of truth). CSV stays the human-editable original.
 
-Gilded Skies (`GS`, 74 rows) is in the sheet, beyond DQR content (Northern Lands) — generator skips it. Boss Raids (between Steampunk Sewers and Orbital Outpost) has no rows yet. Yokai Peak and Abyssal Void exist in-game, not in this dataset.
+Boss Raids (between Steampunk Sewers and Orbital Outpost) has no rows yet. Yokai Peak and Abyssal Void exist in-game, not in this dataset.
 
 ## Columns
 
@@ -21,7 +21,7 @@ Gilded Skies (`GS`, 74 rows) is in the sheet, beyond DQR content (Northern Lands
 
 ## Dungeon codes
 
-Release order. In DQR everything is legacy by default. Calculator dropdown, search, and name-match ties list **hardest first** (`NL` → `DT`).
+Release order. In DQR everything is legacy by default. Calculator dropdown, search, and name-match ties list **hardest first** (`GS` → `DT`).
 
 | Code | Dungeon |
 |---|---|
@@ -39,6 +39,7 @@ Release order. In DQR everything is legacy by default. Calculator dropdown, sear
 | `AT` | Aquatic Temple |
 | `EF` | Enchanted Forest |
 | `NL` | Northern Lands |
+| `GS` | Gilded Skies |
 
 ## Structure
 
