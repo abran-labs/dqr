@@ -56,6 +56,30 @@ export async function logCalculation(scan: {
   }
 }
 
+export interface VlmTooltipRead {
+  readonly name: string | null;
+  readonly physical: number | null;
+  readonly spell: number | null;
+  readonly health: number | null;
+  readonly upsDone: number | null;
+  readonly upsTotal: number | null;
+}
+
+/** Vision-model read of a tooltip image. Null on any failure so callers can fall back to OCR. */
+export async function scanWithVlm(imageDataUrl: string): Promise<VlmTooltipRead | null> {
+  try {
+    const response = await fetch(`${BASE}/scan`, {
+      body: JSON.stringify({ image: imageDataUrl }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    });
+    if (!response.ok) return null;
+    return (await response.json()) as VlmTooltipRead;
+  } catch {
+    return null;
+  }
+}
+
 export async function submitFeedback(
   calculationId: number,
   field: AutofillField,

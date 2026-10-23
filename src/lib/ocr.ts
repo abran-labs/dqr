@@ -3,6 +3,7 @@ import Tesseract from "tesseract.js";
 import type { Rarity } from "./dqr-items";
 import { asDataUrl, prepareTooltipCanvases } from "./ocr-canvas";
 import { readTooltipRows } from "./ocr-rows";
+import { scanWithVlm } from "./stats-client";
 
 /*
   Client-side OCR for Dungeon Quest Reborn tooltips.
@@ -100,9 +101,31 @@ export function invalidateWorker(): void {
 
 export async function scanTooltip(imageSource: File | Blob | string): Promise<TooltipScan> {
   const run = async (): Promise<TooltipScan> => {
-    const worker = await getWorker();
-
     const prepared = await prepareTooltipCanvases(imageSource);
+
+    // Vision model first; any failure (offline, capped, no key) drops to Tesseract.
+    const imageDataUrl = asDataUrl(prepared.color);
+    const vlm = imageDataUrl === null ? null : await scanWithVlm(imageDataUrl);
+    if (vlm !== null) {
+      const raid = vlm.name === null ? null : raidBossTitle(vlm.name);
+      if (raid !== null) throw new RaidBossError(raid);
+      if (vlm.name !== null || vlm.physical !== null || vlm.spell !== null || vlm.health !== null || vlm.upsTotal !== null) {
+        return {
+          health: vlm.health,
+          imageDataUrl,
+          nameText: vlm.name ?? "",
+          physical: vlm.physical,
+          processedText: vlm.name ?? "",
+          rarity: prepared.rarity,
+          rawText: vlm.name ?? "",
+          spell: vlm.spell,
+          upsDone: vlm.upsDone,
+          upsTotal: vlm.upsTotal,
+        };
+      }
+    }
+
+    const worker = await getWorker();
 
     // Structured read. Falls back to the legacy whole-card text pass only
     // when the image could not be decoded to pixels (cross-origin canvas).

@@ -1,20 +1,13 @@
 ---
 import { CalculatorApp } from "@/components/calculator/calculator-app";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { DUNGEONS } from "@/lib/dqr-items";
-
-const gildedSkies = DUNGEONS.find((dungeon) => dungeon.code === "GS");
 ---
 
 <BaseLayout>
   <main class="mx-auto w-full max-w-3xl py-8">
     <CalculatorApp client:load />
-    {
-      gildedSkies ? (
-        <p class="mt-6 text-center text-sm italic">
-          <span style={`color: ${gildedSkies.color}`}>✦ {gildedSkies.name}!</span>
-        </p>
-      ) : null
-    }
+    <p class="mt-6 text-center text-sm italic" style="color: #34D399">
+      Brand new detection. Way more accurate.
+    </p>
   </main>
 </BaseLayout>

@@ -7,6 +7,7 @@
     GET  /api/stats?stat=accuracy -> shields.io endpoint JSON
     POST /api/events              -> { type: "calculation" } -> { id }
     POST /api/feedback            -> { calculationId, field, accurate } -> { success }
+    POST /api/scan                -> { image } -> vision-model tooltip read (needs OPENROUTER_API_KEY)
 
   Run: bun run server/index.ts   (script `bun run stats`)
 
@@ -27,6 +28,7 @@ import { Database } from "bun:sqlite";
 
 import { parseFeedbackPayload } from "../src/lib/autofill-feedback";
 import { openStatsStore } from "./stats-store";
+import { readTooltipWithVlm, vlmAvailable } from "./vlm-scan";
 
 const PORT = Number(process.env.PORT ?? 4322);
 const DB_PATH = resolve(process.env.DQR_STATS_DB ?? `${import.meta.dir}/data/stats.db`);
@@ -120,6 +122,51 @@ const handleEvents = async (request: Request): Promise<Response> => {
   return json({ id });
 };
 
+// Paid upstream: per-client cooldown plus a global daily cap bound the spend.
+const SCAN_COOLDOWN_MS = 1_500;
+const SCAN_DAILY_CAP = Number(process.env.DQR_SCAN_DAILY_CAP ?? 1000);
+const lastScanAt = new Map<string, number>();
+let scanDay = "";
+let scanCount = 0;
+
+const handleScan = async (request: Request): Promise<Response> => {
+  if (!vlmAvailable()) return json({ error: "Vision scan unavailable" }, 503);
+
+  const key = clientKey(request);
+  const now = Date.now();
+  const last = lastScanAt.get(key);
+  if (last !== undefined && now - last < SCAN_COOLDOWN_MS) {
+    return json({ error: "Too soon after the previous scan" }, 429);
+  }
+  const day = new Date(now).toISOString().slice(0, 10);
+  if (day !== scanDay) {
+    scanDay = day;
+    scanCount = 0;
+  }
+  if (scanCount >= SCAN_DAILY_CAP) return json({ error: "Daily scan limit reached" }, 429);
+
+  let body: unknown = null;
+  try {
+    body = await request.json();
+  } catch {
+    body = null;
+  }
+  const { image } = (body ?? {}) as Partial<Record<string, unknown>>;
+  if (typeof image !== "string" || !/^data:image\/(png|jpeg|webp);base64,/.test(image)) {
+    return json({ error: "Image must be a base64 png/jpeg/webp data URL" }, 400);
+  }
+  if (image.length > MAX_IMAGE_BYTES * 1.4) return json({ error: "Image too large" }, 413);
+
+  lastScanAt.set(key, now);
+  scanCount += 1;
+  try {
+    const read = await readTooltipWithVlm(image);
+    return read === null ? json({ error: "Scan failed" }, 502) : json(read);
+  } catch {
+    return json({ error: "Scan failed" }, 502);
+  }
+};
+
 const handleFeedback = async (request: Request): Promise<Response> => {
   let body: unknown;
   try {
@@ -174,6 +221,9 @@ Bun.serve({
     const { pathname } = new URL(request.url);
     if (pathname === "/api/events" && request.method === "POST") {
       return handleEvents(request);
+    }
+    if (pathname === "/api/scan" && request.method === "POST") {
+      return handleScan(request);
     }
     if (pathname === "/api/feedback" && request.method === "POST") {
       return handleFeedback(request);
