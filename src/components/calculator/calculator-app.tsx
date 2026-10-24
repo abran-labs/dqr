@@ -63,7 +63,7 @@ const itemOptions: ComboboxOption[] = ITEMS.map((item) => {
   const dungeon = DUNGEON_BY_CODE.get(item.dungeon);
   const single = item.rows.length === 1;
   return {
-    ...(single ? { color: RARITY_INFO[item.maxRarity].color } : {}),
+    color: RARITY_INFO[item.maxRarity].color,
     description: `${single ? `${RARITY_INFO[item.maxRarity].label} · ` : ""}${CLASS_LABEL[item.class]}${item.glitched ? " · glitched" : ""}${item.rows.length === 0 ? " · no data yet" : ""}`,
     group: dungeon?.name ?? item.dungeon,
     ...(dungeon === undefined ? {} : { groupColor: dungeon.color }),
