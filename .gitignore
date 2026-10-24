@@ -1,9 +1,10 @@
 # Dependencies
 node_modules
 
-# Local-only project guidance, scripts, and tests
+# Local-only project guidance, scripts, tests, and OCR benchmark
 /AGENTS.md
 /scripts/
+/bench/
 *.test.*
 
 # Astro build output

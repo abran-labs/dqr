@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { AutofillVote } from "@/components/calculator/autofill-vote";
 import { ImagePasteZone } from "@/components/calculator/image-paste-zone";
+import { PotPreview } from "@/components/calculator/pot-preview";
 import { ResultPanel } from "@/components/calculator/result-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -272,6 +273,15 @@ export function CalculatorApp() {
     return { done, errors, health, ranges, spell, stat, total };
   }, [item, statStr, spellStr, upsDoneStr, upsTotalStr, healthStr, statLabel]);
 
+  // Upgrade text unreadable after a scan: assume the item is maxed, so the
+  // tooltip stat IS the pot and the upgrade counts are not needed.
+  const assumeMaxed =
+    extract !== null &&
+    item !== undefined &&
+    fields.done === null &&
+    fields.total === null &&
+    (item.class === "hybrid" ? (fields.stat ?? fields.spell) : fields.stat) !== null;
+
   // Auto-resolution — runs on every keystroke, no calculate button.
   const resolution = React.useMemo(() => {
     if (!item) return { status: "empty" as const };
@@ -279,13 +289,18 @@ export function CalculatorApp() {
     const { done, errors, health, spell, stat, total } = fields;
     const hybrid = item.class === "hybrid";
     const primary = hybrid ? (stat ?? spell) : stat;
-    if (primary === null || done === null || total === null) return { status: "empty" as const };
+    if (primary === null) return { status: "empty" as const };
+    if (!assumeMaxed && (done === null || total === null)) return { status: "empty" as const };
     if (errors.total || errors.done || errors.stat || errors.spell || errors.health) {
       return { status: "invalid" as const };
     }
 
-    const pot = calculatePotential(primary, done, total);
-    const survivors = resolveRarityRows(item, { health: health ?? undefined, pot, upgradesTotal: total });
+    const pot = assumeMaxed ? primary : calculatePotential(primary, done ?? 0, total ?? 0);
+    const survivors = resolveRarityRows(item, {
+      health: health ?? undefined,
+      pot,
+      upgradesTotal: assumeMaxed ? undefined : (total ?? undefined),
+    });
     if (survivors.length === 0) return { status: "no-fit" as const };
     if (manualRarity) {
       const chosen = survivors.find((row) => row.rarity === manualRarity);
@@ -295,7 +310,7 @@ export function CalculatorApp() {
       return { status: "ok" as const, row: survivors[0] as ItemRarityRow, pot };
     }
     return { status: "ambiguous" as const, survivors, pot };
-  }, [item, fields, manualRarity]);
+  }, [item, fields, manualRarity, assumeMaxed]);
 
   const result: CalcResult | null =
     item && resolution.status === "ok"
@@ -314,27 +329,27 @@ export function CalculatorApp() {
     ? itemTracks({
         health: fields.health,
         hybrid:
-          result.item.class === "hybrid" && fields.done !== null && fields.total !== null
+          result.item.class === "hybrid" && (assumeMaxed || (fields.done !== null && fields.total !== null))
             ? {
                 physical:
                   fields.stat === null
                     ? null
                     : {
                         percentile: potentialPercentile(
-                          calculatePotential(fields.stat, fields.done, fields.total),
+                          calculatePotential(fields.stat, fields.done ?? 0, fields.total ?? 0),
                           result.row,
                         ),
-                        pot: calculatePotential(fields.stat, fields.done, fields.total),
+                        pot: calculatePotential(fields.stat, fields.done ?? 0, fields.total ?? 0),
                       },
                 spell:
                   fields.spell === null
                     ? null
                     : {
                         percentile: potentialPercentile(
-                          calculatePotential(fields.spell, fields.done, fields.total),
+                          calculatePotential(fields.spell, fields.done ?? 0, fields.total ?? 0),
                           result.row,
                         ),
-                        pot: calculatePotential(fields.spell, fields.done, fields.total),
+                        pot: calculatePotential(fields.spell, fields.done ?? 0, fields.total ?? 0),
                       },
               }
             : null,
@@ -462,6 +477,14 @@ export function CalculatorApp() {
     }, 2000);
   };
 
+  // "Upgrades" (done) only appears once the user starts on the upgrade pair.
+  const showDone = upsTotalStr !== "" || upsDoneStr !== "";
+  const maxedNote = (
+    <p className="text-xs text-muted-foreground">
+      Couldn't read the upgrades, so this assumes the item is fully upgraded. Enter them for an exact result.
+    </p>
+  );
+
   const placeholderFor = (range: NumberRange | null): string => {
     if (!item) return "Select an item first";
     if (!range) return "";
@@ -479,6 +502,7 @@ export function CalculatorApp() {
     value: string;
     error?: string | undefined;
     vote: React.ReactNode;
+    footer?: React.ReactNode;
   }) => {
     const error =
       opts.error ??
@@ -540,6 +564,7 @@ export function CalculatorApp() {
           </p>
         )}
         {opts.vote}
+        {opts.footer}
       </div>
     );
   };
@@ -553,6 +578,25 @@ export function CalculatorApp() {
           value: row.rarity,
         }))
       : [];
+
+  // Item picked, nothing typed yet: let the user choose which rarity to preview.
+  // A rarity detected from the image is used as-is, so no picker then.
+  const scanRarityKnown =
+    item !== undefined && scan?.rarity != null && item.rows.some((row) => row.rarity === scan.rarity);
+  const previewPickable =
+    item !== undefined && item.rows.length > 1 && resolution.status === "empty" && !scanRarityKnown;
+  const previewRarityOptions: ComboboxOption[] =
+    item?.rows.map((row) => ({
+      color: RARITY_INFO[row.rarity].color,
+      label: RARITY_INFO[row.rarity].label,
+      value: row.rarity,
+    })) ?? [];
+  const previewRow =
+    item === undefined
+      ? undefined
+      : (item.rows.find((row) => row.rarity === manualRarity) ??
+        item.rows.find((row) => row.rarity === item.maxRarity) ??
+        item.rows[item.rows.length - 1]);
 
   return (
     <Card>
@@ -600,7 +644,7 @@ export function CalculatorApp() {
             {voteFor("item")}
           </div>
 
-          {resolution.status === "ambiguous" && (
+          {(resolution.status === "ambiguous" || previewPickable) && (
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground" htmlFor="rarity-picker">
                 Rarity
@@ -608,16 +652,16 @@ export function CalculatorApp() {
               <Combobox
                 id="rarity-picker"
                 onChange={(next) => setManualRarity(next as Rarity)}
-                options={rarityOptions}
-                placeholder="Fits multiple rarities — pick one…"
-                value={manualRarity ?? ""}
+                options={resolution.status === "ambiguous" ? rarityOptions : previewRarityOptions}
+                placeholder="Pick a rarity"
+                searchable={false}
+                value={manualRarity ?? (resolution.status === "empty" ? (previewRow?.rarity ?? "") : "")}
               />
-              <p className="text-xs text-muted-foreground">Same numbers, different curve — each rarity shows its percentile.</p>
             </div>
           )}
 
           {numberField({
-            autofillField: "totalUpgrades",
+            autofillField: assumeMaxed ? undefined : "totalUpgrades",
             id: "ups-total",
             label: "Total upgrades",
             onChange: setUpsTotalStr,
@@ -626,19 +670,22 @@ export function CalculatorApp() {
             value: upsTotalStr,
             error: fields.errors.total,
             vote: voteFor("totalUpgrades"),
+            footer: assumeMaxed && !showDone ? maxedNote : null,
           })}
 
-          {numberField({
-            autofillField: "upgrades",
-            id: "ups-done",
-            label: "Upgrades",
-            onChange: setUpsDoneStr,
-            pasteField: "upsDone",
-            range: fields.total !== null ? { min: 0, max: fields.total } : null,
-            value: upsDoneStr,
-            error: fields.errors.done,
-            vote: voteFor("upgrades"),
-          })}
+          {showDone &&
+            numberField({
+              autofillField: assumeMaxed ? undefined : "upgrades",
+              id: "ups-done",
+              label: "Upgrades",
+              onChange: setUpsDoneStr,
+              pasteField: "upsDone",
+              range: fields.total !== null ? { min: 0, max: fields.total } : null,
+              value: upsDoneStr,
+              error: fields.errors.done,
+              vote: voteFor("upgrades"),
+              footer: assumeMaxed ? maxedNote : null,
+            })}
 
           {item?.class === "hybrid" ? (
             <>
@@ -716,6 +763,10 @@ export function CalculatorApp() {
               error: fields.errors.health,
               vote: voteFor("health"),
             })
+          )}
+
+          {item && previewRow !== undefined && resolution.status === "empty" && (
+            <PotPreview row={previewRow} />
           )}
 
           {result && (

@@ -22,6 +22,8 @@ export interface ComboboxProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   searchPlaceholder?: string;
+  /** Show the search box. Turn off for short lists. Default true. */
+  searchable?: boolean;
   className?: string;
   disabled?: boolean;
   error?: boolean;
@@ -42,6 +44,7 @@ export function Combobox({
   onChange,
   placeholder = "Select...",
   searchPlaceholder = "Search...",
+  searchable = true,
   className,
   disabled = false,
   error = false,
@@ -188,18 +191,20 @@ export function Combobox({
 
       {open && (
         <div className="absolute z-50 mt-1 w-full animate-in fade-in-0 zoom-in-95 rounded-sm border border-border bg-surface-lowest text-popover-foreground shadow-lg">
-          <div className="flex items-center gap-2 border-b border-border px-3 py-2">
-            <Search aria-hidden className="h-4 w-4 text-muted-foreground" />
-            <input
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={searchPlaceholder}
-              ref={inputRef}
-              type="text"
-              value={search}
-              className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-            />
-          </div>
+          {searchable && (
+            <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+              <Search aria-hidden className="h-4 w-4 text-muted-foreground" />
+              <input
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={searchPlaceholder}
+                ref={inputRef}
+                type="text"
+                value={search}
+                className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              />
+            </div>
+          )}
 
           <div className="max-h-[228px] overflow-y-auto p-1">
             {filtered.length === 0 ? (

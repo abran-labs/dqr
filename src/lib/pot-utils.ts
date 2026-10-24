@@ -29,6 +29,23 @@ export function potentialPercentile(pot: number, row: ItemRarityRow): number {
   return clampedPercentile(pot, minPot, maxPot);
 }
 
+export interface PotMark {
+  readonly percentile: number;
+  readonly pot: number;
+}
+
+/** Percentile boundaries for the preview: 0-25, 25-50, 50-75, 75-90, 90-100. */
+export const PREVIEW_PERCENTILES: readonly number[] = [0, 25, 50, 75, 90, 100];
+
+/** Pot value at each preview boundary, each listed once. */
+export function potMarks(row: ItemRarityRow): PotMark[] {
+  const { minPot, maxPot } = rowPotRange(row);
+  return PREVIEW_PERCENTILES.map((percentile) => ({
+    percentile,
+    pot: Math.round(minPot + ((maxPot - minPot) * percentile) / 100),
+  }));
+}
+
 /** DPS-armor health roll vs the unupgraded band. Null when the row has no health track. */
 export function healthPercentile(health: number, row: ItemRarityRow): number | null {
   const min = row.lowestHealth;
@@ -99,7 +116,8 @@ export function healthRange(rows: readonly ItemRarityRow[]): NumberRange | null 
 }
 
 export interface RarityInput {
-  readonly upgradesTotal: number;
+  /** Omit when upgrades are unknown (assumed maxed): only the pot is matched. */
+  readonly upgradesTotal?: number | undefined;
   readonly pot: number;
   /** Current armor health — the strongest disambiguator when present. */
   readonly health?: number | undefined;
@@ -111,7 +129,9 @@ export interface RarityInput {
  */
 export function resolveRarityRows(item: DqrItem, input: RarityInput): ItemRarityRow[] {
   return item.rows.filter((row) => {
-    if (input.upgradesTotal < row.minUps || input.upgradesTotal > row.maxUps) return false;
+    if (input.upgradesTotal !== undefined && (input.upgradesTotal < row.minUps || input.upgradesTotal > row.maxUps)) {
+      return false;
+    }
     const { minPot, maxPot } = rowPotRange(row);
     if (input.pot < minPot || input.pot > maxPot) return false;
     if (input.health !== undefined && row.lowestHealth !== undefined && row.highestHealth !== undefined) {
