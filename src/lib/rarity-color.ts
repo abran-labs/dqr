@@ -75,6 +75,64 @@ export function detectRarityFromPixels(image: PixelBuffer): Rarity | null {
   return best;
 }
 
+const UPGRADE_SAT_MIN = 0.3;
+const UPGRADE_VALUE_MIN = 60;
+const UPGRADE_VALUE_MAX = 140;
+
+/**
+ * Upgrade-screen rarity: the item icon box and name plate are tinted by rarity
+ * (rare plate is ~rgb(59,60,103)). The screen is full of gray panels and bright
+ * buttons, so only dim, clearly tinted pixels vote, and gray never wins.
+ * Null when no tint is found — the form's rarity picker takes over.
+ */
+export function detectUpgradeScreenRarity(
+  image: PixelBuffer,
+  /** Normalized [x0, y0, x1, y1] around the item icon + name plate. */
+  box?: readonly [number, number, number, number] | null,
+): Rarity | null {
+  const { data, width, height } = image;
+  const pixels = width * height;
+  if (width <= 0 || height <= 0 || data.length < pixels * 4) return null;
+
+  const x0 = box ? Math.max(0, Math.floor(box[0] * width)) : 0;
+  const y0 = box ? Math.max(0, Math.floor(box[1] * height)) : 0;
+  const x1 = box ? Math.min(width, Math.ceil(box[2] * width)) : width;
+  const y1 = box ? Math.min(height, Math.ceil(box[3] * height)) : height;
+
+  const votes = new Map<Rarity, number>();
+  for (let i = 0; i < pixels; i++) {
+    const px = i % width;
+    const py = Math.floor(i / width);
+    if (px < x0 || px >= x1 || py < y0 || py >= y1) continue;
+    const o = i * 4;
+    if ((data[o + 3] ?? 0) < ALPHA_MIN) continue;
+    const r = data[o] ?? 0;
+    const g = data[o + 1] ?? 0;
+    const b = data[o + 2] ?? 0;
+    const value = Math.max(r, g, b);
+    if (value < UPGRADE_VALUE_MIN || value > UPGRADE_VALUE_MAX) continue;
+    const hsv = rgbToHsv(r, g, b);
+    if (hsv.s < UPGRADE_SAT_MIN) continue;
+    let best: Rarity | null = null;
+    let bestDist = HUE_MAX;
+    for (const entry of CHROMATIC) {
+      const dist = hueDist(hsv.h, entry.hue);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = entry.rarity;
+      }
+    }
+    if (best !== null) votes.set(best, (votes.get(best) ?? 0) + 1);
+  }
+
+  const ranked = [...votes.entries()].sort((a, b) => b[1] - a[1]);
+  const top = ranked[0];
+  if (top === undefined || top[1] < MIN_VOTES) return null;
+  const second = ranked[1];
+  if (second !== undefined && second[1] * 2 > top[1]) return null;
+  return top[0];
+}
+
 function classifyChrome(r: number, g: number, b: number): Rarity | null {
   const value = Math.max(r, g, b);
   if (value < VALUE_MIN || value > VALUE_MAX) return null;

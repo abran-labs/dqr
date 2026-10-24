@@ -63,6 +63,10 @@ export interface VlmTooltipRead {
   readonly health: number | null;
   readonly upsDone: number | null;
   readonly upsTotal: number | null;
+  readonly maxPower?: number | null;
+  readonly recommended?: "physical" | "spell" | "health" | null;
+  readonly rarity?: "common" | "uncommon" | "rare" | "epic" | "legendary" | "ultimate" | null;
+  readonly plateBox?: readonly [number, number, number, number] | null;
 }
 
 /** Vision-model read of a tooltip image. Null on any failure so callers can fall back to OCR. */

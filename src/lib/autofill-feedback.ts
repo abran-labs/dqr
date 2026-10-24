@@ -84,8 +84,10 @@ export function autofillFromExtract(ex: ExtractedTooltip): AutofillForm {
     ? numStr(gated.physical)
     : numStr(picked.value);
   const spellStr = hybrid ? numStr(gated.spell) : "";
-  const upsDoneStr = numStr(gated.upsDone);
-  const upsTotalStr = numStr(gated.upsTotal);
+  // Tiny "done/total" text is the hardest read. When only one half survives,
+  // assume the item is maxed (done == total): the tooltip stat is then the pot.
+  const upsDoneStr = numStr(gated.upsDone ?? gated.upsTotal);
+  const upsTotalStr = numStr(gated.upsTotal ?? gated.upsDone);
   const healthStr = numStr(gated.health);
 
   const fields: AutofillField[] = [];

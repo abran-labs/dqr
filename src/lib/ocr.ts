@@ -3,6 +3,7 @@ import Tesseract from "tesseract.js";
 import type { Rarity } from "./dqr-items";
 import { asDataUrl, prepareTooltipCanvases } from "./ocr-canvas";
 import { readTooltipRows } from "./ocr-rows";
+import { detectUpgradeScreenRarity } from "./rarity-color";
 import { scanWithVlm } from "./stats-client";
 
 /*
@@ -107,6 +108,36 @@ export async function scanTooltip(imageSource: File | Blob | string): Promise<To
     const imageDataUrl = asDataUrl(prepared.color);
     const vlm = imageDataUrl === null ? null : await scanWithVlm(imageDataUrl);
     if (vlm !== null) {
+      // Upgrade screen: "will have N power when maxed" is the pot, so the
+      // current stat is N minus the remaining upgrades' 10 each.
+      if (
+        vlm.maxPower != null &&
+        vlm.upsTotal !== null &&
+        vlm.physical === null &&
+        vlm.spell === null &&
+        vlm.health === null
+      ) {
+        const done = vlm.upsDone ?? 0;
+        const current = vlm.maxPower - Math.max(0, vlm.upsTotal - done) * 10;
+        if (current > 0) {
+          const kind = vlm.recommended ?? "physical";
+          return {
+            health: kind === "health" ? current : null,
+            imageDataUrl,
+            nameText: vlm.name ?? "",
+            physical: kind === "physical" ? current : null,
+            processedText: vlm.name ?? "",
+            rarity:
+              (prepared.pixels === null ? null : detectUpgradeScreenRarity(prepared.pixels, vlm.plateBox)) ??
+              vlm.rarity ??
+              null,
+            rawText: vlm.name ?? "",
+            spell: kind === "spell" ? current : null,
+            upsDone: done,
+            upsTotal: vlm.upsTotal,
+          };
+        }
+      }
       const raid = vlm.name === null ? null : raidBossTitle(vlm.name);
       if (raid !== null) throw new RaidBossError(raid);
       if (vlm.name !== null || vlm.physical !== null || vlm.spell !== null || vlm.health !== null || vlm.upsTotal !== null) {
@@ -116,7 +147,7 @@ export async function scanTooltip(imageSource: File | Blob | string): Promise<To
           nameText: vlm.name ?? "",
           physical: vlm.physical,
           processedText: vlm.name ?? "",
-          rarity: prepared.rarity,
+          rarity: prepared.rarity ?? vlm.rarity ?? null,
           rawText: vlm.name ?? "",
           spell: vlm.spell,
           upsDone: vlm.upsDone,
