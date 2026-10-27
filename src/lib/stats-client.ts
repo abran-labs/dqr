@@ -8,6 +8,7 @@ import type { AutofillField } from "./autofill-feedback";
 
 export interface StatsSummary {
   readonly itemsCalculated: number;
+  readonly levelsCalculated: number;
   readonly feedbackTotal: number;
   readonly feedbackAccurate: number;
   readonly accuracy: number | null;
@@ -26,6 +27,7 @@ export async function fetchStats(): Promise<StatsSummary | null> {
       feedbackAccurate: data.feedbackAccurate ?? 0,
       feedbackTotal: data.feedbackTotal ?? 0,
       itemsCalculated: data.itemsCalculated ?? 0,
+      levelsCalculated: data.levelsCalculated ?? 0,
     };
   } catch {
     return null;
@@ -45,6 +47,21 @@ export async function logCalculation(scan: {
         rawText: scan.rawText,
         type: "calculation",
       }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    });
+    if (!response.ok) return null;
+    const data = (await response.json()) as Partial<{ id: unknown }>;
+    return typeof data.id === "number" ? data.id : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function logLevelCalculation(): Promise<number | null> {
+  try {
+    const response = await fetch(`${BASE}/events`, {
+      body: JSON.stringify({ type: "level-calculation" }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     });

@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { AddToLoadout } from "@/components/calculator/add-to-loadout";
 import { AutofillVote } from "@/components/calculator/autofill-vote";
 import { ImagePasteZone } from "@/components/calculator/image-paste-zone";
 import { PotPreview } from "@/components/calculator/pot-preview";
@@ -27,6 +28,7 @@ import { readFieldPaste, type PasteField } from "@/lib/ocr-field";
 import { extractTooltip, type ExtractedTooltip } from "@/lib/ocr-extract";
 import { pickTooltipStat, statFieldLabel } from "@/lib/ocr-stat";
 import { CALCULATOR_RESET_EVENT } from "@/lib/calculator-reset";
+import { readCalculatorSession, writeCalculatorSession } from "@/lib/calculator-session";
 import { announceStatsUpdate, logCalculation } from "@/lib/stats-client";
 import {
   autofillFailureMessage,
@@ -61,10 +63,9 @@ const parseNumber = (value: string): number | null => {
 
 const itemOptions: ComboboxOption[] = ITEMS.map((item) => {
   const dungeon = DUNGEON_BY_CODE.get(item.dungeon);
-  const single = item.rows.length === 1;
   return {
     color: RARITY_INFO[item.maxRarity].color,
-    description: `${single ? `${RARITY_INFO[item.maxRarity].label} · ` : ""}${CLASS_LABEL[item.class]}${item.glitched ? " · glitched" : ""}${item.rows.length === 0 ? " · no data yet" : ""}`,
+    description: `${CLASS_LABEL[item.class]}${item.glitched ? " · glitched" : ""}${item.rows.length === 0 ? " · no data yet" : ""}`,
     group: dungeon?.name ?? item.dungeon,
     ...(dungeon === undefined ? {} : { groupColor: dungeon.color }),
     groupIcon: `/dungeons/${item.dungeon}.webp`,
@@ -82,20 +83,21 @@ interface CalcResult {
 }
 
 export function CalculatorApp() {
-  const [scan, setScan] = React.useState<TooltipScan | null>(null);
-  const [extract, setExtract] = React.useState<ExtractedTooltip | null>(null);
-  const [calculationId, setCalculationId] = React.useState<number | null>(null);
+  const [initialSession] = React.useState(readCalculatorSession);
+  const [scan, setScan] = React.useState<TooltipScan | null>(initialSession?.scan ?? null);
+  const [extract, setExtract] = React.useState<ExtractedTooltip | null>(initialSession?.extract ?? null);
+  const [calculationId, setCalculationId] = React.useState<number | null>(initialSession?.calculationId ?? null);
 
-  const [itemId, setItemId] = React.useState<string>("");
-  const [manualRarity, setManualRarity] = React.useState<Rarity | null>(null);
-  const [statStr, setStatStr] = React.useState("");
-  const [spellStr, setSpellStr] = React.useState("");
-  const [upsDoneStr, setUpsDoneStr] = React.useState("");
-  const [upsTotalStr, setUpsTotalStr] = React.useState("");
-  const [healthStr, setHealthStr] = React.useState("");
+  const [itemId, setItemId] = React.useState<string>(initialSession?.itemId ?? "");
+  const [manualRarity, setManualRarity] = React.useState<Rarity | null>(initialSession?.manualRarity ?? null);
+  const [statStr, setStatStr] = React.useState(initialSession?.statStr ?? "");
+  const [spellStr, setSpellStr] = React.useState(initialSession?.spellStr ?? "");
+  const [upsDoneStr, setUpsDoneStr] = React.useState(initialSession?.upsDoneStr ?? "");
+  const [upsTotalStr, setUpsTotalStr] = React.useState(initialSession?.upsTotalStr ?? "");
+  const [healthStr, setHealthStr] = React.useState(initialSession?.healthStr ?? "");
 
-  const [autofilled, setAutofilled] = React.useState<readonly AutofillField[]>([]);
-  const [scanGen, setScanGen] = React.useState(0);
+  const [autofilled, setAutofilled] = React.useState<readonly AutofillField[]>(initialSession?.autofilled ?? []);
+  const [scanGen, setScanGen] = React.useState(initialSession?.scanGen ?? 0);
   const [copied, setCopied] = React.useState(false);
   const [pasteGeneration, setPasteGeneration] = React.useState(0);
   const [fieldNote, setFieldNote] = React.useState<{
@@ -105,7 +107,19 @@ export function CalculatorApp() {
   } | null>(null);
   const copiedTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const noteTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const loggedFromScan = React.useRef(false);
+  const inputGenerationRef = React.useRef(0);
+  const loggedFromScan = React.useRef(initialSession?.scan != null);
+  const beginInput = React.useCallback(() => {
+    if (noteTimerRef.current !== null) {
+      clearTimeout(noteTimerRef.current);
+      noteTimerRef.current = null;
+    }
+    setFieldNote(null);
+    const generation = inputGenerationRef.current + 1;
+    inputGenerationRef.current = generation;
+    return generation;
+  }, []);
+  const isInputCurrent = React.useCallback((generation: number) => generation === inputGenerationRef.current, []);
 
   const item = React.useMemo(() => ITEMS.find((i) => i.id === itemId), [itemId]);
   const pickedStat = React.useMemo(
@@ -127,7 +141,7 @@ export function CalculatorApp() {
             ? "spell"
             : "physical";
 
-  const handleScan = React.useCallback((next: TooltipScan): boolean => {
+  const handleScan = React.useCallback((next: TooltipScan, generation: number): boolean => {
     const ex = extractTooltip(next);
     const filled =
       ex.item !== null ||
@@ -150,6 +164,7 @@ export function CalculatorApp() {
     loggedFromScan.current = true;
     setCalculationId(null);
     void logCalculation(next).then((id) => {
+      if (generation !== inputGenerationRef.current) return;
       if (id !== null) {
         setCalculationId(id);
         announceStatsUpdate();
@@ -163,10 +178,7 @@ export function CalculatorApp() {
   // and drop it in — range checks stay with the form's live validation.
   const pasteIntoField = React.useCallback(
     async (field: PasteField, id: string, blob: Blob) => {
-      if (noteTimerRef.current !== null) {
-        clearTimeout(noteTimerRef.current);
-        noteTimerRef.current = null;
-      }
+      const generation = beginInput();
       setFieldNote({ id, message: "Scanning image…", tone: "info" });
       const fail = (message: string) => {
         setFieldNote({ id, message, tone: "error" });
@@ -177,6 +189,7 @@ export function CalculatorApp() {
       };
       try {
         const scan = await scanTooltip(blob);
+        if (generation !== inputGenerationRef.current) return;
         const read = readFieldPaste(field, scan, item ?? null);
         if (read.value === null) {
           fail("Couldn't read a number from that image — paste the value manually.");
@@ -204,6 +217,7 @@ export function CalculatorApp() {
         }
         setFieldNote(null);
       } catch (err) {
+        if (generation !== inputGenerationRef.current) return;
         console.error("Field OCR failed:", err);
         fail(
           err instanceof RaidBossError
@@ -212,7 +226,7 @@ export function CalculatorApp() {
         );
       }
     },
-    [item],
+    [beginInput, item],
   );
 
   const handleItemChange = (nextId: string) => {
@@ -372,9 +386,13 @@ export function CalculatorApp() {
 
   // Count only when the result panel is up, once per item — typing more
   // numbers on the same item is still one calculation.
-  const loggedItemId = React.useRef<string | null>(null);
+  const loggedItemId = React.useRef<string | null>(
+    initialSession !== null && initialSession.scan === null && result !== null ? initialSession.itemId : null,
+  );
 
   const resetCalculator = React.useCallback(() => {
+    inputGenerationRef.current += 1;
+    writeCalculatorSession(null);
     if (copiedTimerRef.current !== null) {
       clearTimeout(copiedTimerRef.current);
       copiedTimerRef.current = null;
@@ -446,6 +464,37 @@ export function CalculatorApp() {
     upsDoneStr !== "" ||
     upsTotalStr !== "" ||
     healthStr !== "";
+
+  React.useEffect(() => {
+    writeCalculatorSession(isDirty ? {
+      autofilled,
+      calculationId,
+      extract,
+      healthStr,
+      itemId,
+      manualRarity,
+      scan,
+      scanGen,
+      spellStr,
+      statStr,
+      upsDoneStr,
+      upsTotalStr,
+    } : null);
+  }, [
+    isDirty,
+    scan,
+    extract,
+    calculationId,
+    itemId,
+    manualRarity,
+    statStr,
+    spellStr,
+    upsDoneStr,
+    upsTotalStr,
+    healthStr,
+    autofilled,
+    scanGen,
+  ]);
 
   const copyForDiscord = () => {
     if (!result || tracks.length === 0) return;
@@ -601,7 +650,13 @@ export function CalculatorApp() {
   return (
     <Card>
       <CardContent className="space-y-6 pt-6">
-        <ImagePasteZone key={pasteGeneration} onScan={handleScan} />
+        <ImagePasteZone
+          initialPreviewUrl={scan?.imageDataUrl ?? null}
+          key={pasteGeneration}
+          isScanCurrent={isInputCurrent}
+          onScan={handleScan}
+          onScanStart={beginInput}
+        />
 
         <form
           autoComplete="off"
@@ -772,6 +827,23 @@ export function CalculatorApp() {
           {result && (
             <ResultPanel
               copied={copied}
+              loadoutActions={
+                <AddToLoadout
+                  draft={{
+                    healthStr,
+                    itemId,
+                    manualRarity: result.row.rarity,
+                    maxedAssumed: assumeMaxed,
+                    offense: displayOffense,
+                    spellStr,
+                    statStr,
+                    title: extract?.title ?? null,
+                    upsDoneStr,
+                    upsTotalStr,
+                  }}
+                  item={result.item}
+                />
+              }
               onCopy={copyForDiscord}
               rarityColor={RARITY_INFO[result.row.rarity].color}
               title={displayName}

@@ -1,7 +1,6 @@
-import { Check, Copy } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { Button } from "@/components/ui/button";
+import { ResultFrame } from "@/components/calculator/result-frame";
 import { TRACK_CHROME, trackHeading, type Track } from "@/lib/item-tracks";
 import { classifyTier, TIER_INFO } from "@/lib/pot-utils";
 
@@ -48,35 +47,15 @@ export interface ResultPanelProps {
   readonly tracks: readonly Track[];
   readonly copied: boolean;
   readonly onCopy: () => void;
+  readonly loadoutActions: ReactNode;
 }
 
-export function ResultPanel({ title, rarityColor, tracks, copied, onCopy }: ResultPanelProps) {
+export function ResultPanel({ title, rarityColor, tracks, copied, onCopy, loadoutActions }: ResultPanelProps) {
   return (
-    <div className="space-y-4 rounded-md border border-border bg-surface-low p-4">
-      <div className="flex items-center justify-between gap-2 border-b border-foreground/20 pb-1">
-        <div
-          className="text-xs font-semibold uppercase tracking-widest"
-          style={{ color: rarityColor }}
-        >
-          {title}
-        </div>
-        <Button
-          aria-label="Copy for Discord"
-          className="h-8 w-8"
-          onClick={onCopy}
-          size="icon"
-          title="Copy for Discord"
-          type="button"
-          variant="ghost"
-        >
-          {copied ? <Check aria-hidden /> : <Copy aria-hidden />}
-        </Button>
-      </div>
-      <div className="space-y-4">
-        {tracks.map((track) => (
-          <TrackBlock key={`${track.kind}-${track.chrome}`} track={track} tracks={tracks} />
-        ))}
-      </div>
-    </div>
+    <ResultFrame title={title} accentColor={rarityColor} actions={loadoutActions} copied={copied} onCopy={onCopy}>
+      {tracks.map((track) => (
+        <TrackBlock key={`${track.kind}-${track.chrome}`} track={track} tracks={tracks} />
+      ))}
+    </ResultFrame>
   );
 }

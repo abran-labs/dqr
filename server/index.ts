@@ -93,7 +93,7 @@ const handleEvents = async (request: Request): Promise<Response> => {
   } catch {
     body = null;
   }
-  const { image, processedText, rawText } = (body ?? {}) as Partial<Record<string, unknown>>;
+  const { image, processedText, rawText, type: eventType } = (body ?? {}) as Partial<Record<string, unknown>>;
   if (image !== undefined && typeof image !== "string") {
     return json({ error: "Invalid request" }, 400);
   }
@@ -107,6 +107,15 @@ const handleEvents = async (request: Request): Promise<Response> => {
   const imageBytes = dataUrlMatch ? Buffer.from(dataUrlMatch[2] ?? "", "base64") : null;
   if (imageBytes !== null && imageBytes.byteLength > MAX_IMAGE_BYTES) {
     return json({ error: "Image too large" }, 413);
+  }
+
+  if (eventType === "level-calculation") {
+    lastEventAt.set(key, now);
+    const id = store.insertLevelCalculation();
+    return json({ id });
+  }
+  if (eventType !== undefined && eventType !== "calculation") {
+    return json({ error: "Invalid event type" }, 400);
   }
 
   lastEventAt.set(key, now);

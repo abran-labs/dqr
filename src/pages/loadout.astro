@@ -1,0 +1,10 @@
+---
+import { LoadoutApp } from "@/components/calculator/loadout-app";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Gear Loadout" description="Save your gear loadout and calculate ability damage from its potential.">
+  <main class="mx-auto w-full max-w-3xl py-8">
+    <LoadoutApp client:load transition:persist="loadout-app" />
+  </main>
+</BaseLayout>

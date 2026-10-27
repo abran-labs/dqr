@@ -6,21 +6,25 @@ import { scanTooltip, RaidBossError, type TooltipScan } from "@/lib/ocr";
 import { cn } from "@/lib/utils";
 
 interface ImagePasteZoneProps {
+  readonly onScanStart: () => number;
+  readonly isScanCurrent: (generation: number) => boolean;
   /** Returns true when the scan produced an item or any number. */
-  readonly onScan: (scan: TooltipScan) => boolean;
+  readonly onScan: (scan: TooltipScan, generation: number) => boolean;
+  readonly initialPreviewUrl?: string | null;
 }
 
 type Status = "idle" | "processing" | "done" | "error";
 
-export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
-  const [status, setStatus] = React.useState<Status>("idle");
+export function ImagePasteZone({ onScan, onScanStart, isScanCurrent, initialPreviewUrl = null }: ImagePasteZoneProps) {
+  const [status, setStatus] = React.useState<Status>(initialPreviewUrl === null ? "idle" : "done");
   const [dragOver, setDragOver] = React.useState(false);
   const [zoomed, setZoomed] = React.useState(false);
-  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(initialPreviewUrl);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const previewUrlRef = React.useRef<string | null>(null);
+  const previewUrlRef = React.useRef<string | null>(initialPreviewUrl);
   const idleTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const processGenerationRef = React.useRef(0);
 
   const clearIdleTimer = React.useCallback(() => {
     if (idleTimerRef.current !== null) {
@@ -52,13 +56,21 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
 
   const processImage = React.useCallback(
     async (source: File | Blob) => {
+      const generation = processGenerationRef.current + 1;
+      processGenerationRef.current = generation;
+      const inputGeneration = onScanStart();
       clearIdleTimer();
       setErrorMessage(null);
       setStatus("processing");
 
       try {
         const scan = await scanTooltip(source);
-        if (!onScan(scan)) {
+        if (generation !== processGenerationRef.current) return;
+        if (!isScanCurrent(inputGeneration)) {
+          setStatus("idle");
+          return;
+        }
+        if (!onScan(scan, inputGeneration)) {
           fail();
           return;
         }
@@ -68,14 +80,25 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
         setPreviewUrl(newUrl);
         setStatus("done");
       } catch (err) {
+        if (generation !== processGenerationRef.current) return;
+        if (!isScanCurrent(inputGeneration)) {
+          setStatus("idle");
+          return;
+        }
         console.error("OCR failed:", err);
         fail(err instanceof RaidBossError ? err.message : undefined);
       }
     },
-    [clearIdleTimer, dropPreview, fail, onScan],
+    [clearIdleTimer, dropPreview, fail, isScanCurrent, onScan, onScanStart],
   );
 
-  React.useEffect(() => () => clearIdleTimer(), [clearIdleTimer]);
+  React.useEffect(
+    () => () => {
+      clearIdleTimer();
+      processGenerationRef.current += 1;
+    },
+    [clearIdleTimer],
+  );
 
   // Global paste listener
   React.useEffect(() => {
@@ -112,14 +135,17 @@ export function ImagePasteZone({ onScan }: ImagePasteZoneProps) {
   };
 
   const handleZoneClick = async () => {
+    const generation = processGenerationRef.current;
     if (status === "processing" || status === "error") return;
     if (!isGeckoEngine((property, value) => CSS.supports(property, value))) {
       const blob = await readClipboardImage(navigator.clipboard);
+      if (generation !== processGenerationRef.current) return;
       if (blob) {
         await processImage(blob);
         return;
       }
     }
+    if (generation !== processGenerationRef.current) return;
     fileInputRef.current?.click();
   };
 

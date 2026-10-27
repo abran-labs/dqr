@@ -6,6 +6,7 @@ export type FieldFeedbackResult = "ok" | "duplicate" | "missing";
 
 export type Aggregate = {
   readonly itemsCalculated: number;
+  readonly levelsCalculated: number;
   readonly feedbackTotal: number;
   readonly feedbackAccurate: number;
   readonly accuracy: number | null;
@@ -13,6 +14,7 @@ export type Aggregate = {
 
 export type StatsStore = {
   readonly insertCalculation: (rawText: string | null, processedText: string | null) => number;
+  readonly insertLevelCalculation: () => number;
   readonly applyFieldFeedback: (
     calculationId: number,
     field: AutofillField,
@@ -42,6 +44,10 @@ export function openStatsStore(db: Database): StatsStore {
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (calculation_id, field)
     );
+    CREATE TABLE IF NOT EXISTS level_calculations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
     CREATE INDEX IF NOT EXISTS idx_calculations_accurate ON calculations(accurate);
   `);
   const columns = columnNames(db, "calculations");
@@ -53,7 +59,9 @@ export function openStatsStore(db: Database): StatsStore {
   const insertCalculationStmt = db.query(
     "INSERT INTO calculations (accurate, verification, ocr_raw_text, ocr_processed_text) VALUES (NULL, NULL, ?1, ?2)",
   );
+  const insertLevelCalculationStmt = db.query("INSERT INTO level_calculations DEFAULT VALUES");
   const countCalculations = db.query<{ total: number }, []>("SELECT COUNT(*) AS total FROM calculations");
+  const countLevelCalculations = db.query<{ total: number }, []>("SELECT COUNT(*) AS total FROM level_calculations");
   const feedbackTotals = db.query<{ total: number; accurate: number }, []>(
     "SELECT COUNT(*) AS total, COALESCE(SUM(accurate), 0) AS accurate FROM field_feedback",
   );
@@ -72,6 +80,10 @@ export function openStatsStore(db: Database): StatsStore {
       const { lastInsertRowid } = insertCalculationStmt.run(rawText, processedText);
       return Number(lastInsertRowid);
     },
+    insertLevelCalculation() {
+      const { lastInsertRowid } = insertLevelCalculationStmt.run();
+      return Number(lastInsertRowid);
+    },
     readAggregate() {
       const items = countCalculations.get()?.total ?? 0;
       const feedback = feedbackTotals.get();
@@ -82,6 +94,7 @@ export function openStatsStore(db: Database): StatsStore {
         feedbackAccurate,
         feedbackTotal,
         itemsCalculated: items,
+        levelsCalculated: countLevelCalculations.get()?.total ?? 0,
       };
     },
   };

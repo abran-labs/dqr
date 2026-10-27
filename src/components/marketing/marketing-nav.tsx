@@ -150,10 +150,12 @@ export function MarketingNav({ navLinks, pathname: initialPathname }: MarketingN
                   // Optimistic move so the bar slides before/during client navigation.
                   setPathname(link.href);
                   if (link.href !== "/") return;
-                  requestCalculatorReset();
-                  // Same-route ClientRouter no-ops — stop the click so we
-                  // reset in place instead of keeping the filled island.
-                  if (window.location.pathname === "/") event.preventDefault();
+                  // Same-route ClientRouter no-ops — reset in place. Returning
+                  // from another section keeps the in-memory calculator session.
+                  if (window.location.pathname === "/") {
+                    requestCalculatorReset();
+                    event.preventDefault();
+                  }
                 }}
               >
                 {content}

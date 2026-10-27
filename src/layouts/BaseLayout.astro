@@ -13,7 +13,8 @@ import "@/styles/globals.css";
 
 const navLinks = [
   { label: "Pot Calculator", href: "/" },
-  { label: "Level Calculator", href: "/level" },
+  { label: "Gear Loadout", href: "/loadout/" },
+  { label: "Level Calculator", href: "/level/" },
 ] as const satisfies ReadonlyArray<SiteNavLink>;
 
 const footerNavLinks: readonly MarketingFooterNavLink[] = [];
@@ -82,7 +83,7 @@ const pathname = Astro.url.pathname;
           <StatsStrip client:load transition:persist="stats-strip" />
         </div>
       </header>
-      <div class="relative z-[1] flex flex-1 flex-col px-4">
+      <div class="relative z-[2] flex flex-1 flex-col px-4">
         <slot />
       </div>
       <MarketingFooter

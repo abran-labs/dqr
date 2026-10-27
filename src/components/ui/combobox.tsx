@@ -11,6 +11,7 @@ export interface ComboboxOption {
   group?: string;
   groupColor?: string;
   groupIcon?: string;
+  icon?: string;
   /** Search-only text (e.g. dungeon codes like "DT" for Desert Temple). */
   keywords?: string;
 }
@@ -28,6 +29,8 @@ export interface ComboboxProps {
   disabled?: boolean;
   error?: boolean;
   errorMessage?: string | undefined;
+  /** Multi-colored closed-button segments. */
+  valueParts?: readonly { readonly text: string; readonly color: string }[];
   /** Closed-button label color. Overrides the selected option's color. */
   valueColor?: string;
 }
@@ -49,12 +52,21 @@ export function Combobox({
   disabled = false,
   error = false,
   errorMessage,
+  valueParts,
   valueColor,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [collapsedGroups, setCollapsedGroups] = React.useState<Set<string>>(new Set());
   const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const groups = new Set<string>();
+    for (const option of options) {
+      if (option.group !== undefined) groups.add(option.group);
+    }
+    setCollapsedGroups(groups);
+  }, [options]);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const selected = options.find((opt) => opt.value === value);
@@ -153,7 +165,7 @@ export function Combobox({
   };
 
   return (
-    <div ref={containerRef} className={cn("relative", className)}>
+    <div ref={containerRef} className={cn("relative", open && "z-[100]", className)}>
       <button
         aria-describedby={error ? errorId : undefined}
         aria-invalid={error ? true : undefined}
@@ -171,11 +183,22 @@ export function Combobox({
           !selected && "text-muted-foreground",
         )}
       >
-        <span
-          className="truncate"
-          style={(valueColor ?? selected?.color) ? { color: valueColor ?? selected?.color } : undefined}
-        >
-          {selected ? selected.label : placeholder}
+        <span className="flex min-w-0 items-center gap-2">
+          {selected?.icon && <img alt="" aria-hidden className="h-5 w-5 rounded-full object-cover" src={selected.icon} />}
+          {selected && valueParts !== undefined ? (
+            <span className="truncate">
+              {valueParts.map((part, index) => (
+                <span key={`${part.text}-${index}`} style={{ color: part.color }}>{part.text}</span>
+              ))}
+            </span>
+          ) : (
+            <span
+              className="truncate"
+              style={(valueColor ?? selected?.color) ? { color: valueColor ?? selected?.color } : undefined}
+            >
+              {selected ? selected.label : placeholder}
+            </span>
+          )}
         </span>
         <ChevronDown
           aria-hidden
@@ -260,13 +283,16 @@ export function Combobox({
                             option.value === value && "font-medium",
                           )}
                         >
-                          <div className="flex flex-col items-start">
-                            <span style={option.color ? { color: option.color } : undefined}>
-                              {option.label}
-                            </span>
-                            {option.description && (
-                              <span className="text-xs text-muted-foreground">{option.description}</span>
-                            )}
+                          <div className="flex items-center gap-2">
+                            {option.icon && <img alt="" aria-hidden className="h-5 w-5 rounded-full object-cover" src={option.icon} />}
+                            <div className="flex flex-col items-start">
+                              <span style={option.color ? { color: option.color } : undefined}>
+                                {option.label}
+                              </span>
+                              {option.description && (
+                                <span className="text-xs text-muted-foreground">{option.description}</span>
+                              )}
+                            </div>
                           </div>
                           {option.value === value && (
                             <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">

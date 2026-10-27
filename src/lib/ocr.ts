@@ -76,7 +76,7 @@ export function raidBossTitle(name: string): string | null {
 // tesseract.js would otherwise request a .gz that 404s and kill the worker).
 let workerPromise: Promise<Tesseract.Worker> | null = null;
 
-async function getWorker(): Promise<Tesseract.Worker> {
+export async function getOcrWorker(): Promise<Tesseract.Worker> {
   if (workerPromise !== null) return workerPromise;
   workerPromise = Tesseract.createWorker("eng", undefined, {
     gzip: false,
@@ -156,7 +156,7 @@ export async function scanTooltip(imageSource: File | Blob | string): Promise<To
       }
     }
 
-    const worker = await getWorker();
+    const worker = await getOcrWorker();
 
     // Structured read. Falls back to the legacy whole-card text pass only
     // when the image could not be decoded to pixels (cross-origin canvas).

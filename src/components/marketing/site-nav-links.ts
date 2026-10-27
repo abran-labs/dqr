@@ -6,9 +6,10 @@ export type SiteNavLink = {
 };
 
 export function isMarketingNavLinkActive(pathname: string, link: SiteNavLink): boolean {
-  const activePath = link.activePath ?? link.href;
+  const currentPath = pathname.replace(/\/$/, "") || "/";
+  const activePath = (link.activePath ?? link.href).replace(/\/$/, "") || "/";
   if (activePath === "/") {
-    return pathname === "/";
+    return currentPath === "/";
   }
-  return pathname === activePath || pathname.startsWith(`${activePath}/`);
+  return currentPath === activePath || currentPath.startsWith(`${activePath}/`);
 }

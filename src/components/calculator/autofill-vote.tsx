@@ -75,7 +75,7 @@ export function AutofillVote(props: {
         No
       </button>
       <button
-        className="text-xs text-muted-foreground/40 underline hover:text-muted-foreground/70"
+        className="text-xs text-muted-foreground underline hover:text-foreground"
         onClick={() => writeShowAutofillVote(props.field, false)}
         type="button"
       >
