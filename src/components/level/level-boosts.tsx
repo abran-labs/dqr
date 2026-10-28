@@ -11,7 +11,7 @@ export type XpBoostKey = "vip" | "solo" | "hardcore" | "xpBoost";
 const BOOSTS: readonly { readonly key: XpBoostKey; readonly label: string }[] = [
   { key: "vip", label: "VIP +20%" },
   { key: "solo", label: "Solo +10%" },
-  { key: "hardcore", label: "Hardcore +10%" },
+  { key: "hardcore", label: "Hardcore +25%" },
   { key: "xpBoost", label: "XP Boost +100%" },
 ];
 

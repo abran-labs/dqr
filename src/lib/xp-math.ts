@@ -1,7 +1,7 @@
 /*
   Pure XP/level math — ported from the official DQR Wiki XP calculator.
   Formula: xpForLevel(L) = Math.round(84 * Math.pow(1.13, L - 1)).
-  Range totals sum each rounded level; boosts stack additively (max 3.4x).
+  Range totals sum each rounded level; boosts stack additively (max 3.55x).
 */
 
 import { isBossRaidSlug } from "./xp-dungeons";
@@ -37,13 +37,13 @@ export interface BoostInput {
   readonly eventBoost?: number | undefined;
 }
 
-/** Additive multiplier: 1 + .2 VIP + .1 solo + .1 hardcore + 1 boost + event. */
+/** Additive multiplier: 1 + .2 VIP + .1 solo + .25 hardcore + 1 boost + event. */
 export function boostMultiplier(input: BoostInput): number {
   return (
     1 +
     0.2 * Number(input.vip === true) +
     0.1 * Number(input.solo === true) +
-    0.1 * Number(input.hardcore === true) +
+    0.25 * Number(input.hardcore === true) +
     Number(input.xpBoost === true) +
     (input.eventBoost ?? 0)
   );
