@@ -1,4 +1,5 @@
-import { calculateDamage } from "./damage-math";
+import { calculateDamage, type DamageResult } from "./damage-math";
+import type { InnerBuff } from "./damage-types";
 import { ABILITIES, abilityOffense, isDamageAbilityChoice } from "./dqr-abilities";
 import { ITEMS } from "./dqr-items";
 import { rowPotRange } from "./pot-utils";
@@ -29,8 +30,28 @@ function maxPotentials(): { readonly weapon: readonly [number, number]; readonly
   return { armor: [armorPhysical, armorSpell], weapon: [weaponPhysical, weaponSpell] };
 }
 
+const MAX_POTENTIALS = maxPotentials();
+
+export function godPotDamage(inputs: {
+  readonly offense: "physical" | "spell";
+  readonly abilityMultiplier: number;
+  readonly inner: InnerBuff;
+  readonly skillPoints: number;
+}): DamageResult {
+  const index = inputs.offense === "physical" ? 0 : 1;
+  const armorPower = MAX_POTENTIALS.armor[index] ?? 0;
+  return calculateDamage({
+    abilityMultiplier: inputs.abilityMultiplier,
+    armorPower,
+    helmetPower: armorPower,
+    inner: inputs.inner,
+    skillPoints: inputs.skillPoints,
+    weaponPower: MAX_POTENTIALS.weapon[index] ?? 0,
+  });
+}
+
 export function theoreticalHighestDamage(): number {
-  const max = maxPotentials();
+  const max = MAX_POTENTIALS;
   let highest = 0;
   for (const ability of ABILITIES.filter(isDamageAbilityChoice)) {
     const offense = abilityOffense(ability);

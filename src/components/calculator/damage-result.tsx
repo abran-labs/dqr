@@ -39,8 +39,9 @@ function ResultRow({ label, value, color, large }: {
   );
 }
 
-export function DamageResultPanel({ result, title, accentColor }: {
+export function DamageResultPanel({ result, godPot, title, accentColor }: {
   readonly result: DamageResult;
+  readonly godPot?: DamageResult | null;
   readonly title: string;
   readonly accentColor: string;
 }) {
@@ -57,6 +58,9 @@ export function DamageResultPanel({ result, title, accentColor }: {
         <ResultRow label="Average damage" value={formatDamage(result.average, { decimals: 2, approximate: false })} large />
         <ResultRow color={LOW_COLOR} label="Lowest damage" value={formatDamage(result.low, { decimals: 2, approximate: false })} />
         <ResultRow color={HIGH_COLOR} label="Highest damage" value={formatDamage(result.high, { decimals: 2, approximate: false })} />
+        {godPot != null && (
+          <ResultRow label="God pot damage" value={formatDamage(godPot.average, { decimals: 2, approximate: false })} />
+        )}
       </div>
     </ResultFrame>
   );

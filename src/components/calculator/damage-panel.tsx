@@ -19,6 +19,7 @@ import {
   parseSkillPoints,
 } from "@/lib/damage-math";
 import type { DamagePotentials, DamageSettings, InnerBuff } from "@/lib/damage-types";
+import { godPotDamage } from "@/lib/theoretical-damage";
 
 export type { DamagePotentials, DamageSettings, InnerBuff } from "@/lib/damage-types";
 export { DEFAULT_DAMAGE_SETTINGS } from "@/lib/damage-types";
@@ -126,6 +127,16 @@ export function DamagePanel({ weapon, armor, helmet, settings, offenseFilter, on
     });
   })();
 
+  const godPot =
+    ready && ability !== undefined && offense !== null
+      ? godPotDamage({
+          abilityMultiplier: ability.multiplier ?? 0,
+          inner: settings.inner,
+          offense,
+          skillPoints: skillValue,
+        })
+      : null;
+
   const status = (() => {
     if (settings.abilitySlug !== "" && ability === undefined) return "Unknown ability — pick a spell.";
     if (ability === undefined) return null;
@@ -210,7 +221,7 @@ export function DamagePanel({ weapon, armor, helmet, settings, offenseFilter, on
       </div>
 
       {result !== null && ability !== undefined && offense !== null ? (
-        <DamageResultPanel accentColor={ability.rarityColour} result={result} title={ability.name} />
+        <DamageResultPanel accentColor={ability.rarityColour} godPot={godPot} result={result} title={ability.name} />
       ) : (
         status !== null && <p className="text-sm text-muted-foreground">{status}</p>
       )}
