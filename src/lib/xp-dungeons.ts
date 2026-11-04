@@ -166,6 +166,32 @@ export function xpDungeonIcon(slug: string): string | undefined {
   return XP_DUNGEON_ICONS[slug];
 }
 
+/** Official wiki time limits in seconds; per-difficulty where the wiki lists two. */
+const TIME_LIMITS: Readonly<Record<string, number | { readonly insane: number; readonly nightmare: number }>> = {
+  "aquatic-temple": 720,
+  "boss-raids": 210,
+  "desert-temple": 600,
+  "enchanted-forest": 660,
+  "ghastly-harbor": 720,
+  "gilded-skies": { insane: 660, nightmare: 690 },
+  "king-s-castle": 660,
+  "northern-lands": 720,
+  "orbital-outpost": { insane: 540, nightmare: 600 },
+  "pirate-island": 660,
+  "samurai-palace": 660,
+  "steampunk-sewers": 540,
+  "the-canals": 600,
+  "the-underworld": { insane: 600, nightmare: 660 },
+  "volcanic-chambers": 720,
+  "winter-outpost": 600,
+};
+
+export function dungeonTimeLimit(slug: string, difficulty: string): number {
+  const limit = TIME_LIMITS[slug] ?? 720;
+  if (typeof limit === "number") return limit;
+  return difficulty === "insane" ? limit.insane : limit.nightmare;
+}
+
 export function findDungeon(slug: string): XpDungeon | undefined {
   return DUNGEONS.find((entry) => entry.slug === slug);
 }

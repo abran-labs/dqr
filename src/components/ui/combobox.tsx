@@ -279,8 +279,8 @@ export function Combobox({
                           type="button"
                           className={cn(
                             "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none transition-colors",
-                            currentIndex === highlightIndex && "bg-accent text-accent-foreground",
-                            option.value === value && "font-medium",
+                            currentIndex === highlightIndex && "bg-accent",
+                            option.value === value ? "font-medium text-primary" : currentIndex === highlightIndex && "text-accent-foreground",
                           )}
                         >
                           <div className="flex items-center gap-2">

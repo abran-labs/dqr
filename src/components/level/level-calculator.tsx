@@ -9,10 +9,12 @@ import { Input } from "@/components/ui/input";
 import { parseXpText } from "@/lib/xp-extract";
 import { dungeonChrome } from "@/lib/dungeon-display";
 import { TRACK_CHROME } from "@/lib/item-tracks";
+import { minutesTextToSeconds, RunTimePicker, secondsToMinutesText } from "@/components/level/run-time-picker";
 import {
   bossVisibleDifficulties,
   difficultyColor,
   difficultyLabel,
+  dungeonTimeLimit,
   DUNGEONS,
   findDungeon,
   resolveDifficulty,
@@ -169,14 +171,14 @@ export function LevelCalculator() {
   const from = parseLevelInput(fromLevel, MIN_LEVEL, MAX_LEVEL - 1);
   const to = parseLevelInput(toLevel, MIN_LEVEL + 1, MAX_LEVEL);
   const xp = parseAmountInput(currentXp);
-  const pace = minutes.trim() === "" ? null : parseAmountInput(minutes);
+  const paceSeconds = minutesTextToSeconds(minutes);
+  const pace = paceSeconds === null ? null : Math.min(paceSeconds, dungeonTimeLimit(dungeonSlug, resolveDifficulty(findDungeon(dungeonSlug), difficulty)?.difficulty ?? "")) / 60;
   const eventBoost = XP_EVENTS.find((event) => event.value === eventId)?.boost ?? 0;
   const rangeError = fromLevel === "" || toLevel === "" ? undefined : !Number.isFinite(from) || !Number.isFinite(to)
     ? `Enter levels ${MIN_LEVEL}–${MAX_LEVEL}.`
     : to <= from ? "Target level must be higher than current level." : undefined;
   const xpError = Number.isFinite(xp) ? undefined : "Enter a valid XP amount (K, M, B, T, Q suffixes work).";
-  const paceError = pace === null || Number.isFinite(pace) ? undefined : "Enter a valid number of minutes.";
-  const valid = fromLevel !== "" && toLevel !== "" && rangeError === undefined && xpError === undefined && paceError === undefined;
+  const valid = fromLevel !== "" && toLevel !== "" && rangeError === undefined && xpError === undefined;
   const candidates = React.useMemo(() => valid
     ? rankXpCandidates({ boosts: { ...boosts, eventBoost }, currentXp: xp, fromLevel: from, minutesPerRun: pace, toLevel: to })
     : [], [valid, boosts, eventBoost, xp, from, pace, to]);
@@ -185,6 +187,7 @@ export function LevelCalculator() {
   const selected = candidates.find((candidate) => candidate.dungeonSlug === dungeonSlug && candidate.difficulty === selectedDifficulty?.difficulty && candidate.eligible) ?? null;
   const selectedError = candidates.find((candidate) => candidate.dungeonSlug === dungeonSlug && !candidate.eligible)?.reason ?? null;
   const activeMultiplier = selected?.multiplier ?? boostMultiplier({ ...boosts, eventBoost, xpBoost: from < 180 || boosts.xpBoost });
+  const timeLimit = dungeonTimeLimit(dungeonSlug, selectedDifficulty?.difficulty ?? "");
   const selectedDungeonLabel = dungeon?.name ?? "Pick a dungeon";
   const selectedDungeonColor = dungeonChrome(dungeonSlug, dungeon?.name ?? "").color ?? TRACK_CHROME.spell;
   const selectedDifficultyLabel = selectedDifficulty === undefined ? "Select difficulty" : difficultyLabel(selectedDifficulty.difficulty);
@@ -274,9 +277,12 @@ export function LevelCalculator() {
               {xpError !== undefined && <p className="text-sm text-destructive">{xpError}</p>}
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="minutes-run">Minutes per run <span className="font-normal text-muted-foreground">(optional)</span></label>
-              <Input id="minutes-run" inputMode="decimal" onChange={(event) => setMinutes(event.target.value)} value={minutes} />
-              {paceError !== undefined && <p className="text-sm text-destructive">{paceError}</p>}
+              <label className="text-sm font-medium" htmlFor="minutes-run">Time per run</label>
+              <RunTimePicker
+                limitSeconds={timeLimit}
+                onChange={(next) => setMinutes(secondsToMinutesText(next))}
+                seconds={minutesTextToSeconds(minutes)}
+              />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="xp-dungeon">Dungeon</label>
