@@ -34,7 +34,7 @@ export function LevelImagePasteZone({ initialPreviewUrl, onPreviewChange, onScan
     setStatus("processing");
     setMessage(null);
     try {
-      const text = await scanXpScreenshot(source);
+      const texts = await scanXpScreenshot(source);
       if (currentScan !== scanId.current || currentRevision !== revisionRef.current) return;
       const nextPreview = await new Promise<string | null>((resolve) => {
         const reader = new FileReader();
@@ -43,7 +43,11 @@ export function LevelImagePasteZone({ initialPreviewUrl, onPreviewChange, onScan
         reader.readAsDataURL(source);
       });
       if (currentScan !== scanId.current || currentRevision !== revisionRef.current) return;
-      const error = onScan(text, currentRevision);
+      let error: string | null = null;
+      for (const text of texts) {
+        error = onScan(text, currentRevision);
+        if (error === null) break;
+      }
       if (error !== null) {
         setMessage(error);
         setStatus("error");
