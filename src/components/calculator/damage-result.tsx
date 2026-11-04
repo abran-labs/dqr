@@ -5,6 +5,7 @@ import { publishDamageAverage } from "@/lib/damage-comparison";
 import type { DamageResult } from "@/lib/damage-math";
 import { formatDamage } from "@/lib/damage-math";
 import type { InnerBuff } from "@/lib/damage-types";
+import { TIER_INFO } from "@/lib/pot-utils";
 
 const INNER_LABELS = {
   enhanced: { combined: "EIR/EIF", physical: "EIR", spell: "EIF" },
@@ -39,6 +40,23 @@ function ResultRow({ label, value, color, large }: {
   );
 }
 
+function DamageSection({ result, title, color }: {
+  readonly result: DamageResult;
+  readonly title: string;
+  readonly color: string;
+}) {
+  return (
+    <div className="space-y-1 border-l-2 pl-3" style={{ borderColor: color }}>
+      <div className="text-xs font-semibold uppercase tracking-widest" style={{ color }}>
+        {title}
+      </div>
+      <ResultRow label="Average damage" value={formatDamage(result.average, { decimals: 2, approximate: false })} large />
+      <ResultRow color={LOW_COLOR} label="Lowest damage" value={formatDamage(result.low, { decimals: 2, approximate: false })} />
+      <ResultRow color={HIGH_COLOR} label="Highest damage" value={formatDamage(result.high, { decimals: 2, approximate: false })} />
+    </div>
+  );
+}
+
 export function DamageResultPanel({ result, godPot, title, accentColor }: {
   readonly result: DamageResult;
   readonly godPot?: DamageResult | null;
@@ -51,16 +69,9 @@ export function DamageResultPanel({ result, godPot, title, accentColor }: {
   }, [result.average]);
   return (
     <ResultFrame accentColor={accentColor} title={title}>
-      <div className="space-y-1 border-l-2 pl-3" style={{ borderColor: accentColor }}>
-        <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: accentColor }}>
-          DPS
-        </div>
-        <ResultRow label="Average damage" value={formatDamage(result.average, { decimals: 2, approximate: false })} large />
-        <ResultRow color={LOW_COLOR} label="Lowest damage" value={formatDamage(result.low, { decimals: 2, approximate: false })} />
-        <ResultRow color={HIGH_COLOR} label="Highest damage" value={formatDamage(result.high, { decimals: 2, approximate: false })} />
-        {godPot != null && (
-          <ResultRow label="God pot damage" value={formatDamage(godPot.average, { decimals: 2, approximate: false })} />
-        )}
+      <div className="space-y-4">
+        <DamageSection color={accentColor} result={result} title="DPS" />
+        {godPot != null && <DamageSection color={TIER_INFO.god.color} result={godPot} title="Theoretical God Pot" />}
       </div>
     </ResultFrame>
   );
