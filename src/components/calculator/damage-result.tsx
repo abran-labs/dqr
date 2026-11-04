@@ -71,7 +71,7 @@ export function DamageResultPanel({ result, godPot, title, accentColor }: {
     <ResultFrame accentColor={accentColor} title={title}>
       <div className="space-y-4">
         <DamageSection color={accentColor} result={result} title="DPS" />
-        {godPot != null && <DamageSection color={TIER_INFO.god.color} result={godPot} title="Theoretical God Pot" />}
+        {godPot != null && <DamageSection color={TIER_INFO.god.color} result={godPot} title="God Pot" />}
       </div>
     </ResultFrame>
   );
