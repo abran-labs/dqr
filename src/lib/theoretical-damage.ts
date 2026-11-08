@@ -6,9 +6,9 @@ import { rowPotRange } from "./pot-utils";
 
 /**
  * Skill points behind the ceiling: the top of the in-game leaderboard is level
- * 235, so that is the most anyone can spend today. Bump when the record moves.
+ * 238, so that is the most anyone can spend today. Bump when the record moves.
  */
-const TOP_LEVEL_SKILL_POINTS = 235;
+const TOP_LEVEL_SKILL_POINTS = 238;
 
 function maxPotentials(): { readonly weapon: readonly [number, number]; readonly armor: readonly [number, number] } {
   let weaponPhysical = 0;
