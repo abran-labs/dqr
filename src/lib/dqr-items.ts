@@ -75,6 +75,26 @@ export interface DqrItem {
 
 export const ITEMS: readonly DqrItem[] = [
   {
+    id: "GS:Lumenflame's Judgement",
+    dungeon: "GS",
+    name: "Lumenflame's Judgement",
+    class: "war",
+    maxRarity: "ultimate",
+    rows: [
+    { maxBase: 158193000, maxUps: 963900, minBase: 146475000, minUps: 892500, rarity: "ultimate" },
+    ],
+  },
+  {
+    id: "GS:Lumenflame's Absolution",
+    dungeon: "GS",
+    name: "Lumenflame's Absolution",
+    class: "mage",
+    maxRarity: "ultimate",
+    rows: [
+    { maxBase: 158193000, maxUps: 963900, minBase: 146475000, minUps: 892500, rarity: "ultimate" },
+    ],
+  },
+  {
     id: "GS:Gildenscale Oath And Aegis",
     dungeon: "GS",
     name: "Gildenscale Oath And Aegis",
@@ -609,7 +629,7 @@ export const ITEMS: readonly DqrItem[] = [
     class: "war",
     maxRarity: "ultimate",
     rows: [
-
+    { maxBase: 35834400, maxUps: 340200, minBase: 33180000, minUps: 315000, rarity: "ultimate" },
     ],
   },
   {
@@ -619,7 +639,7 @@ export const ITEMS: readonly DqrItem[] = [
     class: "mage",
     maxRarity: "ultimate",
     rows: [
-
+    { maxBase: 35834400, maxUps: 340200, minBase: 33180000, minUps: 315000, rarity: "ultimate" },
     ],
   },
   {
