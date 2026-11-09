@@ -1,0 +1,3507 @@
+[
+ {
+  "name": "Apprentice Staff",
+  "type": "weapon",
+  "assetId": "2611334168"
+ },
+ {
+  "name": "Bronze Dagger",
+  "type": "weapon",
+  "assetId": "2511707072"
+ },
+ {
+  "name": "Bronze Longsword",
+  "type": "weapon",
+  "assetId": "2521642665"
+ },
+ {
+  "name": "Desert Fury",
+  "type": "weapon",
+  "assetId": "2718089746"
+ },
+ {
+  "name": "Enchanted Sword",
+  "type": "weapon",
+  "assetId": "2521658215"
+ },
+ {
+  "name": "Flame Staff",
+  "type": "weapon",
+  "assetId": "2718086572"
+ },
+ {
+  "name": "Ghostly Greataxe",
+  "type": "weapon",
+  "assetId": "2521642930"
+ },
+ {
+  "name": "Ghoul Slayer",
+  "type": "weapon",
+  "assetId": "2511715973"
+ },
+ {
+  "name": "Grand Claymore",
+  "type": "weapon",
+  "assetId": "2521613927"
+ },
+ {
+  "name": "Granite Maul",
+  "type": "weapon",
+  "assetId": "2718087611"
+ },
+ {
+  "name": "Holy Staff",
+  "type": "weapon",
+  "assetId": "2718139085"
+ },
+ {
+  "name": "Iron Longsword",
+  "type": "weapon",
+  "assetId": "2521657793"
+ },
+ {
+  "name": "Mage's Spellbook",
+  "type": "weapon",
+  "assetId": "2515160303"
+ },
+ {
+  "name": "Magic Mallet",
+  "type": "weapon",
+  "assetId": "2718086298"
+ },
+ {
+  "name": "Novice Wand",
+  "type": "weapon",
+  "assetId": "2611305024"
+ },
+ {
+  "name": "Onyx Staff",
+  "type": "weapon",
+  "assetId": "2718087053"
+ },
+ {
+  "name": "Pulverizer",
+  "type": "weapon",
+  "assetId": "2718088003"
+ },
+ {
+  "name": "Rogue's Rapier",
+  "type": "weapon",
+  "assetId": "2521658340"
+ },
+ {
+  "name": "Spiked Club",
+  "type": "weapon",
+  "assetId": "2521613519"
+ },
+ {
+  "name": "Steel Serrated Sword",
+  "type": "weapon",
+  "assetId": "2521657919"
+ },
+ {
+  "name": "Blue Wizard Hat",
+  "type": "helmet",
+  "assetId": "2703264993"
+ },
+ {
+  "name": "Crusader Helmet",
+  "type": "helmet",
+  "assetId": "2703265983"
+ },
+ {
+  "name": "Elementalist Hood",
+  "type": "helmet",
+  "assetId": "2703265858"
+ },
+ {
+  "name": "Guardian Helmet",
+  "type": "helmet",
+  "assetId": "2703266523"
+ },
+ {
+  "name": "Iron Helmet",
+  "type": "helmet",
+  "assetId": "2703265268"
+ },
+ {
+  "name": "Mercenary Helmet",
+  "type": "helmet",
+  "assetId": "2703265681"
+ },
+ {
+  "name": "Novice Helmet",
+  "type": "helmet",
+  "assetId": "2703264822"
+ },
+ {
+  "name": "Red Knight Helmet",
+  "type": "helmet",
+  "assetId": "2703266133"
+ },
+ {
+  "name": "Templar Hood",
+  "type": "helmet",
+  "assetId": "2703266298"
+ },
+ {
+  "name": "Blue Wizard Robes",
+  "type": "chest",
+  "assetId": "2703234901"
+ },
+ {
+  "name": "Crusader Armor",
+  "type": "chest",
+  "assetId": "2703235995"
+ },
+ {
+  "name": "Elementalist Robes",
+  "type": "chest",
+  "assetId": "2703235750"
+ },
+ {
+  "name": "Guardian Armor",
+  "type": "chest",
+  "assetId": "2703236768"
+ },
+ {
+  "name": "Iron Armor",
+  "type": "chest",
+  "assetId": "2703235305"
+ },
+ {
+  "name": "Mercenary Armor",
+  "type": "chest",
+  "assetId": "2703235526"
+ },
+ {
+  "name": "Novice Armor",
+  "type": "chest",
+  "assetId": "2703234723"
+ },
+ {
+  "name": "Red Knight Armor",
+  "type": "chest",
+  "assetId": "2703236152"
+ },
+ {
+  "name": "Templar Robes",
+  "type": "chest",
+  "assetId": "2703236325"
+ },
+ {
+  "name": "Arcane Greatstaff",
+  "type": "weapon",
+  "assetId": "2919773900"
+ },
+ {
+  "name": "Azerite Greatstaff",
+  "type": "weapon",
+  "assetId": "91992159769625"
+ },
+ {
+  "name": "Bluefire Staff",
+  "type": "weapon",
+  "assetId": "2919771831"
+ },
+ {
+  "name": "Coldstone Sword",
+  "type": "weapon",
+  "assetId": "2908342666"
+ },
+ {
+  "name": "Crimson Spellblade",
+  "type": "weapon",
+  "assetId": "2919772448"
+ },
+ {
+  "name": "Crystalized Greatsword",
+  "type": "weapon",
+  "assetId": "2513301363"
+ },
+ {
+  "name": "Demonic Greatsword",
+  "type": "weapon",
+  "assetId": "2820209684"
+ },
+ {
+  "name": "Demonic Spellblade",
+  "type": "weapon",
+  "assetId": "2820209799"
+ },
+ {
+  "name": "Diamond Encrusted Blade",
+  "type": "weapon",
+  "assetId": "2521642545"
+ },
+ {
+  "name": "Dragon Slayer Blade",
+  "type": "weapon",
+  "assetId": "2521642419"
+ },
+ {
+  "name": "Elder Void Wand",
+  "type": "weapon",
+  "assetId": "2919775696"
+ },
+ {
+  "name": "Frozen Greatsword",
+  "type": "weapon",
+  "assetId": "2908343473"
+ },
+ {
+  "name": "Frozen Lord's Greatsword",
+  "type": "weapon",
+  "assetId": "2820229906"
+ },
+ {
+  "name": "Glacial Greatsword",
+  "type": "weapon",
+  "assetId": "2908344917"
+ },
+ {
+  "name": "Godsword",
+  "type": "weapon",
+  "assetId": "2908345655"
+ },
+ {
+  "name": "Hardened Ice Sword",
+  "type": "weapon",
+  "assetId": "2908344004"
+ },
+ {
+  "name": "Holy Grail",
+  "type": "weapon",
+  "assetId": "2919770930"
+ },
+ {
+  "name": "Ice Enhanced Sword",
+  "type": "weapon",
+  "assetId": "2908343010"
+ },
+ {
+  "name": "Ice Infused Slicer",
+  "type": "weapon",
+  "assetId": "2908345874"
+ },
+ {
+  "name": "Ice Queen's Wand",
+  "type": "weapon",
+  "assetId": "2919774496"
+ },
+ {
+  "name": "Ice Reaver",
+  "type": "weapon",
+  "assetId": "2514431445"
+ },
+ {
+  "name": "Infernal Elemental Sword",
+  "type": "weapon",
+  "assetId": "2511721913"
+ },
+ {
+  "name": "King's Greatsword",
+  "type": "weapon",
+  "assetId": "2820210213"
+ },
+ {
+  "name": "King's Spellblade",
+  "type": "weapon",
+  "assetId": "2820210011"
+ },
+ {
+  "name": "Magma Infused Staff",
+  "type": "weapon",
+  "assetId": "2512695592"
+ },
+ {
+  "name": "Mighty Frozen Greatsword",
+  "type": "weapon",
+  "assetId": "2908345489"
+ },
+ {
+  "name": "Molten Maul",
+  "type": "weapon",
+  "assetId": "2718090775"
+ },
+ {
+  "name": "Mossy Greatsword",
+  "type": "weapon",
+  "assetId": "2908343808"
+ },
+ {
+  "name": "Onyx Hammer",
+  "type": "weapon",
+  "assetId": "2718090040"
+ },
+ {
+  "name": "Onyx Spell Scythe",
+  "type": "weapon",
+  "assetId": "2919773590"
+ },
+ {
+  "name": "Reinforced Ice Blade",
+  "type": "weapon",
+  "assetId": "2908344750"
+ },
+ {
+  "name": "Reinforced Steel Sword",
+  "type": "weapon",
+  "assetId": "2908343273"
+ },
+ {
+  "name": "Royal Slicer",
+  "type": "weapon",
+  "assetId": "2908345247"
+ },
+ {
+  "name": "Runic Hammer",
+  "type": "weapon",
+  "assetId": "2718090359"
+ },
+ {
+  "name": "Sapphire Spell Dagger",
+  "type": "weapon",
+  "assetId": "2521613764"
+ },
+ {
+  "name": "Snow Elemental Staff",
+  "type": "weapon",
+  "assetId": "2514431372"
+ },
+ {
+  "name": "Snowy Greatstaff",
+  "type": "weapon",
+  "assetId": "2919771304"
+ },
+ {
+  "name": "Steel Strongsword",
+  "type": "weapon",
+  "assetId": "2908342196"
+ },
+ {
+  "name": "Twin Bladed Slicer",
+  "type": "weapon",
+  "assetId": "2908344135"
+ },
+ {
+  "name": "Water Elemental Spellblade",
+  "type": "weapon",
+  "assetId": "2513252546"
+ },
+ {
+  "name": "Ancient Plate Helmet",
+  "type": "helmet",
+  "assetId": "2911804895"
+ },
+ {
+  "name": "Elite Ancient Plate Helmet",
+  "type": "helmet",
+  "assetId": "2574377368"
+ },
+ {
+  "name": "Elite Mage Plate Helmet",
+  "type": "helmet",
+  "assetId": "2574376938"
+ },
+ {
+  "name": "Elite Warlord Plate Helmet",
+  "type": "helmet",
+  "assetId": "2574377179"
+ },
+ {
+  "name": "Forgotten Guardian Helmet",
+  "type": "helmet",
+  "assetId": "2911731800"
+ },
+ {
+  "name": "Forgotten Mage Hood",
+  "type": "helmet",
+  "assetId": "2911732046"
+ },
+ {
+  "name": "Forgotten Warrior Helmet",
+  "type": "helmet",
+  "assetId": "2911731525"
+ },
+ {
+  "name": "Ice Guardian Helmet",
+  "type": "helmet",
+  "assetId": "2911730869"
+ },
+ {
+  "name": "Ice King's Guardian Helmet",
+  "type": "helmet",
+  "assetId": "2911733122"
+ },
+ {
+  "name": "Ice King's Mage Hood",
+  "type": "helmet",
+  "assetId": "2911729495"
+ },
+ {
+  "name": "Ice King's Warrior Helmet",
+  "type": "helmet",
+  "assetId": "2911732722"
+ },
+ {
+  "name": "Ice Mage Hood",
+  "type": "helmet",
+  "assetId": "2911731170"
+ },
+ {
+  "name": "Ice Warrior Helmet",
+  "type": "helmet",
+  "assetId": "2911730485"
+ },
+ {
+  "name": "Mage Plate Helmet",
+  "type": "helmet",
+  "assetId": "2911804004"
+ },
+ {
+  "name": "Warlord Plate Helmet",
+  "type": "helmet",
+  "assetId": "2911804444"
+ },
+ {
+  "name": "Ancient Plate Armor",
+  "type": "chest",
+  "assetId": "2911804711"
+ },
+ {
+  "name": "Elite Ancient Plate Armor",
+  "type": "chest",
+  "assetId": "2911805868"
+ },
+ {
+  "name": "Elite Mage Plate Armor",
+  "type": "chest",
+  "assetId": "2911805615"
+ },
+ {
+  "name": "Elite Warlord Plate Armor",
+  "type": "chest",
+  "assetId": "2911805385"
+ },
+ {
+  "name": "Forgotten Guardian Armor",
+  "type": "chest",
+  "assetId": "2911728222"
+ },
+ {
+  "name": "Forgotten Mage Robes",
+  "type": "chest",
+  "assetId": "2911728506"
+ },
+ {
+  "name": "Forgotten Warrior Armor",
+  "type": "chest",
+  "assetId": "2911727978"
+ },
+ {
+  "name": "Ice Guardian Armor",
+  "type": "chest",
+  "assetId": "2911727123"
+ },
+ {
+  "name": "Ice King's Guardian Armor",
+  "type": "chest",
+  "assetId": "2911729288"
+ },
+ {
+  "name": "Ice King's Mage Robes",
+  "type": "chest",
+  "assetId": "2911729892"
+ },
+ {
+  "name": "Ice King's Warrior Armor",
+  "type": "chest",
+  "assetId": "2911729020"
+ },
+ {
+  "name": "Ice Mage Robes",
+  "type": "chest",
+  "assetId": "2911727556"
+ },
+ {
+  "name": "Ice Warrior Armor",
+  "type": "chest",
+  "assetId": "2911726485"
+ },
+ {
+  "name": "Mage Plate Armor",
+  "type": "chest",
+  "assetId": "2911803754"
+ },
+ {
+  "name": "Warlord Plate Armor",
+  "type": "chest",
+  "assetId": "2911804266"
+ },
+ {
+  "name": "Angelic Staff",
+  "type": "weapon",
+  "assetId": "2968943207"
+ },
+ {
+  "name": "Arcane Orb Staff",
+  "type": "weapon",
+  "assetId": "2968942306"
+ },
+ {
+  "name": "Cultist Blade",
+  "type": "weapon",
+  "assetId": "2968934418"
+ },
+ {
+  "name": "Dark Priest Staff",
+  "type": "weapon",
+  "assetId": "2968944355"
+ },
+ {
+  "name": "Devilish Greataxe",
+  "type": "weapon",
+  "assetId": "2968935966"
+ },
+ {
+  "name": "Earth Wand",
+  "type": "weapon",
+  "assetId": "2968942777"
+ },
+ {
+  "name": "Empowered Crystal Blade",
+  "type": "weapon",
+  "assetId": "2968934693"
+ },
+ {
+  "name": "Greater Dark Scythe",
+  "type": "weapon",
+  "assetId": "2968942570"
+ },
+ {
+  "name": "Greater Prophet Staff",
+  "type": "weapon",
+  "assetId": "2968944786"
+ },
+ {
+  "name": "Holy Wand",
+  "type": "weapon",
+  "assetId": "2968942078"
+ },
+ {
+  "name": "Mighty Flatblade",
+  "type": "weapon",
+  "assetId": "2968933927"
+ },
+ {
+  "name": "Molten Blade",
+  "type": "weapon",
+  "assetId": "2968934150"
+ },
+ {
+  "name": "Molten Greataxe",
+  "type": "weapon",
+  "assetId": "2968941341"
+ },
+ {
+  "name": "Ocean Splitter",
+  "type": "weapon",
+  "assetId": "2968935449"
+ },
+ {
+  "name": "Onyx Empowered Greatsword",
+  "type": "weapon",
+  "assetId": "2968935761"
+ },
+ {
+  "name": "Ruby Staff",
+  "type": "weapon",
+  "assetId": "2968941889"
+ },
+ {
+  "name": "Solar Staff",
+  "type": "weapon",
+  "assetId": "2968942998"
+ },
+ {
+  "name": "Soulstealer Greatsword",
+  "type": "weapon",
+  "assetId": "2968941706"
+ },
+ {
+  "name": "Staff of the Gods",
+  "type": "weapon",
+  "assetId": "2968945104"
+ },
+ {
+  "name": "Stone Strongsword",
+  "type": "weapon",
+  "assetId": "2968933601"
+ },
+ {
+  "name": "Templar Blade",
+  "type": "weapon",
+  "assetId": "2968935228"
+ },
+ {
+  "name": "Titan's Greataxe",
+  "type": "weapon",
+  "assetId": "2968936228"
+ },
+ {
+  "name": "Angelic Plate Helmet",
+  "type": "helmet",
+  "assetId": "2986397312"
+ },
+ {
+  "name": "Godly Guardian Helmet",
+  "type": "helmet",
+  "assetId": "2986398108"
+ },
+ {
+  "name": "Godly Mage Helmet",
+  "type": "helmet",
+  "assetId": "2986398325"
+ },
+ {
+  "name": "Godly Warrior Helmet",
+  "type": "helmet",
+  "assetId": "2986398641"
+ },
+ {
+  "name": "Inferno Plate Helmet",
+  "type": "helmet",
+  "assetId": "2986399235"
+ },
+ {
+  "name": "Pirate King's Guardian Helmet",
+  "type": "helmet",
+  "assetId": "2986399790"
+ },
+ {
+  "name": "Pirate King's Mage Halo",
+  "type": "helmet",
+  "assetId": "2986401342"
+ },
+ {
+  "name": "Pirate King's Warrior Helmet",
+  "type": "helmet",
+  "assetId": "2986400161"
+ },
+ {
+  "name": "Void Plate Helmet",
+  "type": "helmet",
+  "assetId": "2986400841"
+ },
+ {
+  "name": "Angelic Plate Armor",
+  "type": "chest",
+  "assetId": "2986401536"
+ },
+ {
+  "name": "Godly Guardian Armor",
+  "type": "chest",
+  "assetId": "2986401967"
+ },
+ {
+  "name": "Godly Mage Robes",
+  "type": "chest",
+  "assetId": "2986402449"
+ },
+ {
+  "name": "Godly Warrior Armor",
+  "type": "chest",
+  "assetId": "2986402737"
+ },
+ {
+  "name": "Inferno Plate Armor",
+  "type": "chest",
+  "assetId": "2986403083"
+ },
+ {
+  "name": "Pirate King's Guardian Armor",
+  "type": "chest",
+  "assetId": "2986403421"
+ },
+ {
+  "name": "Pirate King's Mage Robes",
+  "type": "chest",
+  "assetId": "2986403693"
+ },
+ {
+  "name": "Pirate King's Warrior Armor",
+  "type": "chest",
+  "assetId": "2986403990"
+ },
+ {
+  "name": "Void Plate Armor",
+  "type": "chest",
+  "assetId": "2986404464"
+ },
+ {
+  "name": "Apothecary Staff",
+  "type": "weapon",
+  "assetId": "3038585501"
+ },
+ {
+  "name": "Arclight Battlestaff",
+  "type": "weapon",
+  "assetId": "3038586904"
+ },
+ {
+  "name": "Beast Cleaver",
+  "type": "weapon",
+  "assetId": "3038587900"
+ },
+ {
+  "name": "Beastmaster Spell Scythe",
+  "type": "weapon",
+  "assetId": "3038587428"
+ },
+ {
+  "name": "Beastmaster War Scythe",
+  "type": "weapon",
+  "assetId": "3038589569"
+ },
+ {
+  "name": "Celestial Fire Staff",
+  "type": "weapon",
+  "assetId": "3038586712"
+ },
+ {
+  "name": "Dual Cutlasses",
+  "type": "weapon",
+  "assetId": "3038587751"
+ },
+ {
+  "name": "Dual Frozen Blades",
+  "type": "weapon",
+  "assetId": "3038588974"
+ },
+ {
+  "name": "Dual Inferno Slicers",
+  "type": "weapon",
+  "assetId": "3038589142"
+ },
+ {
+  "name": "Dual Jade Daggers",
+  "type": "weapon",
+  "assetId": "3038589317"
+ },
+ {
+  "name": "Dual Royal Axes",
+  "type": "weapon",
+  "assetId": "3038588030"
+ },
+ {
+  "name": "Eagle Staff",
+  "type": "weapon",
+  "assetId": "3038584750"
+ },
+ {
+  "name": "Elven Staff",
+  "type": "weapon",
+  "assetId": "3038585329"
+ },
+ {
+  "name": "Ethereal Greataxe",
+  "type": "weapon",
+  "assetId": "3038588719"
+ },
+ {
+  "name": "Fire and Ice Staff",
+  "type": "weapon",
+  "assetId": "3038587105"
+ },
+ {
+  "name": "Goblin Cleaver",
+  "type": "weapon",
+  "assetId": "3038587590"
+ },
+ {
+  "name": "Heavenly Greatsword",
+  "type": "weapon",
+  "assetId": "3038588310"
+ },
+ {
+  "name": "High Priest Battleaxe",
+  "type": "weapon",
+  "assetId": "3038588526"
+ },
+ {
+  "name": "Infernal Sun Staff",
+  "type": "weapon",
+  "assetId": "3038585086"
+ },
+ {
+  "name": "Moonlight Staff",
+  "type": "weapon",
+  "assetId": "3038585652"
+ },
+ {
+  "name": "Sunlight Staff",
+  "type": "weapon",
+  "assetId": "3038585816"
+ },
+ {
+  "name": "Tribal Staff",
+  "type": "weapon",
+  "assetId": "3038584536"
+ },
+ {
+  "name": "Arch-Mage Crown",
+  "type": "helmet",
+  "assetId": "3039045704"
+ },
+ {
+  "name": "Barbaric Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3039045264"
+ },
+ {
+  "name": "Barbaric Mage Crown",
+  "type": "helmet",
+  "assetId": "3039045057"
+ },
+ {
+  "name": "Barbaric Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3039044803"
+ },
+ {
+  "name": "Beastly Guardian Helmet",
+  "type": "helmet",
+  "assetId": "4316782204"
+ },
+ {
+  "name": "Beastly Warrior Helmet",
+  "type": "helmet",
+  "assetId": "4316781866"
+ },
+ {
+  "name": "Titan-forged Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3039047795"
+ },
+ {
+  "name": "Titan-forged Mage Helmet",
+  "type": "helmet",
+  "assetId": "3039047613"
+ },
+ {
+  "name": "Titan-forged Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3039047423"
+ },
+ {
+  "name": "Arch-Mage Robes",
+  "type": "chest",
+  "assetId": "3039043730"
+ },
+ {
+  "name": "Barbaric Guardian Armor",
+  "type": "chest",
+  "assetId": "3039043317"
+ },
+ {
+  "name": "Barbaric Mage Armor",
+  "type": "chest",
+  "assetId": "3039043129"
+ },
+ {
+  "name": "Barbaric Warrior Armor",
+  "type": "chest",
+  "assetId": "3039042794"
+ },
+ {
+  "name": "Beastly Guardian Armor",
+  "type": "chest",
+  "assetId": "3039043877"
+ },
+ {
+  "name": "Beastly Warrior Armor",
+  "type": "chest",
+  "assetId": "3039043561"
+ },
+ {
+  "name": "Titan-forged Guardian Armor",
+  "type": "chest",
+  "assetId": "3039044487"
+ },
+ {
+  "name": "Titan-forged Mage Armor",
+  "type": "chest",
+  "assetId": "3039044301"
+ },
+ {
+  "name": "Titan-forged Warrior Armor",
+  "type": "chest",
+  "assetId": "3039044081"
+ },
+ {
+  "name": "Ancient Elder Staff",
+  "type": "weapon",
+  "assetId": "3115077571"
+ },
+ {
+  "name": "Blacksteel Greatsword",
+  "type": "weapon",
+  "assetId": "3115074050"
+ },
+ {
+  "name": "Demon Lord's Greatstaff",
+  "type": "weapon",
+  "assetId": "3115077748"
+ },
+ {
+  "name": "Dragon's Claw Scythe",
+  "type": "weapon",
+  "assetId": "3115076733"
+ },
+ {
+  "name": "Dual Ancient Daggers",
+  "type": "weapon",
+  "assetId": "3115074824"
+ },
+ {
+  "name": "Dual Arcane Spelldaggers",
+  "type": "weapon",
+  "assetId": "3115077234"
+ },
+ {
+  "name": "Dual Flatblade Slicers",
+  "type": "weapon",
+  "assetId": "3115074302"
+ },
+ {
+  "name": "Dual Phoenix Daggers",
+  "type": "weapon",
+  "assetId": "3115075941"
+ },
+ {
+  "name": "Dual Sapphire Slicers",
+  "type": "weapon",
+  "assetId": "3115073793"
+ },
+ {
+  "name": "Enchanted Demonic Greataxe",
+  "type": "weapon",
+  "assetId": "3115075699"
+ },
+ {
+  "name": "Hope's Triumph",
+  "type": "weapon",
+  "assetId": "3115076547"
+ },
+ {
+  "name": "Luminous Greatstaff",
+  "type": "weapon",
+  "assetId": "3115076302"
+ },
+ {
+  "name": "Nature Scythe",
+  "type": "weapon",
+  "assetId": "3115075464"
+ },
+ {
+  "name": "Phoenix Greatstaff",
+  "type": "weapon",
+  "assetId": "3115077967"
+ },
+ {
+  "name": "Royal Crimson Greatsword",
+  "type": "weapon",
+  "assetId": "3115074580"
+ },
+ {
+  "name": "Sapphire Greatstaff",
+  "type": "weapon",
+  "assetId": "3115076106"
+ },
+ {
+  "name": "Timelost Greatsword",
+  "type": "weapon",
+  "assetId": "3115075055"
+ },
+ {
+  "name": "Timelost Spellbook",
+  "type": "weapon",
+  "assetId": "3115077020"
+ },
+ {
+  "name": "Timelost Warhammer",
+  "type": "weapon",
+  "assetId": "3115075296"
+ },
+ {
+  "name": "Vampiric Greatstaff",
+  "type": "weapon",
+  "assetId": "3115077382"
+ },
+ {
+  "name": "Glorious Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3114574581"
+ },
+ {
+  "name": "Glorious Mage Hood",
+  "type": "helmet",
+  "assetId": "3114574312"
+ },
+ {
+  "name": "Glorious Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3114574029"
+ },
+ {
+  "name": "Reinforced Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3114572461"
+ },
+ {
+  "name": "Timelost Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3114573493"
+ },
+ {
+  "name": "Timelost Mage Helmet",
+  "type": "helmet",
+  "assetId": "3114573195"
+ },
+ {
+  "name": "Timelost Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3114572805"
+ },
+ {
+  "name": "Tribal Mage Hood",
+  "type": "helmet",
+  "assetId": "3114572160"
+ },
+ {
+  "name": "Tribal Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3114571835"
+ },
+ {
+  "name": "Glorious Guardian Armor",
+  "type": "chest",
+  "assetId": "3114574459"
+ },
+ {
+  "name": "Glorious Mage Armor",
+  "type": "chest",
+  "assetId": "3114574188"
+ },
+ {
+  "name": "Glorious Warrior Armor",
+  "type": "chest",
+  "assetId": "3114573834"
+ },
+ {
+  "name": "Reinforced Guardian Armor",
+  "type": "chest",
+  "assetId": "3114572345"
+ },
+ {
+  "name": "Timelost Guardian Armor",
+  "type": "chest",
+  "assetId": "3114573358"
+ },
+ {
+  "name": "Timelost Mage Armor",
+  "type": "chest",
+  "assetId": "3114573030"
+ },
+ {
+  "name": "Timelost Warrior Armor",
+  "type": "chest",
+  "assetId": "3114572655"
+ },
+ {
+  "name": "Tribal Mage Armor",
+  "type": "chest",
+  "assetId": "3114572017"
+ },
+ {
+  "name": "Tribal Warrior Armor",
+  "type": "chest",
+  "assetId": "4316781443"
+ },
+ {
+  "name": "Amethyst Crescent Spellblade",
+  "type": "weapon",
+  "assetId": "3275251342"
+ },
+ {
+  "name": "Amethyst Spelldagger",
+  "type": "weapon",
+  "assetId": "3275250648"
+ },
+ {
+  "name": "Bone Scythe",
+  "type": "weapon",
+  "assetId": "3275245596"
+ },
+ {
+  "name": "Crimson Kris",
+  "type": "weapon",
+  "assetId": "3275247695"
+ },
+ {
+  "name": "Dual Elegant Mage Fans",
+  "type": "weapon",
+  "assetId": "3275252617"
+ },
+ {
+  "name": "Dual Infernal Daggers",
+  "type": "weapon",
+  "assetId": "3275246477"
+ },
+ {
+  "name": "Dual Samurai Sickles",
+  "type": "weapon",
+  "assetId": "3275247106"
+ },
+ {
+  "name": "Dual Samurai Stars",
+  "type": "weapon",
+  "assetId": "3275246758"
+ },
+ {
+  "name": "Honorable Greatsword",
+  "type": "weapon",
+  "assetId": "3275246199"
+ },
+ {
+  "name": "Industrial Spellscythe",
+  "type": "weapon",
+  "assetId": "3275250093"
+ },
+ {
+  "name": "Jade Spelldagger",
+  "type": "weapon",
+  "assetId": "3275251760"
+ },
+ {
+  "name": "Pink Pearl Spellscythe",
+  "type": "weapon",
+  "assetId": "3275252344"
+ },
+ {
+  "name": "Royal Katana",
+  "type": "weapon",
+  "assetId": "3275245888"
+ },
+ {
+  "name": "Ruby Greatsword",
+  "type": "weapon",
+  "assetId": "3275248540"
+ },
+ {
+  "name": "Sakura Greatstaff",
+  "type": "weapon",
+  "assetId": "3275252865"
+ },
+ {
+  "name": "Sakura Katana",
+  "type": "weapon",
+  "assetId": "3275248918"
+ },
+ {
+  "name": "Sapphire Spellspear",
+  "type": "weapon",
+  "assetId": "3275250377"
+ },
+ {
+  "name": "Staff of Heat",
+  "type": "weapon",
+  "assetId": "3275249447"
+ },
+ {
+  "name": "Toxic Warspear",
+  "type": "weapon",
+  "assetId": "3275248099"
+ },
+ {
+  "name": "Violet Spellblade",
+  "type": "weapon",
+  "assetId": "3275251085"
+ },
+ {
+  "name": "Ancestral Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3275331790"
+ },
+ {
+  "name": "Ancestral Mage Hood",
+  "type": "helmet",
+  "assetId": "3275331997"
+ },
+ {
+  "name": "Ancestral Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3275331615"
+ },
+ {
+  "name": "Infernal Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3275331251"
+ },
+ {
+  "name": "Infernal Mage Hood",
+  "type": "helmet",
+  "assetId": "3275331443"
+ },
+ {
+  "name": "Infernal Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3275330997"
+ },
+ {
+  "name": "Samurai Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3275330301"
+ },
+ {
+  "name": "Samurai Mage Helmet",
+  "type": "helmet",
+  "assetId": "3275330570"
+ },
+ {
+  "name": "Samurai Warrior Hairband",
+  "type": "helmet",
+  "assetId": "3275330093"
+ },
+ {
+  "name": "Ancestral Guardian Armor",
+  "type": "chest",
+  "assetId": "3275329528"
+ },
+ {
+  "name": "Ancestral Mage Armor",
+  "type": "chest",
+  "assetId": "3275329787"
+ },
+ {
+  "name": "Ancestral Warrior Armor",
+  "type": "chest",
+  "assetId": "3275329281"
+ },
+ {
+  "name": "Infernal Guardian Armor",
+  "type": "chest",
+  "assetId": "3275328550"
+ },
+ {
+  "name": "Infernal Mage Armor",
+  "type": "chest",
+  "assetId": "3275328835"
+ },
+ {
+  "name": "Infernal Warrior Armor",
+  "type": "chest",
+  "assetId": "3275328124"
+ },
+ {
+  "name": "Samurai Guardian Armor",
+  "type": "chest",
+  "assetId": "3275327540"
+ },
+ {
+  "name": "Samurai Mage Robes",
+  "type": "chest",
+  "assetId": "3275327794"
+ },
+ {
+  "name": "Samurai Warrior Armor",
+  "type": "chest",
+  "assetId": "3275326675"
+ },
+ {
+  "name": "Amethyst Spellscythe",
+  "type": "weapon",
+  "assetId": "3434835566"
+ },
+ {
+  "name": "Bloodthirster",
+  "type": "weapon",
+  "assetId": "3434834192"
+ },
+ {
+  "name": "Dark Ice Blades",
+  "type": "weapon",
+  "assetId": "3434833814"
+ },
+ {
+  "name": "Dual Arcane Slicers",
+  "type": "weapon",
+  "assetId": "3434835726"
+ },
+ {
+  "name": "Dual Crimson Daggers",
+  "type": "weapon",
+  "assetId": "3434832894"
+ },
+ {
+  "name": "Dual Infernal Scimitars",
+  "type": "weapon",
+  "assetId": "3434834028"
+ },
+ {
+  "name": "Dual Magma Fangs",
+  "type": "weapon",
+  "assetId": "3434833631"
+ },
+ {
+  "name": "Dual Razor Slicers",
+  "type": "weapon",
+  "assetId": "3434833153"
+ },
+ {
+  "name": "Elementalist Staff",
+  "type": "weapon",
+  "assetId": "3434834992"
+ },
+ {
+  "name": "Giant Royal Axe",
+  "type": "weapon",
+  "assetId": "3434833443"
+ },
+ {
+  "name": "Mana Infused Spellblade",
+  "type": "weapon",
+  "assetId": "3434836184"
+ },
+ {
+  "name": "Overlord's Manablade",
+  "type": "weapon",
+  "assetId": "3434836386"
+ },
+ {
+  "name": "Overlord's Rageblade",
+  "type": "weapon",
+  "assetId": "3434834348"
+ },
+ {
+  "name": "Runic Pike",
+  "type": "weapon",
+  "assetId": "3434834825"
+ },
+ {
+  "name": "Runic Spellscythe",
+  "type": "weapon",
+  "assetId": "3434836013"
+ },
+ {
+  "name": "Sapphire Stone Wand",
+  "type": "weapon",
+  "assetId": "3434834612"
+ },
+ {
+  "name": "Stone Scythe",
+  "type": "weapon",
+  "assetId": "3434832514"
+ },
+ {
+  "name": "Toxic Spellscythe",
+  "type": "weapon",
+  "assetId": "3434835143"
+ },
+ {
+  "name": "Overlord's Guardian Hat",
+  "type": "helmet",
+  "assetId": "3484534540"
+ },
+ {
+  "name": "Overlord's Mage Hat",
+  "type": "helmet",
+  "assetId": "3484534350"
+ },
+ {
+  "name": "Overlord's Warrior Hat",
+  "type": "helmet",
+  "assetId": "3484534138"
+ },
+ {
+  "name": "Rogue Guardian Hood",
+  "type": "helmet",
+  "assetId": "3484524514"
+ },
+ {
+  "name": "Rogue Mage Hood",
+  "type": "helmet",
+  "assetId": "3484524273"
+ },
+ {
+  "name": "Rogue Warrior Hood",
+  "type": "helmet",
+  "assetId": "3484524027"
+ },
+ {
+  "name": "Salvaged Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3484523568"
+ },
+ {
+  "name": "Salvaged Mage Hat",
+  "type": "helmet",
+  "assetId": "3484523318"
+ },
+ {
+  "name": "Salvaged Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3484511291"
+ },
+ {
+  "name": "Overlord's Guardian Armor",
+  "type": "chest",
+  "assetId": "3484510981"
+ },
+ {
+  "name": "Overlord's Mage Robes",
+  "type": "chest",
+  "assetId": "3484510730"
+ },
+ {
+  "name": "Overlord's Warrior Armor",
+  "type": "chest",
+  "assetId": "3484510512"
+ },
+ {
+  "name": "Rogue Guardian Armor",
+  "type": "chest",
+  "assetId": "3484510156"
+ },
+ {
+  "name": "Rogue Mage Robes",
+  "type": "chest",
+  "assetId": "3484499810"
+ },
+ {
+  "name": "Rogue Warrior Armor",
+  "type": "chest",
+  "assetId": "3484499540"
+ },
+ {
+  "name": "Salvaged Guardian Armor",
+  "type": "chest",
+  "assetId": "3484499067"
+ },
+ {
+  "name": "Salvaged Mage Robes",
+  "type": "chest",
+  "assetId": "3484498744"
+ },
+ {
+  "name": "Salvaged Warrior Armor",
+  "type": "chest",
+  "assetId": "3484498440"
+ },
+ {
+  "name": "Captain's Anchor",
+  "type": "weapon",
+  "assetId": "3732365900"
+ },
+ {
+  "name": "Cracked Tooth Cleaver",
+  "type": "weapon",
+  "assetId": "3732364852"
+ },
+ {
+  "name": "Dual Bladed Mage Daggers",
+  "type": "weapon",
+  "assetId": "3733461587"
+ },
+ {
+  "name": "Dual Ocean Fists",
+  "type": "weapon",
+  "assetId": "3733462001"
+ },
+ {
+  "name": "Dual Phantom Axes",
+  "type": "weapon",
+  "assetId": "3732507585"
+ },
+ {
+  "name": "Dual Phantom Daggers",
+  "type": "weapon",
+  "assetId": "3732507862"
+ },
+ {
+  "name": "Dual Phantom Defenders",
+  "type": "weapon",
+  "assetId": "3733463235"
+ },
+ {
+  "name": "Dual Pirate Cutlasses",
+  "type": "weapon",
+  "assetId": "3732365436"
+ },
+ {
+  "name": "Dual Serrated Knives",
+  "type": "weapon",
+  "assetId": "3732365184"
+ },
+ {
+  "name": "Dual Toxic Daggers",
+  "type": "weapon",
+  "assetId": "3734805582"
+ },
+ {
+  "name": "Kraken Slayer",
+  "type": "weapon",
+  "assetId": "3732508543"
+ },
+ {
+  "name": "Magic Trident",
+  "type": "weapon",
+  "assetId": "3733462850"
+ },
+ {
+  "name": "Ocean Dweller's Mageblade",
+  "type": "weapon",
+  "assetId": "3733464020"
+ },
+ {
+  "name": "Poison Spear",
+  "type": "weapon",
+  "assetId": "3732509392"
+ },
+ {
+  "name": "Sea Serpent's Wings",
+  "type": "weapon",
+  "assetId": "3733504526"
+ },
+ {
+  "name": "Seafarer's Lost Blade",
+  "type": "weapon",
+  "assetId": "3732507231"
+ },
+ {
+  "name": "Seafarer's Magic Device",
+  "type": "weapon",
+  "assetId": "3733504016"
+ },
+ {
+  "name": "Sharktooth Blade",
+  "type": "weapon",
+  "assetId": "3732366631"
+ },
+ {
+  "name": "Hunter's Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3734415265"
+ },
+ {
+  "name": "Hunter's Mage Helmet",
+  "type": "helmet",
+  "assetId": "3734414935"
+ },
+ {
+  "name": "Hunter's Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3734414710"
+ },
+ {
+  "name": "Mythical Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3734425730"
+ },
+ {
+  "name": "Mythical Mage Helmet",
+  "type": "helmet",
+  "assetId": "3734425496"
+ },
+ {
+  "name": "Mythical Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3734425200"
+ },
+ {
+  "name": "Raider's Guardian Helmet",
+  "type": "helmet",
+  "assetId": "3734414281"
+ },
+ {
+  "name": "Raider's Mage Helmet",
+  "type": "helmet",
+  "assetId": "3734413949"
+ },
+ {
+  "name": "Raider's Warrior Helmet",
+  "type": "helmet",
+  "assetId": "3734370929"
+ },
+ {
+  "name": "Hunter's Guardian Armor",
+  "type": "chest",
+  "assetId": "3734369298"
+ },
+ {
+  "name": "Hunter's Mage Armor",
+  "type": "chest",
+  "assetId": "3734322879"
+ },
+ {
+  "name": "Hunter's Warrior Armor",
+  "type": "chest",
+  "assetId": "3734322551"
+ },
+ {
+  "name": "Mythical Guardian Armor",
+  "type": "chest",
+  "assetId": "3734370413"
+ },
+ {
+  "name": "Mythical Mage Armor",
+  "type": "chest",
+  "assetId": "3734370173"
+ },
+ {
+  "name": "Mythical Warrior Armor",
+  "type": "chest",
+  "assetId": "3734369793"
+ },
+ {
+  "name": "Raider's Guardian Armor",
+  "type": "chest",
+  "assetId": "3734322100"
+ },
+ {
+  "name": "Raider's Mage Armor",
+  "type": "chest",
+  "assetId": "3734321350"
+ },
+ {
+  "name": "Raider's Warrior Armor",
+  "type": "chest",
+  "assetId": "3734321055"
+ },
+ {
+  "name": "Bioforged Greataxe",
+  "type": "weapon",
+  "assetId": "4110988298"
+ },
+ {
+  "name": "Bioforged Greatsword",
+  "type": "weapon",
+  "assetId": "4110960933"
+ },
+ {
+  "name": "Bioforged Reinforced Slicer",
+  "type": "weapon",
+  "assetId": "4110961799"
+ },
+ {
+  "name": "Dual Bioforged Spelldaggers",
+  "type": "weapon",
+  "assetId": "4110990537"
+ },
+ {
+  "name": "Dual Fusion Blades",
+  "type": "weapon",
+  "assetId": "4110959982"
+ },
+ {
+  "name": "Dual Hextech Spelldaggers",
+  "type": "weapon",
+  "assetId": "4110990098"
+ },
+ {
+  "name": "Fusion Greatsword",
+  "type": "weapon",
+  "assetId": "4110960375"
+ },
+ {
+  "name": "Hextech Greataxe",
+  "type": "weapon",
+  "assetId": "4110961421"
+ },
+ {
+  "name": "Hextech Katana",
+  "type": "weapon",
+  "assetId": "4110959386"
+ },
+ {
+  "name": "Hextech Polearm",
+  "type": "weapon",
+  "assetId": "4110990990"
+ },
+ {
+  "name": "Hextech Wired Spellblade",
+  "type": "weapon",
+  "assetId": "4110991759"
+ },
+ {
+  "name": "Inventor's Greatsword",
+  "type": "weapon",
+  "assetId": "4110989084"
+ },
+ {
+  "name": "Inventor's Spellblade",
+  "type": "weapon",
+  "assetId": "4110999126"
+ },
+ {
+  "name": "Mighty Fusion Maul",
+  "type": "weapon",
+  "assetId": "4110988717"
+ },
+ {
+  "name": "Mighty Fusion Spellblade",
+  "type": "weapon",
+  "assetId": "4110998780"
+ },
+ {
+  "name": "Plasma Infused Cutlass",
+  "type": "weapon",
+  "assetId": "4110998436"
+ },
+ {
+  "name": "Plasma Spellblade",
+  "type": "weapon",
+  "assetId": "4110989670"
+ },
+ {
+  "name": "Plasma Twin Spellblade",
+  "type": "weapon",
+  "assetId": "4110991382"
+ },
+ {
+  "name": "Industrial Guardian Helmet",
+  "type": "helmet",
+  "assetId": "4111013029"
+ },
+ {
+  "name": "Industrial Mage Helmet",
+  "type": "helmet",
+  "assetId": "4111012588"
+ },
+ {
+  "name": "Industrial Warrior Helmet",
+  "type": "helmet",
+  "assetId": "4111012204"
+ },
+ {
+  "name": "Titanium Guardian Helmet",
+  "type": "helmet",
+  "assetId": "4111011865"
+ },
+ {
+  "name": "Titanium Mage Helmet",
+  "type": "helmet",
+  "assetId": "4111011491"
+ },
+ {
+  "name": "Titanium Warrior Helmet",
+  "type": "helmet",
+  "assetId": "4111011137"
+ },
+ {
+  "name": "War-forged Guardian Helmet",
+  "type": "helmet",
+  "assetId": "4111025343"
+ },
+ {
+  "name": "War-forged Mage Helmet",
+  "type": "helmet",
+  "assetId": "4111013795"
+ },
+ {
+  "name": "War-forged Warrior Helmet",
+  "type": "helmet",
+  "assetId": "4111013455"
+ },
+ {
+  "name": "Industrial Guardian Armor",
+  "type": "chest",
+  "assetId": "4111003175"
+ },
+ {
+  "name": "Industrial Mage Armor",
+  "type": "chest",
+  "assetId": "4111000791"
+ },
+ {
+  "name": "Industrial Warrior Armor",
+  "type": "chest",
+  "assetId": "4111000479"
+ },
+ {
+  "name": "Titanium Guardian Armor",
+  "type": "chest",
+  "assetId": "4111000123"
+ },
+ {
+  "name": "Titanium Mage Armor",
+  "type": "chest",
+  "assetId": "4110999805"
+ },
+ {
+  "name": "Titanium Warrior Armor",
+  "type": "chest",
+  "assetId": "4110999507"
+ },
+ {
+  "name": "War-forged Guardian Armor",
+  "type": "chest",
+  "assetId": "4111005231"
+ },
+ {
+  "name": "War-forged Mage Armor",
+  "type": "chest",
+  "assetId": "4111004318"
+ },
+ {
+  "name": "War-forged Warrior Armor",
+  "type": "chest",
+  "assetId": "4111003861"
+ },
+ {
+  "name": "Blazing Star",
+  "type": "weapon",
+  "assetId": "4626316008"
+ },
+ {
+  "name": "Dual Crystalized Knives",
+  "type": "weapon",
+  "assetId": "4626316242"
+ },
+ {
+  "name": "Dual Solar Blades",
+  "type": "weapon",
+  "assetId": "4626316085"
+ },
+ {
+  "name": "Electron Spell Dagger",
+  "type": "weapon",
+  "assetId": "4626315362"
+ },
+ {
+  "name": "Energized Spell Dagger",
+  "type": "weapon",
+  "assetId": "4626315727"
+ },
+ {
+  "name": "Galactic Dual Blades",
+  "type": "weapon",
+  "assetId": "4626316477"
+ },
+ {
+  "name": "Galactic Pike",
+  "type": "weapon",
+  "assetId": "4626315903"
+ },
+ {
+  "name": "Moon Crystal Spell Blade",
+  "type": "weapon",
+  "assetId": "4626315652"
+ },
+ {
+  "name": "Solar Essence Staff",
+  "type": "weapon",
+  "assetId": "4626315815"
+ },
+ {
+  "name": "Solar Greatsword",
+  "type": "weapon",
+  "assetId": "4626316425"
+ },
+ {
+  "name": "Solar Katana",
+  "type": "weapon",
+  "assetId": "4626316167"
+ },
+ {
+  "name": "Void Greatsword",
+  "type": "weapon",
+  "assetId": "4626316329"
+ },
+ {
+  "name": "Void Spell Blade",
+  "type": "weapon",
+  "assetId": "4626315546"
+ },
+ {
+  "name": "Void Spell Dagger",
+  "type": "weapon",
+  "assetId": "4626315453"
+ },
+ {
+  "name": "Alien Guardian Helmet",
+  "type": "helmet",
+  "assetId": "4626315259"
+ },
+ {
+  "name": "Alien Mage Helmet",
+  "type": "helmet",
+  "assetId": "4626315191"
+ },
+ {
+  "name": "Alien Warrior Helmet",
+  "type": "helmet",
+  "assetId": "4626315123"
+ },
+ {
+  "name": "Commander's Guardian Helmet",
+  "type": "helmet",
+  "assetId": "4626314634"
+ },
+ {
+  "name": "Commander's Mage Helmet",
+  "type": "helmet",
+  "assetId": "4626315033"
+ },
+ {
+  "name": "Commander's Warrior Helmet",
+  "type": "helmet",
+  "assetId": "4626314519"
+ },
+ {
+  "name": "Space Guardian Helmet",
+  "type": "helmet",
+  "assetId": "4626314410"
+ },
+ {
+  "name": "Space Mage Helmet",
+  "type": "helmet",
+  "assetId": "4626314340"
+ },
+ {
+  "name": "Space Warrior Helmet",
+  "type": "helmet",
+  "assetId": "4626314263"
+ },
+ {
+  "name": "Alien Guardian Armor",
+  "type": "chest",
+  "assetId": "4626314148"
+ },
+ {
+  "name": "Alien Mage Armor",
+  "type": "chest",
+  "assetId": "4626314075"
+ },
+ {
+  "name": "Alien Warrior Armor",
+  "type": "chest",
+  "assetId": "4626313967"
+ },
+ {
+  "name": "Commander's Guardian Armor",
+  "type": "chest",
+  "assetId": "4626313841"
+ },
+ {
+  "name": "Commander's Mage Armor",
+  "type": "chest",
+  "assetId": "4626313733"
+ },
+ {
+  "name": "Commander's Warrior Armor",
+  "type": "chest",
+  "assetId": "4626313508"
+ },
+ {
+  "name": "Space Guardian Armor",
+  "type": "chest",
+  "assetId": "4626313414"
+ },
+ {
+  "name": "Space Mage Armor",
+  "type": "chest",
+  "assetId": "4626313283"
+ },
+ {
+  "name": "Space Warrior Armor",
+  "type": "chest",
+  "assetId": "4626313166"
+ },
+ {
+  "name": "Ancient Lava Axe",
+  "type": "weapon",
+  "assetId": "5250371183"
+ },
+ {
+  "name": "Darkstone Greatsword",
+  "type": "weapon",
+  "assetId": "5250374941"
+ },
+ {
+  "name": "Dual Fist Blades",
+  "type": "weapon",
+  "assetId": "5250375285"
+ },
+ {
+  "name": "Dual Hellfire Blades",
+  "type": "weapon",
+  "assetId": "5250370880"
+ },
+ {
+  "name": "Dual Magma Shields",
+  "type": "weapon",
+  "assetId": "5250371513"
+ },
+ {
+  "name": "Hellstone Greataxe",
+  "type": "weapon",
+  "assetId": "5250374427"
+ },
+ {
+  "name": "Lava King's Spell Daggers",
+  "type": "weapon",
+  "assetId": "5250370565"
+ },
+ {
+  "name": "Lava King's Warscythe",
+  "type": "weapon",
+  "assetId": "5250372766"
+ },
+ {
+  "name": "Lava Shard Staff",
+  "type": "weapon",
+  "assetId": "5250372411"
+ },
+ {
+  "name": "Lava Spellblade",
+  "type": "weapon",
+  "assetId": "5250371802"
+ },
+ {
+  "name": "Lava Tendril Pike",
+  "type": "weapon",
+  "assetId": "5250372091"
+ },
+ {
+  "name": "Magma Infused Waraxe",
+  "type": "weapon",
+  "assetId": "5250374077"
+ },
+ {
+  "name": "Shattered Magma Blade",
+  "type": "weapon",
+  "assetId": "5250373343"
+ },
+ {
+  "name": "Volcanic Greatsword",
+  "type": "weapon",
+  "assetId": "5250373076"
+ },
+ {
+  "name": "Burned Guardian Helmet",
+  "type": "helmet",
+  "assetId": "5250430797"
+ },
+ {
+  "name": "Burned Mage Helmet",
+  "type": "helmet",
+  "assetId": "5250431075"
+ },
+ {
+  "name": "Burned Warrior Helmet",
+  "type": "helmet",
+  "assetId": "5250431379"
+ },
+ {
+  "name": "Lava King's Guardian Helmet",
+  "type": "helmet",
+  "assetId": "5250428923"
+ },
+ {
+  "name": "Lava King's Mage Helmet",
+  "type": "helmet",
+  "assetId": "5250429234"
+ },
+ {
+  "name": "Lava King's Warrior Helmet",
+  "type": "helmet",
+  "assetId": "5250429535"
+ },
+ {
+  "name": "Molten Forged Guardian Helmet",
+  "type": "helmet",
+  "assetId": "5250429874"
+ },
+ {
+  "name": "Molten Forged Mage Helmet",
+  "type": "helmet",
+  "assetId": "5250430160"
+ },
+ {
+  "name": "Molten Forged Warrior Helmet",
+  "type": "helmet",
+  "assetId": "5250430475"
+ },
+ {
+  "name": "Burned Guardian Armor",
+  "type": "chest",
+  "assetId": "5250433369"
+ },
+ {
+  "name": "Burned Mage Armor",
+  "type": "chest",
+  "assetId": "5250433628"
+ },
+ {
+  "name": "Burned Warrior Armor",
+  "type": "chest",
+  "assetId": "5250434060"
+ },
+ {
+  "name": "Lava King's Guardian Armor",
+  "type": "chest",
+  "assetId": "5250431666"
+ },
+ {
+  "name": "Lava King's Mage Armor",
+  "type": "chest",
+  "assetId": "5250431969"
+ },
+ {
+  "name": "Lava King's Warrior Armor",
+  "type": "chest",
+  "assetId": "5250432232"
+ },
+ {
+  "name": "Molten Forged Guardian Armor",
+  "type": "chest",
+  "assetId": "5250432530"
+ },
+ {
+  "name": "Molten Forged Mage Armor",
+  "type": "chest",
+  "assetId": "5250432778"
+ },
+ {
+  "name": "Molten Forged Warrior Armor",
+  "type": "chest",
+  "assetId": "5250433087"
+ },
+ {
+  "name": "Aquatic Defender",
+  "type": "weapon",
+  "assetId": "6187578195"
+ },
+ {
+  "name": "Aquatic Executioner",
+  "type": "weapon",
+  "assetId": "6187577570"
+ },
+ {
+  "name": "Aquatic Scimitars",
+  "type": "weapon",
+  "assetId": "6187577643"
+ },
+ {
+  "name": "Aquatic Spear",
+  "type": "weapon",
+  "assetId": "6187577821"
+ },
+ {
+  "name": "Enchanted Sea Axes",
+  "type": "weapon",
+  "assetId": "6187578086"
+ },
+ {
+  "name": "Enchanted Sea Daggers",
+  "type": "weapon",
+  "assetId": "6187578293"
+ },
+ {
+  "name": "Enchanted Serpent Daggers",
+  "type": "weapon",
+  "assetId": "6187578471"
+ },
+ {
+  "name": "Ocean Pearl Staff",
+  "type": "weapon",
+  "assetId": "6187578376"
+ },
+ {
+  "name": "Oceanic Greatsword",
+  "type": "weapon",
+  "assetId": "6187577884"
+ },
+ {
+  "name": "Sea King's Greatstaff",
+  "type": "weapon",
+  "assetId": "6187578571"
+ },
+ {
+  "name": "Sea King's Trident",
+  "type": "weapon",
+  "assetId": "6187577966"
+ },
+ {
+  "name": "Sea Staff",
+  "type": "weapon",
+  "assetId": "6187578017"
+ },
+ {
+  "name": "Serpent Pike",
+  "type": "weapon",
+  "assetId": "6187577702"
+ },
+ {
+  "name": "Serpent Scimitars",
+  "type": "weapon",
+  "assetId": "6187577481"
+ },
+ {
+  "name": "Aquatic Guardian Helmet",
+  "type": "helmet",
+  "assetId": "6187591484"
+ },
+ {
+  "name": "Aquatic Mage Helmet",
+  "type": "helmet",
+  "assetId": "6187498558"
+ },
+ {
+  "name": "Aquatic Warrior Helmet",
+  "type": "helmet",
+  "assetId": "6187573164"
+ },
+ {
+  "name": "Riptide Guardian Helmet",
+  "type": "helmet",
+  "assetId": "6187497907"
+ },
+ {
+  "name": "Riptide Mage Helmet",
+  "type": "helmet",
+  "assetId": "6187498069"
+ },
+ {
+  "name": "Riptide Warrior Helmet",
+  "type": "helmet",
+  "assetId": "6187498386"
+ },
+ {
+  "name": "Triton Guardian Helmet",
+  "type": "helmet",
+  "assetId": "6187424401"
+ },
+ {
+  "name": "Triton Mage Helmet",
+  "type": "helmet",
+  "assetId": "6187424687"
+ },
+ {
+  "name": "Triton Warrior Helmet",
+  "type": "helmet",
+  "assetId": "6187591623"
+ },
+ {
+  "name": "Aquatic Guardian Armor",
+  "type": "chest",
+  "assetId": "6187578736"
+ },
+ {
+  "name": "Aquatic Mage Armor",
+  "type": "chest",
+  "assetId": "6187578814"
+ },
+ {
+  "name": "Aquatic Warrior Armor",
+  "type": "chest",
+  "assetId": "6187578647"
+ },
+ {
+  "name": "Riptide Guardian Armor",
+  "type": "chest",
+  "assetId": "6187579049"
+ },
+ {
+  "name": "Riptide Mage Armor",
+  "type": "chest",
+  "assetId": "6187578982"
+ },
+ {
+  "name": "Riptide Warrior Armor",
+  "type": "chest",
+  "assetId": "6187578883"
+ },
+ {
+  "name": "Triton Guardian Armor",
+  "type": "chest",
+  "assetId": "6187573499"
+ },
+ {
+  "name": "Triton Mage Armor",
+  "type": "chest",
+  "assetId": "6187579195"
+ },
+ {
+  "name": "Triton Warrior Armor",
+  "type": "chest",
+  "assetId": "6187579128"
+ },
+ {
+  "name": "Crystalline Shard Staff",
+  "type": "weapon",
+  "assetId": "6871202156"
+ },
+ {
+  "name": "Eden’s Reaper",
+  "type": "weapon",
+  "assetId": "103550525606563"
+ },
+ {
+  "name": "Eden’s Vengeance",
+  "type": "weapon",
+  "assetId": "102574845507566"
+ },
+ {
+  "name": "Eldenbark Greatstaff",
+  "type": "weapon",
+  "assetId": "6871202291"
+ },
+ {
+  "name": "Eldenbark Greatsword",
+  "type": "weapon",
+  "assetId": "6871201475"
+ },
+ {
+  "name": "Enchanted Shard Dual Blade",
+  "type": "weapon",
+  "assetId": "6871200984"
+ },
+ {
+  "name": "Enchanted Shard Spelldagger",
+  "type": "weapon",
+  "assetId": "6871201839"
+ },
+ {
+  "name": "Enchanted Shard Staff",
+  "type": "weapon",
+  "assetId": "6871201943"
+ },
+ {
+  "name": "Enchanted Shard War Axe",
+  "type": "weapon",
+  "assetId": "6871201128"
+ },
+ {
+  "name": "Forest Vine Hatchet",
+  "type": "weapon",
+  "assetId": "6871201258"
+ },
+ {
+  "name": "Forest Vine Spellblade",
+  "type": "weapon",
+  "assetId": "6871202056"
+ },
+ {
+  "name": "Fungal Lance",
+  "type": "weapon",
+  "assetId": "6871200860"
+ },
+ {
+  "name": "Fungal Pike",
+  "type": "weapon",
+  "assetId": "6871201596"
+ },
+ {
+  "name": "Fungal Staff",
+  "type": "weapon",
+  "assetId": "6871201707"
+ },
+ {
+  "name": "Fungal Warhammer",
+  "type": "weapon",
+  "assetId": "6871200754"
+ },
+ {
+  "name": "Overgrown War Scythe",
+  "type": "weapon",
+  "assetId": "6871201358"
+ },
+ {
+  "name": "Crystalline Guardian Helmet",
+  "type": "helmet",
+  "assetId": "6871200261"
+ },
+ {
+  "name": "Crystalline Mage Helmet",
+  "type": "helmet",
+  "assetId": "6871200160"
+ },
+ {
+  "name": "Crystalline Warrior Helmet",
+  "type": "helmet",
+  "assetId": "6871200060"
+ },
+ {
+  "name": "Eldenbark Guardian Helmet",
+  "type": "helmet",
+  "assetId": "6871200604"
+ },
+ {
+  "name": "Eldenbark Mage Helmet",
+  "type": "helmet",
+  "assetId": "6871200501"
+ },
+ {
+  "name": "Eldenbark Warrior Helmet",
+  "type": "helmet",
+  "assetId": "6871200392"
+ },
+ {
+  "name": "Fungal Guardian Helmet",
+  "type": "helmet",
+  "assetId": "6871199914"
+ },
+ {
+  "name": "Fungal Mage Helmet",
+  "type": "helmet",
+  "assetId": "6871199809"
+ },
+ {
+  "name": "Fungal Warrior Helmet",
+  "type": "helmet",
+  "assetId": "6871199674"
+ },
+ {
+  "name": "Crystalline Guardian Armor",
+  "type": "chest",
+  "assetId": "6871198713"
+ },
+ {
+  "name": "Crystalline Mage Armor",
+  "type": "chest",
+  "assetId": "6871198434"
+ },
+ {
+  "name": "Crystalline Warrior Armor",
+  "type": "chest",
+  "assetId": "6871198282"
+ },
+ {
+  "name": "Eldenbark Guardian Armor",
+  "type": "chest",
+  "assetId": "6871199225"
+ },
+ {
+  "name": "Eldenbark Mage Armor",
+  "type": "chest",
+  "assetId": "6871199079"
+ },
+ {
+  "name": "Eldenbark Warrior Armor",
+  "type": "chest",
+  "assetId": "6871198942"
+ },
+ {
+  "name": "Fungal Guardian Armor",
+  "type": "chest",
+  "assetId": "6871198084"
+ },
+ {
+  "name": "Fungal Mage Armor",
+  "type": "chest",
+  "assetId": "6871197922"
+ },
+ {
+  "name": "Fungal Warrior Armor",
+  "type": "chest",
+  "assetId": "6871197790"
+ },
+ {
+  "name": "Frost Giant Greataxe",
+  "type": "weapon",
+  "assetId": "8349309782"
+ },
+ {
+  "name": "Gungnir",
+  "type": "weapon",
+  "assetId": "8349310824"
+ },
+ {
+  "name": "Hofund",
+  "type": "weapon",
+  "assetId": "9821875398"
+ },
+ {
+  "name": "Ice Greatspear",
+  "type": "weapon",
+  "assetId": "8349309516"
+ },
+ {
+  "name": "Ice Spellblade",
+  "type": "weapon",
+  "assetId": "8349310227"
+ },
+ {
+  "name": "Laevateinn",
+  "type": "weapon",
+  "assetId": "9821873895"
+ },
+ {
+  "name": "Mjolnir",
+  "type": "weapon",
+  "assetId": "8352073741"
+ },
+ {
+  "name": "Norse Blade",
+  "type": "weapon",
+  "assetId": "8349309115"
+ },
+ {
+  "name": "Norse Greataxe",
+  "type": "weapon",
+  "assetId": "8349309617"
+ },
+ {
+  "name": "Northern Runic Blade",
+  "type": "weapon",
+  "assetId": "8349309275"
+ },
+ {
+  "name": "Northern Spellstaff",
+  "type": "weapon",
+  "assetId": "8349310058"
+ },
+ {
+  "name": "Runic Mace",
+  "type": "weapon",
+  "assetId": "8349310505"
+ },
+ {
+  "name": "Staff of the North",
+  "type": "weapon",
+  "assetId": "8349310701"
+ },
+ {
+  "name": "Viking Hatchets",
+  "type": "weapon",
+  "assetId": "8349309362"
+ },
+ {
+  "name": "Viking Sceptre",
+  "type": "weapon",
+  "assetId": "8349310334"
+ },
+ {
+  "name": "Viking Shield",
+  "type": "weapon",
+  "assetId": "8349310166"
+ },
+ {
+  "name": "Jotunn Guardian Helmet",
+  "type": "helmet",
+  "assetId": "8349312784"
+ },
+ {
+  "name": "Jotunn Mage Helmet",
+  "type": "helmet",
+  "assetId": "8349312703"
+ },
+ {
+  "name": "Jotunn Warrior Helmet",
+  "type": "helmet",
+  "assetId": "8349312615"
+ },
+ {
+  "name": "Midgardian Guardian Helmet",
+  "type": "helmet",
+  "assetId": "8349312484"
+ },
+ {
+  "name": "Midgardian Mage Helmet",
+  "type": "helmet",
+  "assetId": "8349312318"
+ },
+ {
+  "name": "Midgardian Warrior Helmet",
+  "type": "helmet",
+  "assetId": "8349312205"
+ },
+ {
+  "name": "Valhalla Guardian Helmet",
+  "type": "helmet",
+  "assetId": "8349313160"
+ },
+ {
+  "name": "Valhalla Mage Helmet",
+  "type": "helmet",
+  "assetId": "8349312958"
+ },
+ {
+  "name": "Valhalla Warrior Helmet",
+  "type": "helmet",
+  "assetId": "8352073326"
+ },
+ {
+  "name": "Jotunn Guardian Armor",
+  "type": "chest",
+  "assetId": "8349311592"
+ },
+ {
+  "name": "Jotunn Mage Armor",
+  "type": "chest",
+  "assetId": "8349311436"
+ },
+ {
+  "name": "Jotunn Warrior Armor",
+  "type": "chest",
+  "assetId": "8349311318"
+ },
+ {
+  "name": "Midgardian Guardian Armor",
+  "type": "chest",
+  "assetId": "8349311218"
+ },
+ {
+  "name": "Midgardian Mage Armor",
+  "type": "chest",
+  "assetId": "8349311112"
+ },
+ {
+  "name": "Midgardian Warrior Armor",
+  "type": "chest",
+  "assetId": "8349310950"
+ },
+ {
+  "name": "Valhalla Guardian Armor",
+  "type": "chest",
+  "assetId": "8349312125"
+ },
+ {
+  "name": "Valhalla Mage Armor",
+  "type": "chest",
+  "assetId": "8349311950"
+ },
+ {
+  "name": "Valhalla Warrior Armor",
+  "type": "chest",
+  "assetId": "8352073533"
+ },
+ {
+  "name": "Daybreak And Gildensong",
+  "type": "weapon",
+  "assetId": "11558824087"
+ },
+ {
+  "name": "Dracani Flanged Mace",
+  "type": "weapon",
+  "assetId": "11558821665"
+ },
+ {
+  "name": "Dracani Gilded Lance",
+  "type": "weapon",
+  "assetId": "11558823237"
+ },
+ {
+  "name": "Dracani Gilded Staff",
+  "type": "weapon",
+  "assetId": "11558823417"
+ },
+ {
+  "name": "Dracani Gilded Sword",
+  "type": "weapon",
+  "assetId": "11558821429"
+ },
+ {
+  "name": "Dracani Royal Glaive",
+  "type": "weapon",
+  "assetId": "11558821878"
+ },
+ {
+  "name": "Dracani Spellclaws",
+  "type": "weapon",
+  "assetId": "11558822782"
+ },
+ {
+  "name": "Gildenscale Oath And Aegis",
+  "type": "weapon",
+  "assetId": "11558822668"
+ },
+ {
+  "name": "Oathsworn Halberd",
+  "type": "weapon",
+  "assetId": "11558829719"
+ },
+ {
+  "name": "Oathsworn Hammer",
+  "type": "weapon",
+  "assetId": "11558822012"
+ },
+ {
+  "name": "Oathsworn Spellblade",
+  "type": "weapon",
+  "assetId": "11558822984"
+ },
+ {
+  "name": "Oathsworn Spellscythe",
+  "type": "weapon",
+  "assetId": "11558823672"
+ },
+ {
+  "name": "Oathsworn Staff And Tome",
+  "type": "weapon",
+  "assetId": "11558823855"
+ },
+ {
+  "name": "Oathsworn Sword And Shield",
+  "type": "weapon",
+  "assetId": "11558822269"
+ },
+ {
+  "name": "Dracani Guardian Helmet",
+  "type": "helmet",
+  "assetId": "11558827099"
+ },
+ {
+  "name": "Dracani Mage Helmet",
+  "type": "helmet",
+  "assetId": "11558826716"
+ },
+ {
+  "name": "Dracani Warrior Helmet",
+  "type": "helmet",
+  "assetId": "11558826954"
+ },
+ {
+  "name": "Gildenscale Guardian Helmet",
+  "type": "helmet",
+  "assetId": "11558828522"
+ },
+ {
+  "name": "Gildenscale Mage Helmet",
+  "type": "helmet",
+  "assetId": "11558828185"
+ },
+ {
+  "name": "Gildenscale Warrior Helmet",
+  "type": "helmet",
+  "assetId": "11558828377"
+ },
+ {
+  "name": "Oathsworn Guardian Helmet",
+  "type": "helmet",
+  "assetId": "11558827865"
+ },
+ {
+  "name": "Oathsworn Mage Helmet",
+  "type": "helmet",
+  "assetId": "11558827428"
+ },
+ {
+  "name": "Oathsworn Warrior Helmet",
+  "type": "helmet",
+  "assetId": "11558827623"
+ },
+ {
+  "name": "Dracani Guardian Armor",
+  "type": "chest",
+  "assetId": "11558824644"
+ },
+ {
+  "name": "Dracani Mage Armor",
+  "type": "chest",
+  "assetId": "11558824284"
+ },
+ {
+  "name": "Dracani Warrior Armor",
+  "type": "chest",
+  "assetId": "11558824445"
+ },
+ {
+  "name": "Gildenscale Guardian Armor",
+  "type": "chest",
+  "assetId": "11558830025"
+ },
+ {
+  "name": "Gildenscale Mage Armor",
+  "type": "chest",
+  "assetId": "11558826292"
+ },
+ {
+  "name": "Gildenscale Warrior Armor",
+  "type": "chest",
+  "assetId": "11558826454"
+ },
+ {
+  "name": "Oathsworn Guardian Armor",
+  "type": "chest",
+  "assetId": "11558826017"
+ },
+ {
+  "name": "Oathsworn Mage Armor",
+  "type": "chest",
+  "assetId": "11558824892"
+ },
+ {
+  "name": "Oathsworn Warrior Armor",
+  "type": "chest",
+  "assetId": "11558825021"
+ },
+ {
+  "name": "Lumenflame's Judgement",
+  "type": "weapon",
+  "assetId": "132643100847806"
+ },
+ {
+  "name": "Lumenflame's Absolution",
+  "type": "weapon",
+  "assetId": "77222693008329"
+ },
+ {
+  "name": "Arcane Spray",
+  "type": "ability",
+  "assetId": "2744123452"
+ },
+ {
+  "name": "Battle Shout",
+  "type": "ability",
+  "assetId": "2621050486"
+ },
+ {
+  "name": "Blue Fireball",
+  "type": "ability",
+  "assetId": "384797849"
+ },
+ {
+  "name": "Fireball",
+  "type": "ability",
+  "assetId": "114317124"
+ },
+ {
+  "name": "Holy Barrier",
+  "type": "ability",
+  "assetId": "2610744829"
+ },
+ {
+  "name": "Holy Circle",
+  "type": "ability",
+  "assetId": "2520304152"
+ },
+ {
+  "name": "Innervate",
+  "type": "ability",
+  "assetId": "2621336370"
+ },
+ {
+  "name": "Lightning Strikes",
+  "type": "ability",
+  "assetId": "2610930929"
+ },
+ {
+  "name": "Poison Cloud",
+  "type": "ability",
+  "assetId": "2621358544"
+ },
+ {
+  "name": "Redemption",
+  "type": "ability",
+  "assetId": "2520313327"
+ },
+ {
+  "name": "Whirlwind",
+  "type": "ability",
+  "assetId": "2768520109"
+ },
+ {
+  "name": "Arcane Barrage",
+  "type": "ability",
+  "assetId": "2859306211"
+ },
+ {
+  "name": "Aura of Life",
+  "type": "ability",
+  "assetId": "2923911354"
+ },
+ {
+  "name": "Fire Bomb",
+  "type": "ability",
+  "assetId": "2923910451"
+ },
+ {
+  "name": "Gale Slice",
+  "type": "ability",
+  "assetId": "2823986768"
+ },
+ {
+  "name": "Ground Slam",
+  "type": "ability",
+  "assetId": "2924294282"
+ },
+ {
+  "name": "Ice Needles",
+  "type": "ability",
+  "assetId": "2923911770"
+ },
+ {
+  "name": "Lightning Beam",
+  "type": "ability",
+  "assetId": "2923912159"
+ },
+ {
+  "name": "Piercing Rain",
+  "type": "ability",
+  "assetId": "2923912884"
+ },
+ {
+  "name": "Rejuvenating Spray",
+  "type": "ability",
+  "assetId": "2923911030"
+ },
+ {
+  "name": "Searing Beam",
+  "type": "ability",
+  "assetId": "2923913298"
+ },
+ {
+  "name": "Taunting Aura",
+  "type": "ability",
+  "assetId": "2923909998"
+ },
+ {
+  "name": "Demonic Strike",
+  "type": "ability",
+  "assetId": "2985732756"
+ },
+ {
+  "name": "Enchanted Spinning Blades",
+  "type": "ability",
+  "assetId": "2985732294"
+ },
+ {
+  "name": "Ghostly Cannon Barrage",
+  "type": "ability",
+  "assetId": "2985731919"
+ },
+ {
+  "name": "Guardian Call",
+  "type": "ability",
+  "assetId": "2985915527"
+ },
+ {
+  "name": "Phantom Flames",
+  "type": "ability",
+  "assetId": "4318579122"
+ },
+ {
+  "name": "Pulsefire",
+  "type": "ability",
+  "assetId": "2985730646"
+ },
+ {
+  "name": "Universal Heal",
+  "type": "ability",
+  "assetId": "2985730059"
+ },
+ {
+  "name": "Blade Throw",
+  "type": "ability",
+  "assetId": "3040144692"
+ },
+ {
+  "name": "Chain Heal",
+  "type": "ability",
+  "assetId": "3040144898"
+ },
+ {
+  "name": "Electric Boom",
+  "type": "ability",
+  "assetId": "3040145096"
+ },
+ {
+  "name": "Glacial Blows",
+  "type": "ability",
+  "assetId": "3040144363"
+ },
+ {
+  "name": "Guardian's Blessing",
+  "type": "ability",
+  "assetId": "3040146215"
+ },
+ {
+  "name": "Thunderous Blast",
+  "type": "ability",
+  "assetId": "3040146940"
+ },
+ {
+  "name": "Void Beam",
+  "type": "ability",
+  "assetId": "3040155194"
+ },
+ {
+  "name": "Demonic Spikes",
+  "type": "ability",
+  "assetId": "3115156334"
+ },
+ {
+  "name": "Ice Nova",
+  "type": "ability",
+  "assetId": "3115157056"
+ },
+ {
+  "name": "Ice Totem",
+  "type": "ability",
+  "assetId": "3115157403"
+ },
+ {
+  "name": "Infernal Orbs",
+  "type": "ability",
+  "assetId": "3115156166"
+ },
+ {
+  "name": "Infernal Strike",
+  "type": "ability",
+  "assetId": "3115156596"
+ },
+ {
+  "name": "Rending Slice",
+  "type": "ability",
+  "assetId": "3115155894"
+ },
+ {
+  "name": "Berserk",
+  "type": "ability",
+  "assetId": "3276265847"
+ },
+ {
+  "name": "Earth Clap",
+  "type": "ability",
+  "assetId": "3276264186"
+ },
+ {
+  "name": "Enchanted Shuriken",
+  "type": "ability",
+  "assetId": "3276264470"
+ },
+ {
+  "name": "Flame Cyclone",
+  "type": "ability",
+  "assetId": "3276266137"
+ },
+ {
+  "name": "Ghostly Rampage",
+  "type": "ability",
+  "assetId": "3276264842"
+ },
+ {
+  "name": "Guardian Roar",
+  "type": "ability",
+  "assetId": "3276266442"
+ },
+ {
+  "name": "Hand Cannon",
+  "type": "ability",
+  "assetId": "3276263848"
+ },
+ {
+  "name": "Illusion Blast",
+  "type": "ability",
+  "assetId": "3276265175"
+ },
+ {
+  "name": "Lava Lash",
+  "type": "ability",
+  "assetId": "3276265493"
+ },
+ {
+  "name": "Blade Revolver",
+  "type": "ability",
+  "assetId": "3484481154"
+ },
+ {
+  "name": "Blade Storm",
+  "type": "ability",
+  "assetId": "3484482431"
+ },
+ {
+  "name": "Earth Kick",
+  "type": "ability",
+  "assetId": "3484482939"
+ },
+ {
+  "name": "Electric Slash",
+  "type": "ability",
+  "assetId": "3484482695"
+ },
+ {
+  "name": "Forgotten Army",
+  "type": "ability",
+  "assetId": "3484489972"
+ },
+ {
+  "name": "Icicle Barrage",
+  "type": "ability",
+  "assetId": "3484488104"
+ },
+ {
+  "name": "Life Pulse",
+  "type": "ability",
+  "assetId": "3484490246"
+ },
+ {
+  "name": "Runic Strike",
+  "type": "ability",
+  "assetId": "3484481774"
+ },
+ {
+  "name": "Tsunami",
+  "type": "ability",
+  "assetId": "3484489072"
+ },
+ {
+  "name": "Vortex",
+  "type": "ability",
+  "assetId": "3484489695"
+ },
+ {
+  "name": "Earth Spikes",
+  "type": "ability",
+  "assetId": "3734464227"
+ },
+ {
+  "name": "Mighty Leap",
+  "type": "ability",
+  "assetId": "3734464505"
+ },
+ {
+  "name": "Phantom Blades",
+  "type": "ability",
+  "assetId": "3734464926"
+ },
+ {
+  "name": "Phantom Striker",
+  "type": "ability",
+  "assetId": "3734463449"
+ },
+ {
+  "name": "Pulse Beam",
+  "type": "ability",
+  "assetId": "3734488053"
+ },
+ {
+  "name": "Smite",
+  "type": "ability",
+  "assetId": "3734463726"
+ },
+ {
+  "name": "Spirit Bomb",
+  "type": "ability",
+  "assetId": "3734426616"
+ },
+ {
+  "name": "Void Spheres",
+  "type": "ability",
+  "assetId": "3734426882"
+ },
+ {
+  "name": "Arrow Rain",
+  "type": "ability",
+  "assetId": "4111026362"
+ },
+ {
+  "name": "Chained Energy Blasts",
+  "type": "ability",
+  "assetId": "4111034625"
+ },
+ {
+  "name": "Chromatic Rain",
+  "type": "ability",
+  "assetId": "4111033824"
+ },
+ {
+  "name": "Life Dash",
+  "type": "ability",
+  "assetId": "4111026739"
+ },
+ {
+  "name": "Overcharge",
+  "type": "ability",
+  "assetId": "4111034252"
+ },
+ {
+  "name": "Pulse Waves",
+  "type": "ability",
+  "assetId": "4111027068"
+ },
+ {
+  "name": "Star Barrage",
+  "type": "ability",
+  "assetId": "4111027727"
+ },
+ {
+  "name": "Starfall",
+  "type": "ability",
+  "assetId": "4111027423"
+ },
+ {
+  "name": "Triple Blade Throw",
+  "type": "ability",
+  "assetId": "4111028069"
+ },
+ {
+  "name": "Electric Field",
+  "type": "ability",
+  "assetId": "4626316975"
+ },
+ {
+  "name": "Energy Orb",
+  "type": "ability",
+  "assetId": "4626316892"
+ },
+ {
+  "name": "Explosive Mine",
+  "type": "ability",
+  "assetId": "4626316807"
+ },
+ {
+  "name": "Focus Beam",
+  "type": "ability",
+  "assetId": "4626316615"
+ },
+ {
+  "name": "Mystery Matter",
+  "type": "ability",
+  "assetId": "4626316551"
+ },
+ {
+  "name": "Vortex Grenade",
+  "type": "ability",
+  "assetId": "4626316715"
+ },
+ {
+  "name": "Amethyst Blast",
+  "type": "ability",
+  "assetId": "5251636956"
+ },
+ {
+  "name": "Blade Fall",
+  "type": "ability",
+  "assetId": "5251637214"
+ },
+ {
+  "name": "Inner Focus",
+  "type": "ability",
+  "assetId": "5251638369"
+ },
+ {
+  "name": "Inner Rage",
+  "type": "ability",
+  "assetId": "5251638613"
+ },
+ {
+  "name": "Lava Barrage",
+  "type": "ability",
+  "assetId": "5251638063"
+ },
+ {
+  "name": "Lava Beam Orb",
+  "type": "ability",
+  "assetId": "5251637778"
+ },
+ {
+  "name": "Lava Cage",
+  "type": "ability",
+  "assetId": "5251636715"
+ },
+ {
+  "name": "Molten Shards",
+  "type": "ability",
+  "assetId": "5251637482"
+ },
+ {
+  "name": "Aquatic Smite",
+  "type": "ability",
+  "assetId": "6207983767"
+ },
+ {
+  "name": "Ice Barrage",
+  "type": "ability",
+  "assetId": "6207983645"
+ },
+ {
+  "name": "Ice Crash",
+  "type": "ability",
+  "assetId": "6207983948"
+ },
+ {
+  "name": "Ice Spikes",
+  "type": "ability",
+  "assetId": "6207984085"
+ },
+ {
+  "name": "Spear Strike",
+  "type": "ability",
+  "assetId": "6207983856"
+ },
+ {
+  "name": "Water Orb",
+  "type": "ability",
+  "assetId": "6207984172"
+ },
+ {
+  "name": "Agony Orbs",
+  "type": "ability",
+  "assetId": "6874804465"
+ },
+ {
+  "name": "Crystalline Cannon",
+  "type": "ability",
+  "assetId": "6874804900"
+ },
+ {
+  "name": "Fungal Poison",
+  "type": "ability",
+  "assetId": "6874804603"
+ },
+ {
+  "name": "Lightning Burst",
+  "type": "ability",
+  "assetId": "6874804760"
+ },
+ {
+  "name": "Piercing Roots",
+  "type": "ability",
+  "assetId": "6874804342"
+ },
+ {
+  "name": "Revitalize",
+  "type": "ability",
+  "assetId": "6874805273"
+ },
+ {
+  "name": "Wind Blast",
+  "type": "ability",
+  "assetId": "6874804146"
+ },
+ {
+  "name": "Enhanced Inner Focus",
+  "type": "ability",
+  "assetId": "5251638369"
+ },
+ {
+  "name": "Enhanced Inner Rage",
+  "type": "ability",
+  "assetId": "5251638613"
+ },
+ {
+  "name": "Flame Shuriken",
+  "type": "ability",
+  "assetId": "8349313620"
+ },
+ {
+  "name": "Flame Strike",
+  "type": "ability",
+  "assetId": "8349313743"
+ },
+ {
+  "name": "Frost Cone",
+  "type": "ability",
+  "assetId": "8349313309"
+ },
+ {
+  "name": "Gale Barrage",
+  "type": "ability",
+  "assetId": "8349313462"
+ },
+ {
+  "name": "Geyser",
+  "type": "ability",
+  "assetId": "8349314058"
+ },
+ {
+  "name": "Soul Drain",
+  "type": "ability",
+  "assetId": "8349313894"
+ },
+ {
+  "name": "Amethyst Beams",
+  "type": "ability",
+  "assetId": "11623492062"
+ },
+ {
+  "name": "Blade Barrage",
+  "type": "ability",
+  "assetId": "11623492658"
+ },
+ {
+  "name": "God Spear",
+  "type": "ability",
+  "assetId": "11623492807"
+ },
+ {
+  "name": "Jade Rain",
+  "type": "ability",
+  "assetId": "11623492208"
+ },
+ {
+  "name": "Jade Roller",
+  "type": "ability",
+  "assetId": "11623492525"
+ },
+ {
+  "name": "Solar Beam",
+  "type": "ability",
+  "assetId": "11623520034"
+ },
+ {
+  "name": "Taunt",
+  "type": "ability",
+  "assetId": "2614310269"
+ },
+ {
+  "name": "Orb Of Destruction",
+  "type": "ability",
+  "assetId": "4284635863"
+ },
+ {
+  "name": "Ground Stomp",
+  "type": "ability",
+  "assetId": "4452299205"
+ },
+ {
+  "name": "Arrow Barrage",
+  "type": "ability",
+  "assetId": "4452299440"
+ },
+ {
+  "name": "Demonic Curse",
+  "type": "ability",
+  "assetId": "4510338450"
+ },
+ {
+  "name": "Electric Grinder",
+  "type": "ability",
+  "assetId": "4510338336"
+ },
+ {
+  "name": "Guardian Blessing",
+  "type": "ability",
+  "assetId": "3040146215"
+ },
+ {
+  "name": "Molten Ball",
+  "type": "ability",
+  "assetId": "4510338078"
+ },
+ {
+  "name": "Explosive Punch",
+  "type": "ability",
+  "assetId": "14224858430"
+ },
+ {
+  "name": "Infernal Blast",
+  "type": "ability",
+  "assetId": "4452299619"
+ },
+ {
+  "name": "Twin Slash",
+  "type": "ability",
+  "assetId": "4510338216"
+ },
+ {
+  "name": "Chain Lightning",
+  "type": "ability",
+  "assetId": "4452299003"
+ }
+]

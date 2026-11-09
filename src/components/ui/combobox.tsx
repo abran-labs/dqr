@@ -184,7 +184,7 @@ export function Combobox({
         )}
       >
         <span className="flex min-w-0 items-center gap-2">
-          {selected?.icon && <img alt="" aria-hidden className="h-5 w-5 rounded-full object-cover" src={selected.icon} />}
+          {selected?.icon && <img alt="" aria-hidden className="h-6 w-6 shrink-0 object-contain" loading="lazy" src={selected.icon} />}
           {selected && valueParts !== undefined ? (
             <span className="truncate">
               {valueParts.map((part, index) => (
@@ -284,7 +284,7 @@ export function Combobox({
                           )}
                         >
                           <div className="flex items-center gap-2">
-                            {option.icon && <img alt="" aria-hidden className="h-5 w-5 rounded-full object-cover" src={option.icon} />}
+                            {option.icon && <img alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain" loading="lazy" src={option.icon} />}
                             <div className="flex flex-col items-start">
                               <span style={option.color ? { color: option.color } : undefined}>
                                 {option.label}

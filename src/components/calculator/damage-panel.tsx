@@ -4,6 +4,7 @@ import { DamageResultPanel, innerLabel } from "@/components/calculator/damage-re
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { dungeonChrome } from "@/lib/dungeon-display";
+import { abilityIconSrc } from "@/lib/item-icons";
 import { cn } from "@/lib/utils";
 import {
   DUNGEONS,
@@ -57,7 +58,9 @@ export function DamagePanel({ weapon, armor, helmet, settings, offenseFilter, on
       [...DUNGEONS].reverse().flatMap((dungeon) => {
         const chrome = dungeonChrome(dungeon.slug, dungeon.name);
         return abilitiesForDungeon(dungeon.slug).filter(isDamageAbilityChoice).filter((ability) => offenseFilter === null || abilityOffense(ability) === offenseFilter).map((ability) => {
+          const icon = abilityIconSrc(ability.slug);
           return {
+            ...(icon === undefined ? {} : { icon }),
             color: ability.rarityColour,
             description: `${String(ability.multiplier)}×`,
             group: dungeon.name,

@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { DUNGEONS, ITEMS, RARITY_INFO, type DqrItem, type ItemClass, type ItemRarityRow, type Rarity } from "@/lib/dqr-items";
 import { buildDiscordText } from "@/lib/discord-copy";
 import { displayItemName } from "@/lib/item-display";
+import { itemIconSrc } from "@/lib/item-icons";
 import { itemTracks, TRACK_CHROME } from "@/lib/item-tracks";
 import {
   calculatePotential,
@@ -63,7 +64,9 @@ const parseNumber = (value: string): number | null => {
 
 const itemOptions: ComboboxOption[] = ITEMS.map((item) => {
   const dungeon = DUNGEON_BY_CODE.get(item.dungeon);
+  const icon = itemIconSrc(item.id);
   return {
+    ...(icon === undefined ? {} : { icon }),
     color: RARITY_INFO[item.maxRarity].color,
     description: `${CLASS_LABEL[item.class]}${item.glitched ? " · glitched" : ""}${item.rows.length === 0 ? " · no data yet" : ""}`,
     group: dungeon?.name ?? item.dungeon,
