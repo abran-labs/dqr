@@ -2,7 +2,7 @@
 
 Source: `docs/Info/DQR_Min_Max_List.csv` — 1358 data rows (~494 blank padding), 362 items, 14 dungeons. Generator writes `src/lib/dqr-items.ts` (app source of truth). CSV stays the human-editable original.
 
-Boss Raids (between Steampunk Sewers and Orbital Outpost) has no rows yet. Yokai Peak and Abyssal Void exist in-game, not in this dataset.
+Boss Raids (between Steampunk Sewers and Orbital Outpost) is deliberately unsupported: its items scale with raid tier (the `+N` name suffix, 1–30), and no source gives exact per-tier ranges. Yokai Peak and Abyssal Void exist in-game, not in this dataset. Additions newer than the CSV are logged under **Game updates** below.
 
 ## Columns
 
@@ -51,7 +51,7 @@ Rarity mapping checked against wiki weapon tables (`Bronze Dagger` averages 6/2 
 |---|---|
 | `War` / `Mage` | Warrior / Mage weapon (4 rows) |
 | `War Legend` / `Mage Legend` | Legendary weapon (1 row) |
-| `War Ultimate` / `Mage Ultimate` | Ultimate weapon (1 row) — Eden's Reaper, Eden's Vengeance, Hofund, Laevateinn |
+| `War Ultimate` / `Mage Ultimate` | Ultimate weapon (1 row) — Eden's Reaper, Eden's Vengeance (estimated), Hofund, Laevateinn, Lumenflame's Judgement, Lumenflame's Absolution. See **Ultimate range rule**. |
 | `Legendary` | Hybrid war/mage legendary weapon → item class `hybrid` (Desert Fury, Crystalised Greatsword). Two offense tracks; see `docs/Info/Pot-System.md`. |
 | `Guardian` | Health-track armor |
 | `DPS Armor` | Damage/spell-track armor |
@@ -124,3 +124,27 @@ Armor usually unique (health). Weapons often not — residual ambiguity is large
 6. **Zero → hard error.** OCR misread, glitched item, or legacy outside the formula. Never force-fit.
 
 `REQ Lvl.` cannot disambiguate — it tracks dungeon difficulty, not rarity.
+
+## Game updates
+
+The community sheet (`DQR_Min_Max_List.csv`) is the canonical source for ranges and lags the live game. The official wiki (`https://dqreborn.com`) shows per-rarity averages only, never min/max, and its "God Pot" figures are not reliable. Rows added below are not from the sheet; replace them when the sheet catches up.
+
+### Ultimate range rule
+
+Every ultimate pair follows one rule: its `Min Ups` / `Min Base` equal the same dungeon's legendary `Max Ups` / `Max Base`, and its maxima are those minima × 1.08. Pots then derive as `base + ups * 10`.
+
+| Ultimate | Legendary it starts from | Check |
+|---|---|---|
+| Hofund / Laevateinn | Mjolnir / Gungnir max 462,000 ups, 69,930,000 base | Exact match in the sheet |
+| Lumenflame's Judgement / Absolution | Gildenscale Oath And Aegis / Daybreak And Gildensong max 892,500 ups, 146,475,000 base | Exact match to the official pot range below |
+
+### 2026-11-07 — Gilded Skies ultimates (official)
+
+Drop from the bonus boss Voidsbane Vytelus on Nightmare, `REQ Lvl. 196`, one per class. The official announcement gives fully upgraded potential **155,400,000 – 167,832,000**, which the rule reproduces exactly. Rows: 892,500–963,900 ups, 146,475,000–158,193,000 base. The wiki's God Pot of 167,600,000 is wrong.
+
+### Eden's Reaper / Eden's Vengeance (estimated)
+
+The sheet lists both with every cell blank. No official range exists, so the rows apply the ultimate rule to Eldenbark (max 315,000 ups, 33,180,000 base): 315,000–340,200 ups, 33,180,000–35,834,400 base, 36,330,000–39,236,400 potential.
+
+This contradicts the wiki's averages (290,000 ups, 36,000,000 base, God Pot 39,180,000): 290,000 ups would sit below Eldenbark's own maximum, which no other ultimate does. Treat these rows as **estimated** until a real copy or an official post confirms them.
+
